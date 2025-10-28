@@ -1,0 +1,21 @@
+# Configuração do Ruff para o Framework Investigativo VQC
+[lint]
+select = ["E", "F", "W"]
+ignore = [
+    "E402",  # Module level import not at top of file (imports são organizados por seção lógica)
+    "F401",  # Unused import (alguns imports são usados dinamicamente)
+    "F811",  # Redefinition of unused (imports duplicados em seções diferentes)
+    "E722",  # Bare except (usado para robustez em algumas funções auxiliares)
+    "F841",  # Unused variable (variáveis de unpacking podem ser intencionalmente não usadas)
+    "E741",  # Ambiguous variable name (l pode representar "layer" em contextos matemáticos)
+]
+
+# Comprimento máximo de linha
+line-length = 120
+
+[format]
+# Usar aspas duplas
+quote-style = "double"
+
+# Indentação com 4 espaços
+indent-width = 4

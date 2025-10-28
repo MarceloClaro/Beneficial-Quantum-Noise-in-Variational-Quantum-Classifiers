@@ -89,7 +89,8 @@ def rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epoca
         Esta técnica é inspirada em métodos de otimização de hiperparâmetros
         como Successive Halving e Grid Search Refinement.
     """
-    import os, json
+    import json
+    import os
     from pathlib import Path
     
     subdir_root = Path(pasta_resultados) / 'rastreio_fino'
