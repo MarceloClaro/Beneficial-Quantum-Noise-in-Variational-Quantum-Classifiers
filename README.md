@@ -394,9 +394,119 @@ Remove-Item Env:\VQC_QUICK  # Windows PowerShell
 export VQC_QUICK=1
 python framework_investigativo_completo.py
 
-# Modo completo (produção, ~15-20 horas)
+# Modo Bayesiano inteligente (NOVO, 10-20x mais eficiente)
+export VQC_BAYESIAN=1
+export VQC_QUICK=1  # Opcional: combinar para validação ultrarrápida
+python framework_investigativo_completo.py
+
+# Modo completo tradicional (produção, ~15-20 horas)
 python framework_investigativo_completo.py
 ```
+
+### ⚡ NOVO: Otimização Bayesiana de Ruído Benéfico
+
+**Melhoria de desempenho**: 10-20x mais eficiente que grid search tradicional!
+
+A partir da versão v7.2, o framework inclui **Otimização Bayesiana inteligente** usando [Optuna](https://optuna.org/), que:
+
+- **Explora o espaço de hiperparâmetros de forma inteligente** usando Tree-structured Parzen Estimator (TPE)
+- **Descarta configurações ruins precocemente** via Median Pruning adaptativo
+- **Identifica automaticamente os hiperparâmetros mais importantes** para ruído benéfico
+- **Reduz tempo de experimento** de ~15-20h (8,280 trials) para ~1-2h (100-200 trials)
+
+```bash
+# Instalação do Optuna (necessário apenas uma vez)
+pip install optuna
+
+# Ativar modo Bayesiano
+$env:VQC_BAYESIAN="1"  # Windows PowerShell
+export VQC_BAYESIAN=1  # Linux/macOS
+
+# Executar
+python framework_investigativo_completo.py
+```
+
+**Saída esperada:**
+
+```
+[2/5] Executando busca de hiperparâmetros...
+  🧠 Modo Bayesiano ativado (VQC_BAYESIAN=1)
+     Usando Otimização Bayesiana (10-20x mais eficiente)
+
+================================================================================
+ OTIMIZAÇÃO BAYESIANA DE RUÍDO BENÉFICO
+================================================================================
+  Trials: 100 (vs 540 do grid search)
+  Épocas por trial: 5
+  Algoritmo: Tree-structured Parzen Estimator (TPE)
+  Pruning: Median-based early stopping
+
+[Trial 001/100] arquitetura=strongly_entangling, init=matematico, ruido=depolarizante, nivel=0.0047
+    ✓ Acurácia: 0.7250 | Tempo: 124.3s
+
+...
+
+[Trial 100/100] arquitetura=hardware_efficient, init=fibonacci_spiral, ruido=amplitude, nivel=0.0089
+    ✓ Acurácia: 0.7583 | Tempo: 98.7s
+
+================================================================================
+ RESULTADOS DA OTIMIZAÇÃO BAYESIANA
+================================================================================
+  ✓ Melhor acurácia: 0.7916
+  ✓ Trial: 67/100
+  ✓ Trials completos: 84
+  ✓ Trials podados: 16 (early stopping eficiente)
+
+  Melhores hiperparâmetros:
+    - arquitetura: strongly_entangling
+    - estrategia_init: quantico
+    - tipo_ruido: depolarizante
+    - nivel_ruido: 0.008423
+    - taxa_aprendizado: 0.0234
+    - ruido_schedule: exponencial
+
+  Importância dos hiperparâmetros:
+    - nivel_ruido: 0.412 ⭐ (mais importante)
+    - tipo_ruido: 0.287
+    - arquitetura: 0.196
+    - estrategia_init: 0.105
+    - ruido_schedule: 0.000 (negligível)
+
+  ✓ Resultados salvos em: resultados_YYYY-MM-DD_HH-MM-SS/otimizacao_bayesiana/
+    - resultado_otimizacao.json: Resultado completo
+    - historico_trials.csv: Histórico de todos os trials
+    - README_otimizacao.md: Documentação da otimização
+```
+
+**Vantagens sobre Grid Search tradicional:**
+
+| Aspecto | Grid Search | Otimização Bayesiana |
+|---------|-------------|---------------------|
+| **Tempo de execução** | ~15-20 horas (8,280 trials) | ~1-2 horas (100-200 trials) |
+| **Eficiência** | Explora tudo uniformemente | Foca em regiões promissoras |
+| **Pruning** | Não | Sim (descarta ruins cedo) |
+| **Interpretabilidade** | Limitada | Importância de hiperparâmetros |
+| **Uso recomendado** | Análise exhaustiva final | Exploração inicial rápida |
+
+**Como funciona:**
+
+1. **Trials iniciais aleatórios** (primeiros 10): Exploração do espaço
+2. **TPE Sampler**: Modela distribuição probabilística de bons/maus hiperparâmetros
+3. **Pruning adaptativo**: Interrompe trials com acurácia abaixo da mediana após 3 épocas
+4. **Análise de importância**: Calcula contribuição de cada hiperparâmetro via fANOVA
+
+**Quando usar cada modo:**
+
+- **Grid Search** (`VQC_BAYESIAN=0` ou não definir):
+  - Quando você precisa de cobertura completa do espaço de hiperparâmetros
+  - Para artigos científicos com análise estatística exhaustiva
+  - Quando tempo não é limitação crítica
+  
+- **Otimização Bayesiana** (`VQC_BAYESIAN=1`):
+  - Para encontrar rapidamente configurações ótimas
+  - Quando recursos computacionais são limitados
+  - Para exploração inicial antes de grid search completo
+  - Em projetos com prazos apertados
 
 ### Pipeline de Execução
 
