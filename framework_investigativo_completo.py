@@ -2184,8 +2184,8 @@ def executar_grid_search(datasets, n_epocas=15, verbose=True, pasta_resultados=N
     os.makedirs(pasta_individual, exist_ok=True)
     # Placeholders para Pylance
     from typing import Any
-    metadata: dict[str, Any] = {}
-    metadata_path: str | None = None
+    metadata: Dict[str, Any] = {}
+    metadata_path: Optional[str] = None
     
     # Definir grid de hiperparâmetros
     quick = os.environ.get('VQC_QUICK', '0') == '1'
@@ -2639,8 +2639,8 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
         'arquivos_gerados': [],
         'csvs': {}
     }
-    metadata_path: str | None = None
-    pasta_individual: str | None = None
+    metadata_path: Optional[str] = None
+    pasta_individual: Optional[str] = None
     
     if pasta_resultados is not None:
         pasta_individual = os.path.join(pasta_resultados, 'analises_individuais')
@@ -2872,8 +2872,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         'arquivos_gerados': [],
         'figuras': []
     }
-    metadata_path: str | None = None
-    pasta_individual: str | None = None
+    metadata_path: Optional[str] = None
+    pasta_individual: Optional[str] = None
     
     if pasta_resultados is not None:
         pasta_individual = os.path.join(pasta_resultados, 'visualizacoes_individuais')
@@ -3309,7 +3309,7 @@ def analise_correlacao_profunda(df: pd.DataFrame, save_path: str = 'figura_corre
     return corr_matrix
 
 
-def analise_pca_profunda(df: pd.DataFrame, save_path: str | None = None):
+def analise_pca_profunda(df: pd.DataFrame, save_path: Optional[str] = None):
     if not SKLEARN_ADVANCED_AVAILABLE:
         logger.warning("Scikit-learn PCA não disponível")
         return None, None
@@ -3374,7 +3374,7 @@ def analise_pca_profunda(df: pd.DataFrame, save_path: str | None = None):
     return pca, X_pca
 
 
-def analise_clustering_profunda(df: pd.DataFrame, n_clusters: int = 3, save_path: str | None = None):
+def analise_clustering_profunda(df: pd.DataFrame, n_clusters: int = 3, save_path: Optional[str] = None):
     """Análise de clustering com K-means."""
     if not SKLEARN_ADVANCED_AVAILABLE:
         logger.warning("Scikit-learn KMeans não disponível")
@@ -3449,7 +3449,7 @@ def analise_clustering_profunda(df: pd.DataFrame, n_clusters: int = 3, save_path
     return kmeans
 
 
-def analise_sensibilidade_profunda(df: pd.DataFrame, save_path: str | None = None):
+def analise_sensibilidade_profunda(df: pd.DataFrame, save_path: Optional[str] = None):
     """Análise de sensibilidade ao ruído."""
     logger.info("\n" + "="*80)
     logger.info(" ANÁLISE DE SENSIBILIDADE AO RUÍDO")
@@ -3491,7 +3491,7 @@ def executar_analises_profundas(df: pd.DataFrame, salvar_figuras: bool = True, p
         'arquivos_gerados': [],
         'artefatos': []
     }
-    metadata_path: str | None = None
+    metadata_path: Optional[str] = None
     if pasta_resultados is not None:
         os.makedirs(pasta_resultados, exist_ok=True)
         # Forense: README e metadata
@@ -3564,7 +3564,7 @@ def executar_analises_profundas(df: pd.DataFrame, salvar_figuras: bool = True, p
 # ===============================
 # Utilitário interno de validação
 # ===============================
-def validar_exportacao_circuito(pasta_resultados: str | None = None) -> str:
+def validar_exportacao_circuito(pasta_resultados: Optional[str] = None) -> str:
     """
     Gera uma imagem PNG de um circuito quântico simples usando o QNode persistido (qnode_)
     para validar a exportação de diagramas via qml.draw_mpl. Salva em pasta_resultados/circuitos
