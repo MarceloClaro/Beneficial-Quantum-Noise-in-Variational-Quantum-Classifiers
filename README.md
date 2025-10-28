@@ -552,9 +552,6 @@ resultados_2025-10-18_21-23-40/
 
 ---
 
-
----
-
 ### 1. ANOVA Multifatorial
 
 Testamos hipóteses nulas:

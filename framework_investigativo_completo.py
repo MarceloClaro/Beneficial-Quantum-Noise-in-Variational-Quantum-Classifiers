@@ -1,10 +1,39 @@
 # =============================================================================
 # RASTREIO FINO DO NÍVEL DE RUÍDO
 # =============================================================================
-import pandas as pd
+# Imports centralizados no topo do arquivo (PEP 8)
 import os
+import json
+import time
+import logging
+from pathlib import Path
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
+import numpy as np
+import pandas as pd
+
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn import datasets as sk_datasets
+from sklearn.metrics import confusion_matrix
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+
+# Estatística
+from scipy.stats import f_oneway, ttest_ind
+from statsmodels.formula.api import ols
+from statsmodels.stats.anova import anova_lm
+
+# Visualização
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.express as px
+
+# Inicializar logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # ===============================
 # Utilidades de diretório de resultados (Drive/Colab/local)
@@ -89,9 +118,7 @@ def rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epoca
         Esta técnica é inspirada em métodos de otimização de hiperparâmetros
         como Successive Halving e Grid Search Refinement.
     """
-    import json
-    import os
-    from pathlib import Path
+    # json, os, Path já disponíveis no escopo global
     
     subdir_root = Path(pasta_resultados) / 'rastreio_fino'
     os.makedirs(subdir_root, exist_ok=True)
@@ -123,7 +150,7 @@ def rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epoca
     ruido_otimo = config_otima['tipo_ruido']
     
     if verbose:
-        logger.info(f"\n✓ Configuração ótima identificada:")
+        logger.info("\n✓ Configuração ótima identificada:")
         logger.info(f"  Dataset: {dataset_otimo}")
         logger.info(f"  Arquitetura: {arq_otima}")
         logger.info(f"  Inicialização: {init_otima}")
@@ -202,7 +229,7 @@ def rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epoca
         acuracia_otima_refinada = df_rastreio.loc[idx_melhor_refinado, 'acuracia_teste']
         
         if verbose:
-            logger.info(f"\n✓ Rastreio fino concluído!")
+            logger.info("\n✓ Rastreio fino concluído!")
             logger.info(f"  Nível ótimo refinado: {nivel_otimo_refinado:.4f}")
             logger.info(f"  Acurácia refinada: {acuracia_otima_refinada:.4f}")
             logger.info(f"  Melhoria: {acuracia_otima_refinada - config_otima['acuracia_teste']:+.4f}")
@@ -386,42 +413,6 @@ NOVO em v7.1:
 ✓ Gradient clipping adaptativo
 """
 
-import numpy as np
-import pandas as pd
-import os
-import json
-import time
-from pathlib import Path
-                    
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn import datasets as sk_datasets
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-
-# Estatística
-import scipy.stats as stats
-from scipy.stats import f_oneway, ttest_rel, ttest_ind, shapiro, levene
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
-from statsmodels.formula.api import ols
-from statsmodels.stats.anova import anova_lm
-
-# Visualização
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import plotly.express as px
-
-# Sistema
-import logging
-from typing import Callable, Dict, List, Optional, Tuple, Any
-from datetime import datetime
-
-# Inicializar logging o quanto antes
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
 # Helper: converter valor para float simples ou None (para silenciar stubs do Pylance)
 def _to_float_or_none(x: Any) -> Optional[float]:
     try:
@@ -491,7 +482,7 @@ try:
 except ImportError:
     SKLEARN_ADVANCED_AVAILABLE = False
     logger.warning("⚠️ Módulos avançados do scikit-learn não disponíveis")
-from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from sklearn.decomposition import PCA as SklearnPCA  # type: ignore
     from sklearn.cluster import KMeans  # type: ignore
@@ -813,9 +804,9 @@ class MonitorEmaranhamento:
         for i in range(2):
             for j in range(2):
                 for k in range(2):
-                    for l in range(2):
+                    for ell in range(2):
                         # Swap índices do segundo qubit
-                        rho_pt[2*i+k, 2*j+l] = rho[2*i+l, 2*j+k]
+                        rho_pt[2*i+k, 2*j+ell] = rho[2*i+ell, 2*j+k]
         return rho_pt
 
 
@@ -1987,7 +1978,7 @@ class ClassificadorVQC(BaseEstimator, ClassifierMixin):
                     
                     if self.detector_plateau_.detectar(grad_array):
                         logger.warning(f"Época {epoca}: Barren Plateau detectado (var={variancia_grad:.2e})")
-                except:
+                except Exception:
                     self.historico_['variancia_gradiente'].append(0.0)
             else:
                 self.historico_['variancia_gradiente'].append(0.0)
@@ -2009,7 +2000,7 @@ class ClassificadorVQC(BaseEstimator, ClassifierMixin):
                     # Calcular entropia
                     entropia = self.monitor_emaranhamento_.calcular_entropia_von_neumann(rho_0)
                     self.historico_['entropia_emaranhamento'].append(float(entropia))
-                except:
+                except Exception:
                     self.historico_['entropia_emaranhamento'].append(0.0)
             else:
                 self.historico_['entropia_emaranhamento'].append(0.0)
@@ -2248,8 +2239,8 @@ def executar_grid_search(datasets, n_epocas=15, verbose=True, pasta_resultados=N
         }
     
     for nome_dataset, dataset in datasets.items():
-        X_train, y_train = dataset['X_train'], dataset['y_train']
-        X_test, y_test = dataset['X_test'], dataset['y_test']
+        _X_train, _y_train = dataset['X_train'], dataset['y_train']
+        _X_test, _y_test = dataset['X_test'], dataset['y_test']
         
         for arq in grid['arquitetura']:
             for init in grid['estrategia_init']:
@@ -2384,7 +2375,6 @@ def executar_grid_search(datasets, n_epocas=15, verbose=True, pasta_resultados=N
                                             import matplotlib
                                             matplotlib.use('Agg')
                                             import matplotlib.pyplot as plt
-                                            from mpl_toolkits.mplot3d import Axes3D
                                             import numpy as np
 
                                             # Criar pasta para barren plateaus se não existir
@@ -2762,20 +2752,21 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
     except Exception as e:
         if verbose:
             logger.warning(f"Falha ao gerar comparacao_baselines.csv: {str(e)[:80]}")
-        # Salvar DataFrame completo das análises estatísticas
-        try:
-            df.to_csv(os.path.join(pasta_resultados, 'analises_estatisticas_completo.csv'), index=False)
-            analise_meta['csvs']['completo'] = os.path.join(pasta_resultados, 'analises_estatisticas_completo.csv')
-            # Salvar cada análise individualmente em CSV
-            if pasta_individual is not None:
-                for idx, row in df.iterrows():
-                    id_analise = f"analise_{idx:05d}"
-                    df_row = pd.DataFrame([row])
-                    csv_analise_path = os.path.join(pasta_individual, f"{id_analise}.csv")
-                    df_row.to_csv(csv_analise_path, index=False)
-                analise_meta['csvs_individuais'] = [os.path.join('analises_individuais', f) for f in os.listdir(pasta_individual) if f.endswith('.csv')]
-        except Exception:
-            pass
+    # Salvar DataFrame completo das análises estatísticas
+    try:
+        df.to_csv(os.path.join(str(pasta_resultados), 'analises_estatisticas_completo.csv'), index=False)
+        analise_meta['csvs']['completo'] = os.path.join(str(pasta_resultados), 'analises_estatisticas_completo.csv')
+        # Salvar cada análise individualmente em CSV
+        if pasta_individual is not None:
+            for idx, row in df.iterrows():
+                id_analise = f"analise_{idx:05d}"
+                df_row = pd.DataFrame([row])
+                csv_analise_path = os.path.join(str(pasta_individual), f"{id_analise}.csv")
+                df_row.to_csv(csv_analise_path, index=False)
+            # Listar CSVs apenas se pasta_individual é válido
+            analise_meta['csvs_individuais'] = [os.path.join('analises_individuais', f) for f in os.listdir(str(pasta_individual)) if f.endswith('.csv')]
+    except Exception:
+        pass
     
     analises['comparacao_inicializacoes'] = comp_init
     
