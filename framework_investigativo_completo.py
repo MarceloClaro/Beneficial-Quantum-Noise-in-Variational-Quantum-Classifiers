@@ -2719,6 +2719,49 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
             analise_meta['csvs']['comparacao_inicializacoes'] = comp_init_path
         except Exception:
             pass
+
+    # 2b. Comparação consolidada: VQC vs Baselines Clássicos (SVM/RF)
+    try:
+        if verbose:
+            logger.info("\n2b. COMPARAÇÃO: VQC vs SVM/RF (por dataset)")
+            logger.info("-"*80)
+        df_q = df[df['tipo_ruido'] != 'classico']
+        df_class = df[df['tipo_ruido'] == 'classico']
+        # Melhor VQC por dataset (maior acurácia)
+        vqc_best = df_q.groupby('dataset')['acuracia_teste'].max().rename('vqc_melhor')
+        # VQC sem ruído (média por dataset)
+        vqc_sem = df[df['tipo_ruido'] == 'sem_ruido'].groupby('dataset')['acuracia_teste'].mean().rename('vqc_sem_ruido_media')
+        # Baselines
+        svm = (
+            df_class[df_class['arquitetura'] == 'SVM']
+            .groupby('dataset')['acuracia_teste']
+            .mean()
+            .rename('svm')
+        )
+        rf = (
+            df_class[df_class['arquitetura'] == 'RandomForest']
+            .groupby('dataset')['acuracia_teste']
+            .mean()
+            .rename('rf')
+        )
+        comp = pd.concat([vqc_best, vqc_sem, svm, rf], axis=1)
+        # Deltas (podem ser NaN se baseline ausente)
+        comp['delta_vqc_svm'] = comp['vqc_melhor'] - comp['svm']
+        comp['delta_vqc_rf'] = comp['vqc_melhor'] - comp['rf']
+        comp = comp.reset_index()
+        if verbose:
+            logger.info("Resumo por dataset:")
+            logger.info(comp.round(4).to_string(index=False))
+        if pasta_resultados is not None:
+            comp_path = os.path.join(pasta_resultados, 'comparacao_baselines.csv')
+            try:
+                comp.to_csv(comp_path, index=False)
+                analise_meta['csvs']['comparacao_baselines'] = comp_path
+            except Exception:
+                pass
+    except Exception as e:
+        if verbose:
+            logger.warning(f"Falha ao gerar comparacao_baselines.csv: {str(e)[:80]}")
         # Salvar DataFrame completo das análises estatísticas
         try:
             df.to_csv(os.path.join(pasta_resultados, 'analises_estatisticas_completo.csv'), index=False)
@@ -2852,7 +2895,7 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
             f.write(
                 "# Visualizações Geradas\n\n"
                 f"- Data de execução: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                "- Figuras: 2, 3, 4, 5, 6, 7\n"
+                "- Figuras: 2, 2b, 3, 3b, 4, 5, 6, 7\n"
             )
     
     logger.info("="*80)
@@ -2899,6 +2942,54 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
             fig2.write_image(path_svg, format='svg', width=1200, height=800)
             viz_meta['figuras'] += [path_png, path_pdf, path_svg]
     figuras['figura2'] = fig2
+
+    # FIGURA 2b: Beneficial Noise com IC95% por grupo (dataset, tipo_ruido, nivel_ruido)
+    logger.info("Gerando Figura 2b: Beneficial Noise com IC95%...")
+    try:
+        df_q = df[df['tipo_ruido'] != 'classico'].copy()
+        grp_cols = ['dataset', 'tipo_ruido', 'nivel_ruido']
+        df_ci = (
+            df_q.groupby(grp_cols)
+            .agg(media=('acuracia_teste', 'mean'), desvio=('acuracia_teste', 'std'), n=('acuracia_teste', 'count'))
+            .reset_index()
+        )
+        # Evitar divisão por zero para n<=1
+        df_ci['sem'] = df_ci.apply(lambda r: (r['desvio'] / np.sqrt(r['n'])) if r['n'] > 1 and r['desvio'] == r['desvio'] else 0.0, axis=1)
+        df_ci['ci95'] = 1.96 * df_ci['sem']
+        fig2b = px.scatter(
+            df_ci, x='nivel_ruido', y='media', color='tipo_ruido', facet_col='dataset',
+            error_y='ci95',
+            title='Figura 2b: Acurácia Média ± IC95% por Nível de Ruído',
+            labels={'nivel_ruido': 'Nível de Ruído', 'media': 'Acurácia Média (Teste)'},
+            height=500
+        )
+        # Aparência consistente
+        fig2b.update_layout(
+            font=dict(family='serif', size=18, color='black'),
+            title_font=dict(size=22, family='serif', color='black', bold=True),
+            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            legend_font=dict(size=16, family='serif', color='black'),
+            margin=dict(l=60, r=40, t=80, b=60),
+            paper_bgcolor='white', plot_bgcolor='white',
+        )
+        fig2b.update_traces(marker=dict(line=dict(width=1, color='black')))
+        fig2b.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
+        fig2b.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
+        if salvar:
+            path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura2b_beneficial_noise_ic95.html')
+            fig2b.write_html(path_html)
+            if pasta_resultados is not None:
+                viz_meta['figuras'].append(path_html)
+                path_png = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.png')
+                path_pdf = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.pdf')
+                path_svg = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.svg')
+                fig2b.write_image(path_png, format='png', scale=3, width=1200, height=800)
+                fig2b.write_image(path_pdf, format='pdf', width=1200, height=800)
+                fig2b.write_image(path_svg, format='svg', width=1200, height=800)
+                viz_meta['figuras'] += [path_png, path_pdf, path_svg]
+        figuras['figura2b'] = fig2b
+    except Exception as e:
+        logger.warning(f"Não foi possível gerar a Figura 2b (IC95%): {str(e)[:80]}")
     
     # FIGURA 3: Noise Type Comparison
     logger.info("Gerando Figura 3: Comparação de Tipos de Ruído...")
@@ -2935,6 +3026,48 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
             fig3.write_image(path_svg, format='svg', width=1200, height=800)
             viz_meta['figuras'] += [path_png, path_pdf, path_svg]
     figuras['figura3'] = fig3
+
+    # FIGURA 3b: Médias por Tipo de Ruído com IC95% (facet por dataset)
+    logger.info("Gerando Figura 3b: Tipos de Ruído com IC95%...")
+    try:
+        df_q2 = df[df['tipo_ruido'] != 'classico'].copy()
+        grp_cols3 = ['dataset', 'tipo_ruido']
+        df_ci3 = (
+            df_q2.groupby(grp_cols3)
+            .agg(media=('acuracia_teste', 'mean'), desvio=('acuracia_teste', 'std'), n=('acuracia_teste', 'count'))
+            .reset_index()
+        )
+        df_ci3['sem'] = df_ci3.apply(lambda r: (r['desvio'] / np.sqrt(r['n'])) if r['n'] > 1 and r['desvio'] == r['desvio'] else 0.0, axis=1)
+        df_ci3['ci95'] = 1.96 * df_ci3['sem']
+        fig3b = px.bar(
+            df_ci3, x='tipo_ruido', y='media', color='tipo_ruido', facet_col='dataset',
+            error_y='ci95', barmode='group',
+            title='Figura 3b: Acurácia Média ± IC95% por Tipo de Ruído',
+            labels={'media': 'Acurácia Média (Teste)', 'tipo_ruido': 'Tipo de Ruído'}, height=500
+        )
+        if salvar:
+            fig3b.update_layout(
+                font=dict(family='serif', size=18, color='black'),
+                title_font=dict(size=22, family='serif', color='black', bold=True),
+                legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+                legend_font=dict(size=16, family='serif', color='black'),
+                margin=dict(l=60, r=40, t=80, b=60),
+                paper_bgcolor='white', plot_bgcolor='white',
+            )
+            path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura3b_noise_types_ic95.html')
+            fig3b.write_html(path_html)
+            if pasta_resultados is not None:
+                viz_meta['figuras'].append(path_html)
+                path_png = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.png')
+                path_pdf = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.pdf')
+                path_svg = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.svg')
+                fig3b.write_image(path_png, format='png', scale=3, width=1200, height=800)
+                fig3b.write_image(path_pdf, format='pdf', width=1200, height=800)
+                fig3b.write_image(path_svg, format='svg', width=1200, height=800)
+                viz_meta['figuras'] += [path_png, path_pdf, path_svg]
+        figuras['figura3b'] = fig3b
+    except Exception as e:
+        logger.warning(f"Não foi possível gerar a Figura 3b (IC95%): {str(e)[:80]}")
     
     # FIGURA 4: Initialization Strategies
     logger.info("Gerando Figura 4: Estratégias de Inicialização...")
@@ -3215,7 +3348,6 @@ def analise_pca_profunda(df: pd.DataFrame, save_path: str | None = None):
         logger.info(f"  PC{i+1}: {var_exp[i]:.2%} (acumulado: {var_cum[i]:.2%})")
     
     # Visualização: Scree plot + Biplot
-    from plotly.subplots import make_subplots
     
     fig = make_subplots(
         rows=1, cols=2,
@@ -3547,11 +3679,11 @@ def main():
 
     # 4. Gerar visualizações
     print("\n[4/6] Gerando visualizações...")
-    figuras = gerar_visualizacoes(df_resultados, salvar=True, pasta_resultados=pasta_resultados)
+    gerar_visualizacoes(df_resultados, salvar=True, pasta_resultados=pasta_resultados)
 
     # 5. Análises profundas (v7.1)
     print("\n[5/6] Executando análises profundas (v7.1)...")
-    analises_profundas = executar_analises_profundas(df_resultados, salvar_figuras=True, pasta_resultados=pasta_resultados)
+    executar_analises_profundas(df_resultados, salvar_figuras=True, pasta_resultados=pasta_resultados)
 
     # 6. Resumo final
     print("\n[6/6] Resumo Final")
@@ -3589,11 +3721,14 @@ def main():
     
     print("\n📁 ARQUIVOS GERADOS:")
     print("  - resultados_completos_artigo.csv")
+    print("  - comparacao_baselines.csv (NOVO)")
     print("  - figura2_beneficial_noise.html")
+    print("  - figura2b_beneficial_noise_ic95.html (NOVO)")
     print("  - figura3_noise_types.html")
+    print("  - figura3b_noise_types_ic95.html (NOVO)")
     print("  - figura4_initialization.html")
     print("  - figura5_architecture_tradeoffs.html")
-    print("  - figura6_effect_sizes.html (NOVO)")
+    print("  - figura6_effect_sizes.html")
     print("  - figura7_overfitting.html")
     
     print("\n🚀 FUNCIONALIDADES AVANÇADAS ATIVADAS:")

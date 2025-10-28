@@ -188,6 +188,27 @@ A implementação destes três testes permite avaliar a robustez das conclusões
 
 Todas as análises estatísticas foram implementadas utilizando statsmodels e scipy.stats, e os resultados são reportados com intervalos de confiança de 95% e valores de p ajustados para múltiplas comparações quando apropriado.
 
+## Intervalos de Confiança (IC95%) e Baselines Clássicos
+
+Para reforçar a robustez estatística das visualizações e possibilitar comparação direta com métodos clássicos, adicionamos:
+
+1) Estimativa de IC95% nas figuras agregadas
+
+- Cálculo: IC95% = 1.96 × SEM, onde SEM = desvio-padrão/√n.
+- Agrupamentos:
+  - Figura 2b (Beneficial Noise com IC95%): grupos por (dataset, tipo_ruido, nivel_ruido).
+  - Figura 3b (Tipos de Ruído com IC95%): grupos por (dataset, tipo_ruido).
+- Observação: entradas rotuladas como “classico” (baselines) normalmente possuem n=1 por dataset; por esse motivo, suas barras de erro não são exibidas nessas figuras.
+
+2) Baselines clássicos e comparação consolidada
+
+- Modelos:
+  - SVM com kernel RBF (scikit-learn, `SVC(kernel='rbf', probability=True, random_state=42)`).
+  - Random Forest (`RandomForestClassifier(n_estimators=100, random_state=42)`).
+- Integração: os resultados clássicos são inseridos no DataFrame final com `tipo_ruido = 'classico'` e arquiteturas `SVM` e `RandomForest`.
+- Exportação: criamos `comparacao_baselines.csv`, que apresenta por dataset: `vqc_melhor` (melhor acurácia VQC), `vqc_sem_ruido_media`, `svm`, `rf` e os deltas `delta_vqc_svm` e `delta_vqc_rf`.
+- Interpretação: deltas positivos indicam vantagem do melhor VQC sobre o baseline; deltas próximos de zero sugerem paridade.
+
 ## Datasets e Preparação de Dados
 
 A seleção de datasets para avaliação dos classificadores seguiu critérios de diversidade em termos de número de features, tamanho da amostra e complexidade da fronteira de decisão, garantindo que os resultados não sejam específicos para um tipo particular de problema. Foram utilizados quatro datasets clássicos de machine learning, todos disponíveis no repositório UCI Machine Learning e acessíveis através do scikit-learn:

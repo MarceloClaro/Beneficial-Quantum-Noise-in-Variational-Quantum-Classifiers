@@ -499,11 +499,10 @@ resultados_2025-10-18_21-23-40/
 │   └── ...
 │
 ├── figuras/                                 # Visualizações científicas
-│   ├── figura2_beneficial_noise.html        # Interativo Plotly
-│   ├── figura2_beneficial_noise.png         # Alta resolução (1200×800, 300 DPI)
-│   ├── figura2_beneficial_noise.pdf         # Pronto para publicação
-│   ├── figura2_beneficial_noise.svg         # Vetorial escalável
+│   ├── figura2_beneficial_noise.{html,png,pdf,svg}
+│   ├── figura2b_beneficial_noise_ic95.{html,png,pdf,svg}   # NOVO: médias ± IC95%
 │   ├── figura3_noise_types.{html,png,pdf,svg}
+│   ├── figura3b_noise_types_ic95.{html,png,pdf,svg}        # NOVO: médias ± IC95%
 │   ├── figura4_initialization.{html,png,pdf,svg}
 │   ├── figura5_architecture_tradeoffs.{html,png,pdf,svg}
 │   ├── figura6_effect_sizes.{html,png,pdf,svg}
@@ -525,6 +524,7 @@ resultados_2025-10-18_21-23-40/
     ├── posthoc_tests.json
     ├── analises_estatisticas_completo.csv
     ├── analise_comparacao_inicializacoes.csv
+  ├── comparacao_baselines.csv             # NOVO: VQC vs SVM/RF por dataset
     └── visualizacoes_completo.csv
 ```
 
@@ -749,6 +749,8 @@ furnished to do so, subject to the following conditions:
 - [x] Reprodutibilidade garantida (seed, ambiente, commit)
 - [x] Exportação de figuras em PNG/PDF/SVG 300 DPI
 - [x] Resultados estatísticos (ANOVA, effect sizes, post-hoc)
+- [x] Intervalos de confiança (95%) nas visualizações principais (Figuras 2b e 3b)
+- [x] Comparação com baselines clássicos (SVM, Random Forest)
 - [x] CSVs granulares por experimento
 - [x] Metadados e logs completos
 - [x] Referências cruzadas e citações
@@ -791,6 +793,8 @@ Remove-Item Env:\VQC_QUICK; & ".venv/Scripts/python.exe" framework_investigativo
 - ✅ 5 modelos de ruído via Lindblad + 5 modelos realistas (bit-flip, phase-flip, pink noise, readout error, thermal)
 - ✅ Análises estatísticas rigorosas (ANOVA, effect sizes, post-hoc)
 - ✅ Visualizações Qualis A1: PNG/PDF/SVG em alta resolução (300 DPI)
+- ✅ Novas visualizações com IC95% (Figuras 2b e 3b)
+- ✅ Tabela de comparação VQC vs SVM/RF (comparacao_baselines.csv)
 - ✅ Circuitos quânticos exportados em PNG para cada configuração
 - ✅ Gráficos 3D de barren plateaus (época × variância gradiente × custo)
 - ✅ CSVs individuais por experimento/análise/visualização

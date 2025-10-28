@@ -112,25 +112,18 @@ O framework atende a **90% dos requisitos críticos** para publicação em peri�
 ---
 
 ### 3. **Comparação com Estado da Arte** ⚠️
-**Status Atual:** Faltam benchmarks diretos
+**Status Atual:** Benchmarks clássicos integrados (SVM, RandomForest)
 
 **O que falta:**
-- ⚠️ Comparação quantitativa com métodos clássicos (SVM, Random Forest)
 - ⚠️ Comparação com outros VQC noise-aware da literatura
-- ⚠️ Tabela de performance relativa (speedup, acurácia, robustez)
+- ⚠️ Inclusão de mais um baseline clássico (e.g., XGBoost) como controle adicional
+- ⚠️ Tabela de performance relativa (speedup, acurácia, robustez) no texto principal
 
-**Ação Requerida:**
+**Ação Requerida (complementar):**
 ```python
-# Adicionar ao executar_grid_search():
-# Benchmarks clássicos
-resultados_classicos = {
-    'SVM': executar_benchmark_svm(datasets),
-    'Random Forest': executar_benchmark_rf(datasets),
-    'XGBoost': executar_benchmark_xgboost(datasets)
-}
-
-# Gerar tabela comparativa
-gerar_tabela_comparacao(resultados_vqc, resultados_classicos)
+# Opcional: adicionar XGBoost
+from xgboost import XGBClassifier
+clf_xgb = XGBClassifier(n_estimators=200, max_depth=4, learning_rate=0.1, subsample=0.9, colsample_bytree=0.9, random_state=42)
 ```
 
 **Impacto:** 🟡 **IMPORTANTE** - Revistas Qualis A1 exigem contextualização com SOTA
@@ -155,32 +148,13 @@ gerar_tabela_comparacao(resultados_vqc, resultados_classicos)
 ---
 
 ### 5. **Análise de Incertezas** ⚠️
-**Status Atual:** Seeds múltiplas (42-46) mas sem quantificação de incerteza
+**Status Atual:** IC95% adicionado nas visualizações (Figuras 2b e 3b)
 
-**O que adicionar:**
-- ⚠️ Intervalos de confiança (95%) nas figuras
-- ⚠️ Barras de erro nas visualizações
-- ⚠️ Análise de bootstrap para robustez estatística
+**Melhorias Futuras (opcionais):**
+- 🟡 Análise de bootstrap para robustez
+- 🟡 IC95% por arquitetura/ansatz quando houver replicações suficientes
 
-**Ação Requerida:**
-```python
-# Modificar gerar_visualizacoes():
-# Adicionar intervalos de confiança
-from scipy import stats
-
-def calcular_ic95(dados):
-    return stats.t.interval(0.95, len(dados)-1, 
-                           loc=np.mean(dados), 
-                           scale=stats.sem(dados))
-
-# Atualizar plots com error bars
-fig.add_trace(go.Scatter(
-    y=media,
-    error_y=dict(type='data', array=ic95_upper, arrayminus=ic95_lower)
-))
-```
-
-**Impacto:** 🟡 **IMPORTANTE** - Melhora credibilidade científica
+**Impacto:** � **ENDEREÇADO** - Incremento de credibilidade científica
 
 ---
 
@@ -246,10 +220,10 @@ stats.dump_stats('performance_profile.prof')
 - [ ] Executar framework completo (modo não-quick) e salvar todos os 8,280 CSVs
 - [ ] Gerar todas as figuras em 300 DPI (PNG/PDF/SVG)
 - [ ] Revisão de English no README (abstract, metodologia)
-- [ ] Comparação quantitativa com baselines clássicos
+- [x] Comparação quantitativa com baselines clássicos
 
 ### Altamente Recomendado
-- [ ] Adicionar intervalos de confiança nas visualizações
+- [x] Adicionar intervalos de confiança nas visualizações
 - [ ] Documentar limitações computacionais (4 qubits)
 - [ ] Incluir seção "Future Work" com hardware real
 - [ ] Criar notebook Jupyter de tutorial básico
