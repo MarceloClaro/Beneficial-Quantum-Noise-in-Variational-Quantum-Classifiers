@@ -16,13 +16,36 @@ This repository presents the full investigative framework for the article **"Fro
 [![PennyLane](https://img.shields.io/badge/PennyLane-0.38.0-brightgreen.svg)](https://pennylane.ai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2025.xxxxx-b31b1b.svg)](https://arxiv.org/)
+[![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
 
-> **Framework Investigativo Completo para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
+> **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
+>
+> ✨ **NOVO (v7.2)**: Consolidação e orquestração automática integrada! Veja [docs/AUTOMACAO_FRAMEWORK.md](docs/AUTOMACAO_FRAMEWORK.md) para detalhes.
 
+## 🚀 Início Rápido
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers.git
+cd Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers
+
+# 2. Instale as dependências
+pip install -r requirements.txt
+
+# 3. Execute (modo rápido para teste - 1-2 horas)
+python framework_investigativo_completo.py --bayes --trials 100 --dataset-bayes moons
+
+# Ou execução completa (48-72 horas)
+python framework_investigativo_completo.py
+```
+
+**📚 Documentação Completa**:
+- 📖 [Guia de Instalação](INSTALL.md)
+- 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
+- 📂 [Estrutura do Projeto](STRUCTURE.md)
+- 💡 [Exemplos Práticos](examples/exemplo_uso_programatico.py)
 
 ## 📋 Sumário
-
-
 - [Resumo Científico](#-abstract)
 - [Visão Geral](#-visão-geral)
 - [Reprodutibilidade](#-reprodutibilidade)
@@ -43,15 +66,14 @@ This repository presents the full investigative framework for the article **"Fro
 
 ---
 
-
 ---
 
 ## 🔁 Reprodutibilidade
 
-**DOI Dataset:** [10.5281/zenodo.XXXXXXX](https://doi.org/10.5281/zenodo.XXXXXXX)  
-**Commit Hash:** `abcdef1234567890`  
-**Ambiente:** Python 3.13, PennyLane 0.38.0, Windows 11, 16GB RAM  
-**Seed Global:** 42–46  
+**DOI Dataset:** [10.5281/zenodo.XXXXXXX](https://doi.org/10.5281/zenodo.XXXXXXX)
+**Commit Hash:** `abcdef1234567890`
+**Ambiente:** Python 3.13, PennyLane 0.38.0, Windows 11, 16GB RAM
+**Seed Global:** 42–46
 **Configuração:** Todos os parâmetros experimentais e scripts estão versionados. Para replicar resultados, utilize o ambiente virtual `.venv` e execute o framework conforme instruções abaixo.
 
 ---
@@ -60,7 +82,6 @@ This repository presents the full investigative framework for the article **"Fro
 
 Este repositório contém a implementação completa do framework investigativo desenvolvido para o artigo científico **"From Obstacle to Opportunity: Harnessing Beneficial Quantum Noise in Variational Classifiers"**, submetido para publicação em periódicos Qualis A1 (Nature Quantum Information, Quantum, npj Quantum Information).
 
-
 ---
 
 Contrariamente ao paradigma dominante que trata o ruído quântico exclusivamente como deletério, nossa pesquisa investiga **quando e por que o ruído quântico pode ser benéfico** para o desempenho de Variational Quantum Classifiers (VQCs). Propomos que, sob condições específicas, o ruído atua como:
@@ -68,7 +89,6 @@ Contrariamente ao paradigma dominante que trata o ruído quântico exclusivament
 1. **Regularizador natural** contra overfitting via perturbações estocásticas no espaço de Hilbert
 2. **Mecanismo de exploração** que supera mínimos locais durante otimização variacional
 3. **Facilitador de generalização** através de invariância por ruído no mapeamento de features quânticas
-
 
 ### Contribuições Científicas
 
@@ -80,7 +100,6 @@ Contrariamente ao paradigma dominante que trata o ruído quântico exclusivament
 - **Metodologia estatística rigorosa** com ANOVA, effect sizes (Cohen's d, Glass's Δ, Hedges' g) e testes post-hoc
 
 ---
-
 
 ---
 
@@ -159,9 +178,7 @@ Hipótese: estas constantes carregam **informação estrutural do universo** e p
 
 ---
 
-
 ---
-
 
 ### Fluxograma do Pipeline
 
@@ -235,7 +252,6 @@ framework_investigativo_completo.py (3,151 linhas)
 5. **Xavier Quântico**: $\theta \sim \mathcal{N}(0, \sqrt{2/(n_{in} + n_{out})})$ adaptado
 
 ---
-
 
 ---
 
@@ -321,7 +337,6 @@ Todos os datasets são pré-processados com:
 
 ---
 
-
 ---
 
 ### Requisitos de Sistema
@@ -383,7 +398,6 @@ Remove-Item Env:\VQC_QUICK  # Windows PowerShell
 ```
 
 ---
-
 
 ---
 
@@ -501,7 +515,7 @@ python framework_investigativo_completo.py
   - Quando você precisa de cobertura completa do espaço de hiperparâmetros
   - Para artigos científicos com análise estatística exhaustiva
   - Quando tempo não é limitação crítica
-  
+
 - **Otimização Bayesiana** (`VQC_BAYESIAN=1`):
   - Para encontrar rapidamente configurações ótimas
   - Quando recursos computacionais são limitados
@@ -521,18 +535,18 @@ python framework_investigativo_completo.py
 
 [2/5] Executando grid search...
   ⚡ Modo rápido ativado (VQC_QUICK=1): n_epocas=5
-  
+
   [    1/8280] Dataset: moons | Seed: 42 | Arquitetura: basico | Init: matematico | Ruído: sem_ruido | Nível: 0.0000
     ✓ Acurácia: 0.6833 | Gap: +0.0988 | Tempo: 281.8s
-  
+
   [    2/8280] Dataset: moons | Seed: 43 | Arquitetura: basico | Init: matematico | Ruído: sem_ruido | Nível: 0.0000
     ✓ Acurácia: 0.6583 | Gap: +0.0845 | Tempo: 340.1s
-  
+
   ...
-  
+
   [8280/8280] Dataset: wine | Seed: 46 | Arquitetura: real_amplitudes | Init: fibonacci_spiral | Ruído: correlacionado | Nível: 0.0200
     ✓ Acurácia: 0.8974 | Gap: -0.0123 | Tempo: 456.3s
-  
+
 ✓ GRID SEARCH CONCLUÍDO: 8,280 experimentos em 5.7 horas
 
 [3/5] Executando análises estatísticas...
@@ -579,7 +593,6 @@ grep "Tempo:" framework.log | awk '{sum+=$NF; count++} END {print sum/count "s"}
 ```
 
 ---
-
 
 ---
 
@@ -722,7 +735,6 @@ Mais conservador, mas válido para comparações complexas *a posteriori*.
 
 ---
 
-
 ---
 
 ### Artigo Principal
@@ -754,7 +766,6 @@ Mais conservador, mas válido para comparações complexas *a posteriori*.
 Todos os 8,280 experimentos, código-fonte, e artefatos de análise estão disponíveis em Zenodo para reprodutibilidade.
 
 ---
-
 
 ---
 
@@ -792,7 +803,6 @@ Este projeto adere ao [Contributor Covenant v2.1](https://www.contributor-covena
 
 ---
 
-
 ---
 
 Este projeto está licenciado sob a **MIT License** - veja [LICENSE](LICENSE) para detalhes.
@@ -813,7 +823,6 @@ furnished to do so, subject to the following conditions:
 ```
 
 ---
-
 
 ---
 
@@ -844,7 +853,6 @@ furnished to do so, subject to the following conditions:
 </div>
 
 ---
-
 
 ---
 

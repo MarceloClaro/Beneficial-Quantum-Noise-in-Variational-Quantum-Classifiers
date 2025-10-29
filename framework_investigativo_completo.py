@@ -476,12 +476,7 @@ except ImportError:
     MedianPruner = None  # type: ignore[assignment]
     logger.warning("⚠️ Optuna não disponível. Instale com: pip install optuna")
 
-try:
-    import joblib
-    JOBLIB_AVAILABLE = True
-except ImportError:
-    JOBLIB_AVAILABLE = False
-    logger.warning("⚠️ Joblib não disponível. Instale com: pip install joblib")
+# Removido: joblib não é utilizado diretamente; evitamos import desnecessário
 
 try:
     from sklearn.decomposition import PCA as SklearnPCA
@@ -912,13 +907,13 @@ class FuncaoCustoAvancada:
         # Converter para numpy para operações não-diferenciáveis
         predicoes_np = np.array(predicoes)
         labels_np = np.array(labels)
-        
+
         # Sigmoid para probabilidades
-        probs = 1 / (1 + np.exp(-predicoes_np))
-        
+        probs = 1.0 / (1.0 + np.exp(-predicoes_np))
+
         # Labels de {-1, 1} para {0, 1}
         labels_01 = (labels_np + 1) / 2
-        
+
         # Cross-entropy: -Σ [y log(p) + (1-y)log(1-p)]
         eps = 1e-10  # Evitar log(0) para evitar NaN
         ce = -np.mean(
@@ -2891,6 +2886,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         # Forense: README e metadata
         readme_path = os.path.join(pasta_resultados, 'README_visualizacoes.md')
         metadata_path = os.path.join(pasta_resultados, 'metadata_visualizacoes.json')
+        os.makedirs(os.path.dirname(readme_path), exist_ok=True)
+        os.makedirs(os.path.dirname(metadata_path), exist_ok=True)
         with open(readme_path, 'w', encoding='utf-8') as f:
             f.write(
                 "# Visualizações Geradas\n\n"
@@ -2931,12 +2928,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig2.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         # Exportar em alta resolução e formatos científicos
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura2_beneficial_noise.html')
+        os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig2.write_html(path_html)
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura2_beneficial_noise.png')
             path_pdf = os.path.join(pasta_resultados, 'figura2_beneficial_noise.pdf')
             path_svg = os.path.join(pasta_resultados, 'figura2_beneficial_noise.svg')
+            for p in [path_png, path_pdf, path_svg]:
+                os.makedirs(os.path.dirname(p), exist_ok=True)
             fig2.write_image(path_png, format='png', scale=3, width=1200, height=800)
             fig2.write_image(path_pdf, format='pdf', width=1200, height=800)
             fig2.write_image(path_svg, format='svg', width=1200, height=800)
@@ -2977,12 +2977,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig2b.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         if salvar:
             path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura2b_beneficial_noise_ic95.html')
+            os.makedirs(os.path.dirname(path_html), exist_ok=True)
             fig2b.write_html(path_html)
             if pasta_resultados is not None:
                 viz_meta['figuras'].append(path_html)
                 path_png = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.png')
                 path_pdf = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.pdf')
                 path_svg = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.svg')
+                for p in [path_png, path_pdf, path_svg]:
+                    os.makedirs(os.path.dirname(p), exist_ok=True)
                 fig2b.write_image(path_png, format='png', scale=3, width=1200, height=800)
                 fig2b.write_image(path_pdf, format='pdf', width=1200, height=800)
                 fig2b.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3015,12 +3018,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig3.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         fig3.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura3_noise_types.html')
+        os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig3.write_html(path_html)
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura3_noise_types.png')
             path_pdf = os.path.join(pasta_resultados, 'figura3_noise_types.pdf')
             path_svg = os.path.join(pasta_resultados, 'figura3_noise_types.svg')
+            for p in [path_png, path_pdf, path_svg]:
+                os.makedirs(os.path.dirname(p), exist_ok=True)
             fig3.write_image(path_png, format='png', scale=3, width=1200, height=800)
             fig3.write_image(path_pdf, format='pdf', width=1200, height=800)
             fig3.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3055,12 +3061,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
                 paper_bgcolor='white', plot_bgcolor='white',
             )
             path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura3b_noise_types_ic95.html')
+            os.makedirs(os.path.dirname(path_html), exist_ok=True)
             fig3b.write_html(path_html)
             if pasta_resultados is not None:
                 viz_meta['figuras'].append(path_html)
                 path_png = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.png')
                 path_pdf = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.pdf')
                 path_svg = os.path.join(pasta_resultados, 'figura3b_noise_types_ic95.svg')
+                for p in [path_png, path_pdf, path_svg]:
+                    os.makedirs(os.path.dirname(p), exist_ok=True)
                 fig3b.write_image(path_png, format='png', scale=3, width=1200, height=800)
                 fig3b.write_image(path_pdf, format='pdf', width=1200, height=800)
                 fig3b.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3093,12 +3102,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig4.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         fig4.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura4_initialization.html')
+        os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig4.write_html(path_html)
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura4_initialization.png')
             path_pdf = os.path.join(pasta_resultados, 'figura4_initialization.pdf')
             path_svg = os.path.join(pasta_resultados, 'figura4_initialization.svg')
+            for p in [path_png, path_pdf, path_svg]:
+                os.makedirs(os.path.dirname(p), exist_ok=True)
             fig4.write_image(path_png, format='png', scale=3, width=1200, height=800)
             fig4.write_image(path_pdf, format='pdf', width=1200, height=800)
             fig4.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3129,12 +3141,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig5.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         fig5.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura5_architecture_tradeoffs.html')
+        os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig5.write_html(path_html)
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura5_architecture_tradeoffs.png')
             path_pdf = os.path.join(pasta_resultados, 'figura5_architecture_tradeoffs.pdf')
             path_svg = os.path.join(pasta_resultados, 'figura5_architecture_tradeoffs.svg')
+            for p in [path_png, path_pdf, path_svg]:
+                os.makedirs(os.path.dirname(p), exist_ok=True)
             fig5.write_image(path_png, format='png', scale=3, width=1200, height=800)
             fig5.write_image(path_pdf, format='pdf', width=1200, height=800)
             fig5.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3177,12 +3192,15 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         fig7.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         fig7.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura7_overfitting.html')
+        os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig7.write_html(path_html)
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura7_overfitting.png')
             path_pdf = os.path.join(pasta_resultados, 'figura7_overfitting.pdf')
             path_svg = os.path.join(pasta_resultados, 'figura7_overfitting.svg')
+            for p in [path_png, path_pdf, path_svg]:
+                os.makedirs(os.path.dirname(p), exist_ok=True)
             fig7.write_image(path_png, format='png', scale=3, width=1200, height=800)
             fig7.write_image(path_pdf, format='pdf', width=1200, height=800)
             fig7.write_image(path_svg, format='svg', width=1200, height=800)
@@ -3244,6 +3262,7 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         
         if salvar:
             path = os.path.join(pasta_resultados if pasta_resultados else '', 'figura6_effect_sizes.html')
+            os.makedirs(os.path.dirname(path), exist_ok=True)
             fig6.write_html(path)
             if pasta_resultados is not None:
                 viz_meta['figuras'].append(path)
@@ -3255,17 +3274,22 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     if pasta_resultados is not None and metadata_path is not None:
         try:
             viz_meta['arquivos_gerados'] = [f for f in os.listdir(pasta_resultados) if os.path.isfile(os.path.join(pasta_resultados, f))]
+            os.makedirs(os.path.dirname(metadata_path), exist_ok=True)
             with open(metadata_path, 'w', encoding='utf-8') as f:
                 json.dump(viz_meta, f, indent=2, ensure_ascii=False, default=str)
                 # Salvar DataFrame completo das visualizações
-                df.to_csv(os.path.join(pasta_resultados, 'visualizacoes_completo.csv'), index=False)
-                viz_meta['csv_completo'] = os.path.join(pasta_resultados, 'visualizacoes_completo.csv')
+                csv_completo_path = os.path.join(pasta_resultados, 'visualizacoes_completo.csv')
+                os.makedirs(os.path.dirname(csv_completo_path), exist_ok=True)
+                df.to_csv(csv_completo_path, index=False)
+                viz_meta['csv_completo'] = csv_completo_path
                 # Salvar cada visualização individualmente em CSV
                 if pasta_individual is not None:
+                    os.makedirs(pasta_individual, exist_ok=True)
                     for idx, row in df.iterrows():
                         id_vis = f"vis_{idx:05d}"
                         df_row = pd.DataFrame([row])
                         csv_vis_path = os.path.join(pasta_individual, f"{id_vis}.csv")
+                        os.makedirs(os.path.dirname(csv_vis_path), exist_ok=True)
                         df_row.to_csv(csv_vis_path, index=False)
                     viz_meta['csvs_individuais'] = [os.path.join('visualizacoes_individuais', f) for f in os.listdir(pasta_individual) if f.endswith('.csv')]
         except Exception:
@@ -3634,7 +3658,8 @@ def otimizar_ruido_benefico_bayesiano(
     n_epocas: int = 10,
     timeout: Optional[int] = None,
     pasta_resultados: Optional[str] = None,
-    verbose: bool = True
+    verbose: bool = True,
+    dataset_nome: Optional[str] = 'moons'
 ) -> Dict[str, Any]:
     """
     Busca inteligente de hiperparâmetros de ruído benéfico usando Otimização Bayesiana.
@@ -3678,8 +3703,11 @@ def otimizar_ruido_benefico_bayesiano(
         logger.info("  Pruning: Median-based early stopping")
     
     # Escolher dataset representativo (moons é desafiador e rápido)
-    dataset_nome = 'moons'
-    dataset = datasets[dataset_nome]
+    ds_nome = dataset_nome or 'moons'
+    if ds_nome not in datasets:
+        logger.warning(f"Dataset '{ds_nome}' não encontrado. Usando 'moons'.")
+        ds_nome = 'moons'
+    dataset = datasets[ds_nome]
     
     def objective(trial):
         """Função objetivo para Optuna."""
@@ -3828,7 +3856,7 @@ def otimizar_ruido_benefico_bayesiano(
                 f"## Configuração\n"
                 f"- Trials: {n_trials}\n"
                 f"- Épocas por trial: {n_epocas}\n"
-                f"- Dataset: {dataset_nome}\n"
+                f"- Dataset: {ds_nome}\n"
                 f"- Algoritmo: Tree-structured Parzen Estimator (TPE)\n\n"
                 f"## Resultados\n"
                 f"- **Melhor acurácia:** {melhor_valor:.4f}\n"
@@ -3859,8 +3887,9 @@ def otimizar_ruido_benefico_bayesiano(
 def main():
     """Execução principal do framework investigativo."""
     print("="*80)
-    print(" FRAMEWORK INVESTIGATIVO COMPLETO - ARTIGO NATURE/QUANTUM")
+    print(" FRAMEWORK INVESTIGATIVO COMPLETO v7.2 - ARTIGO NATURE/QUANTUM")
     print(" Beneficial Quantum Noise in Variational Quantum Classifiers")
+    print(" + CONSOLIDAÇÃO E ORQUESTRAÇÃO AUTOMÁTICA INTEGRADA")
     print("="*80)
     
     # Criar pasta de resultados com timestamp (com suporte a Colab/Drive e variável de ambiente)
@@ -3890,45 +3919,119 @@ def main():
     # 2. Executar grid search ou otimização Bayesiana
     print("\n[2/5] Executando busca de hiperparâmetros...")
     n_epocas_padrao = 15
+    # Garantir definição de df_resultados para Pylance e segurança de fluxo
+    df_resultados: pd.DataFrame = pd.DataFrame()
     try:
         modo_rapido = os.environ.get('VQC_QUICK', '0') == '1'
         modo_bayesiano = os.environ.get('VQC_BAYESIAN', '0') == '1'
+        executar_bayes_apos_grid = os.environ.get('VQC_BAYES_AFTER_GRID', '0') == '1'
     except Exception:
         modo_rapido = False
         modo_bayesiano = False
+        executar_bayes_apos_grid = False
+
+    # Flags de CLI (opcionais)
+    import sys as _sys_cli
+    _argv = _sys_cli.argv[1:]
+    if '--bayes' in _argv:
+        modo_bayesiano = True
+    if '--bayes-after-grid' in _argv or '--run-both' in _argv:
+        executar_bayes_apos_grid = True
+    # Overrides de parâmetros Bayesianos
+    _cli_n_trials = None
+    _cli_epocas_bayes = None
+    _cli_dataset_bayes = None
+    if '--trials' in _argv:
+        try:
+            i = _argv.index('--trials')
+            _cli_n_trials = int(_argv[i+1])
+        except Exception:
+            pass
+    if '--epocas-bayes' in _argv:
+        try:
+            i = _argv.index('--epocas-bayes')
+            _cli_epocas_bayes = int(_argv[i+1])
+        except Exception:
+            pass
+    if '--dataset-bayes' in _argv:
+        try:
+            i = _argv.index('--dataset-bayes')
+            _cli_dataset_bayes = _argv[i+1]
+        except Exception:
+            pass
     
     if modo_rapido:
         print("  ⚡ Modo rápido ativado (VQC_QUICK=1): n_epocas=5")
     
     # OTIMIZAÇÃO BAYESIANA (novo método inteligente)
     resultado_bayesiano: Optional[Dict[str, Any]] = None
-    if modo_bayesiano:
+    if modo_bayesiano and not executar_bayes_apos_grid:
         if not OPTUNA_AVAILABLE:
             print("  ⚠️ Optuna não disponível. Instale com: pip install optuna")
             print("  Continuando com grid search tradicional...")
         else:
             print("  🧠 Modo Bayesiano ativado (VQC_BAYESIAN=1)")
             print("     Usando Otimização Bayesiana (10-20x mais eficiente)")
+            # 100 trials é ~5x mais rápido que 540 do grid (cap = 200)
+            n_trials = _cli_n_trials if _cli_n_trials is not None else (100 if modo_rapido else 200)
+            n_trials = min(200, int(n_trials))
+            # Épocas máximas por trial; efetivo será determinado por Early Stopping
+            n_epocas_bayes = _cli_epocas_bayes if _cli_epocas_bayes is not None else (5 if modo_rapido else n_epocas_padrao)
+            ds_bayes = (_cli_dataset_bayes if _cli_dataset_bayes is not None else 'moons')
+
+            if ds_bayes.lower() == 'all':
+                print("  ▶️ Executando Bayesiano para TODOS os datasets: moons, circles, iris, breast_cancer, wine (cap 200 trials cada)")
+                resultado_bayesiano = {}
+                for _ds in ['moons', 'circles', 'iris', 'breast_cancer', 'wine']:
+                    res = otimizar_ruido_benefico_bayesiano(
+                        datasets=datasets,
+                        n_trials=n_trials,
+                        n_epocas=n_epocas_bayes,
+                        timeout=None,
+                        pasta_resultados=pasta_resultados,
+                        verbose=True,
+                        dataset_nome=_ds
+                    )
+                    resultado_bayesiano[_ds] = res
+            else:
+                resultado_bayesiano = otimizar_ruido_benefico_bayesiano(
+                    datasets=datasets,
+                    n_trials=n_trials,
+                    n_epocas=n_epocas_bayes,
+                    timeout=None,
+                    pasta_resultados=pasta_resultados,
+                    verbose=True,
+                    dataset_nome=ds_bayes
+                )
             
-            n_trials = 100 if modo_rapido else 200  # 100 trials é ~5x mais rápido que 540 do grid
-            resultado_bayesiano = otimizar_ruido_benefico_bayesiano(
-                datasets=datasets,
-                n_trials=n_trials,
-                n_epocas=(5 if modo_rapido else n_epocas_padrao),
-                timeout=None,
-                pasta_resultados=pasta_resultados,
-                verbose=True
-            )
-            
-            # Salvar resultado especial Bayesiano
+            # Salvar/relatar resultado especial Bayesiano
             if resultado_bayesiano:
                 print("\n  ✅ Otimização Bayesiana concluída!")
-                print(f"     Melhor acurácia: {resultado_bayesiano['melhor_acuracia']:.4f}")
-                print(f"     Trials completos: {resultado_bayesiano['trials_completos']}/{n_trials}")
-                print("     Configuração ótima salva em: otimizacao_bayesiana/")
+                # Pode ser um único dict de resultados ou um dict por dataset
+                if isinstance(resultado_bayesiano, dict) and 'melhor_acuracia' not in resultado_bayesiano:
+                    # Agregar por dataset
+                    melhor_ds = None
+                    melhor_acc = -1.0
+                    for _ds, _res in resultado_bayesiano.items():
+                        try:
+                            acc = float(_res.get('melhor_acuracia', 0.0))
+                            print(f"     - {_ds}: melhor_acuracia={acc:.4f} | trials={_res.get('trials_completos', 0)}/{_res.get('n_trials', n_trials)}")
+                            if acc > melhor_acc:
+                                melhor_acc = acc
+                                melhor_ds = _ds
+                        except Exception:
+                            pass
+                    if melhor_ds is not None:
+                        print(f"     Melhor geral: {melhor_ds} com acurácia {melhor_acc:.4f}")
+                    print("     Configurações ótimas salvas em: otimizacao_bayesiana/")
+                else:
+                    # Resultado único
+                    print(f"     Melhor acurácia: {resultado_bayesiano['melhor_acuracia']:.4f}")
+                    print(f"     Trials completos: {resultado_bayesiano['trials_completos']}/{n_trials}")
+                    print("     Configuração ótima salva em: otimizacao_bayesiana/")
     
     # GRID SEARCH TRADICIONAL (método original)
-    if not modo_bayesiano or not OPTUNA_AVAILABLE:
+    if (not modo_bayesiano or not OPTUNA_AVAILABLE) and not executar_bayes_apos_grid:
         df_resultados = executar_grid_search(datasets, n_epocas=(5 if modo_rapido else n_epocas_padrao), verbose=True, pasta_resultados=pasta_resultados)
         # Rastreio fino do nível de ruído após grid search
         rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epocas=(5 if modo_rapido else n_epocas_padrao), verbose=True)
@@ -3937,20 +4040,51 @@ def main():
         csv_path = os.path.join(pasta_resultados, 'resultados_completos_artigo.csv')
         df_resultados.to_csv(csv_path, index=False)
         print(f"\n  ✓ Resultados salvos: {csv_path}")
-    else:
+    elif not executar_bayes_apos_grid:
         # Criar DataFrame mínimo para compatibilidade com análises
         if resultado_bayesiano is not None:
-            melhor_params = resultado_bayesiano['melhor_params']
-            df_resultados = pd.DataFrame([{
-                'dataset': 'moons',
-                'arquitetura': melhor_params['arquitetura'],
-                'estrategia_init': melhor_params['estrategia_init'],
-                'tipo_ruido': melhor_params['tipo_ruido'],
-                'nivel_ruido': melhor_params.get('nivel_ruido', 0.0),
-                'acuracia_teste': resultado_bayesiano['melhor_acuracia'],
-                'seed': 42
-            }])
-            print("\n  ℹ️ Usando configuração ótima Bayesiana para análises subsequentes")
+            # Pode ser um resultado único (um dataset) ou um dict por dataset
+            if isinstance(resultado_bayesiano, dict) and 'melhor_acuracia' not in resultado_bayesiano:
+                linhas = []
+                for _ds, _res in resultado_bayesiano.items():
+                    try:
+                        _params = _res.get('melhor_params', {})
+                        linhas.append({
+                            'dataset': _ds,
+                            'arquitetura': _params.get('arquitetura', 'desconhecida'),
+                            'estrategia_init': _params.get('estrategia_init', 'desconhecida'),
+                            'tipo_ruido': _params.get('tipo_ruido', 'sem_ruido'),
+                            'nivel_ruido': _params.get('nivel_ruido', 0.0),
+                            'acuracia_teste': _res.get('melhor_acuracia', 0.0),
+                            'seed': 42
+                        })
+                    except Exception:
+                        pass
+                if len(linhas) == 0:
+                    # Fallback de segurança caso algo dê errado
+                    linhas = [{
+                        'dataset': 'moons',
+                        'arquitetura': 'basico',
+                        'estrategia_init': 'matematico',
+                        'tipo_ruido': 'sem_ruido',
+                        'nivel_ruido': 0.0,
+                        'acuracia_teste': 0.5,
+                        'seed': 42
+                    }]
+                df_resultados = pd.DataFrame(linhas)
+                print("\n  ℹ️ Usando configurações ótimas Bayesianas (por dataset) para análises subsequentes")
+            else:
+                melhor_params = resultado_bayesiano['melhor_params']
+                df_resultados = pd.DataFrame([{
+                    'dataset': 'moons',
+                    'arquitetura': melhor_params['arquitetura'],
+                    'estrategia_init': melhor_params['estrategia_init'],
+                    'tipo_ruido': melhor_params['tipo_ruido'],
+                    'nivel_ruido': melhor_params.get('nivel_ruido', 0.0),
+                    'acuracia_teste': resultado_bayesiano['melhor_acuracia'],
+                    'seed': 42
+                }])
+                print("\n  ℹ️ Usando configuração ótima Bayesiana para análises subsequentes")
         else:
             # Fallback: usar configuração padrão
             df_resultados = pd.DataFrame([{
@@ -3962,6 +4096,59 @@ def main():
                 'acuracia_teste': 0.5,
                 'seed': 42
             }])
+
+    # Execução combinada: Grid Search seguido de Bayesiano
+    if executar_bayes_apos_grid:
+        # Primeiro executa o grid search completo
+        df_resultados = executar_grid_search(datasets, n_epocas=(5 if modo_rapido else n_epocas_padrao), verbose=True, pasta_resultados=pasta_resultados)
+        rastreio_fino_nivel_ruido(df_resultados, datasets, pasta_resultados, n_epocas=(5 if modo_rapido else n_epocas_padrao), verbose=True)
+        csv_path = os.path.join(pasta_resultados, 'resultados_completos_artigo.csv')
+        df_resultados.to_csv(csv_path, index=False)
+        print(f"\n  ✓ Resultados do grid salvos: {csv_path}")
+
+        # Em seguida, executa a otimização Bayesiana para refino
+        if OPTUNA_AVAILABLE:
+            print("\n  ▶️ Iniciando Otimização Bayesiana pós-grid...")
+            n_trials = _cli_n_trials if _cli_n_trials is not None else (60 if modo_rapido else 120)
+            n_trials = min(200, int(n_trials))
+            n_epocas_bayes = _cli_epocas_bayes if _cli_epocas_bayes is not None else (5 if modo_rapido else n_epocas_padrao)
+            ds_bayes = _cli_dataset_bayes if _cli_dataset_bayes is not None else 'moons'
+            if ds_bayes.lower() == 'all':
+                for _ds in ['moons', 'circles', 'iris', 'breast_cancer', 'wine']:
+                    _ = otimizar_ruido_benefico_bayesiano(
+                        datasets=datasets,
+                        n_trials=n_trials,
+                        n_epocas=n_epocas_bayes,
+                        timeout=None,
+                        pasta_resultados=pasta_resultados,
+                        verbose=True,
+                        dataset_nome=_ds
+                    )
+            else:
+                _ = otimizar_ruido_benefico_bayesiano(
+                    datasets=datasets,
+                    n_trials=n_trials,
+                    n_epocas=n_epocas_bayes,
+                    timeout=None,
+                    pasta_resultados=pasta_resultados,
+                    verbose=True,
+                    dataset_nome=ds_bayes
+                )
+            print("  ✓ Otimização Bayesiana pós-grid finalizada.")
+        else:
+            print("  ⚠️ Optuna não disponível; etapa Bayesiana pós-grid foi pulada.")
+
+    # Garantia final: se por algum motivo df_resultados não foi definido, usar um fallback mínimo
+    if df_resultados is None or df_resultados.empty:
+        df_resultados = pd.DataFrame([{
+            'dataset': 'moons',
+            'arquitetura': 'basico',
+            'estrategia_init': 'matematico',
+            'tipo_ruido': 'sem_ruido',
+            'nivel_ruido': 0.0,
+            'acuracia_teste': 0.5,
+            'seed': 42
+        }])
 
     # 3. Análises estatísticas
     print("\n[3/6] Executando análises estatísticas...")
@@ -4039,9 +4226,20 @@ def main():
     print("  ✓ Análise de sensibilidade")
     print("  ✓ 9 visualizações interativas totais")
     
+    print("\n🤖 AUTOMAÇÃO INTEGRADA (v7.2):")
+    print("  ✓ Consolidação automática de CSVs individuais")
+    print("  ✓ Geração automática de comparacao_baselines.csv")
+    print("  ✓ Geração automática de metadata_orchestrator.json")
+    print("  ✓ Inventário completo de arquivos e estatísticas")
+    
     print("\n" + "="*80)
-    print(" ✓ FRAMEWORK INVESTIGATIVO COMPLETO v7.1 EXECUTADO COM SUCESSO!")
+    print(" ✓ FRAMEWORK INVESTIGATIVO COMPLETO v7.2 EXECUTADO COM SUCESSO!")
     print("="*80)
+    
+    # 7. AUTOMAÇÃO: Consolidação e Metadados (v7.2)
+    print("\n[7/7] Consolidação automática e metadados...")
+    consolidar_e_gerar_metadados(pasta_resultados, verbose=True)
+    
     # Atualizar metadata raiz com a lista final de arquivos
     try:
         raiz_meta['arquivos_gerados'] = [f for f in os.listdir(pasta_resultados) if os.path.isfile(os.path.join(pasta_resultados, f))]
@@ -4049,6 +4247,190 @@ def main():
             json.dump(raiz_meta, f, indent=2, ensure_ascii=False, default=str)
     except Exception:
         pass
+
+
+# =============================================================================
+# CONSOLIDAÇÃO E AUTOMAÇÃO INTEGRADA (v7.2)
+# =============================================================================
+
+def consolidar_resultados_individuais(pasta_resultados: str, verbose: bool = True) -> Dict[str, Any]:
+    """Consolida todos os CSVs individuais em um único arquivo consolidado.
+    
+    Parâmetros:
+    - pasta_resultados: caminho absoluto para a pasta de resultados (contendo 'experimentos_individuais/').
+    - verbose: se True, imprime logs de progresso.
+    
+    Retorna:
+    - dict com sumário: caminhos gerados, contagens, colunas.
+    """
+    pasta_resultados = os.path.abspath(pasta_resultados)
+    individual_dir = os.path.join(pasta_resultados, 'experimentos_individuais')
+    
+    if not os.path.isdir(individual_dir):
+        msg = f"Pasta 'experimentos_individuais' não encontrada em: {pasta_resultados}"
+        if verbose:
+            print(f"  ⚠️ {msg}")
+        return {'status': 'error', 'message': msg}
+    
+    csv_files = sorted([os.path.join(individual_dir, f) for f in os.listdir(individual_dir) if f.endswith('.csv')])
+    if len(csv_files) == 0:
+        msg = f"Nenhum CSV individual encontrado em {individual_dir}"
+        if verbose:
+            print(f"  ℹ️ {msg}")
+        return {'status': 'skip', 'message': msg}
+    
+    if verbose:
+        print(f"  📦 Encontrados {len(csv_files)} CSVs individuais. Consolidando...")
+    
+    dfs = []
+    for p in csv_files:
+        try:
+            df = pd.read_csv(p)
+            dfs.append(df)
+        except Exception as e:
+            if verbose:
+                print(f"    ⚠️ Falha ao ler {os.path.basename(p)}: {str(e)[:100]}")
+    
+    if len(dfs) == 0:
+        msg = 'Nenhum CSV lido com sucesso.'
+        if verbose:
+            print(f"  ⚠️ {msg}")
+        return {'status': 'error', 'message': msg}
+    
+    df_all = pd.concat(dfs, ignore_index=True)
+    consolidated_path = os.path.join(pasta_resultados, 'resultados_completos_artigo.csv')
+    df_all.to_csv(consolidated_path, index=False)
+    
+    if verbose:
+        print("  ✅ CSV consolidado salvo: resultados_completos_artigo.csv")
+        print(f"     Linhas: {len(df_all)} | Colunas: {len(df_all.columns)}")
+    
+    return {
+        'status': 'ok',
+        'num_csvs_individuais': len(csv_files),
+        'consolidated_path': consolidated_path,
+        'rows_consolidated': len(df_all),
+        'columns': list(df_all.columns),
+        'df': df_all
+    }
+
+
+def gerar_comparacao_baselines(df_all: pd.DataFrame, pasta_resultados: str, verbose: bool = True) -> Optional[str]:
+    """Gera arquivo comparacao_baselines.csv comparando VQC vs. SVM/RF por dataset.
+    
+    Retorna:
+    - caminho do arquivo gerado, ou None se não foi possível gerar.
+    """
+    required = {'dataset', 'arquitetura', 'tipo_ruido', 'nivel_ruido', 'acuracia_teste'}
+    if not required.issubset(df_all.columns):
+        if verbose:
+            print("  ℹ️ Colunas necessárias para comparação de baselines não encontradas.")
+        return None
+    
+    try:
+        vqc_melhor = df_all[df_all['tipo_ruido'] != 'classico'].groupby('dataset')['acuracia_teste'].max()
+        vqc_sem_ruido = df_all[(df_all['tipo_ruido'].isin(['sem_ruido', 'none'])) | (df_all['nivel_ruido'] == 0.0)].groupby('dataset')['acuracia_teste'].mean()
+        svm = df_all[df_all['arquitetura'].str.lower().str.contains('svm', na=False)].groupby('dataset')['acuracia_teste'].mean()
+        rf = df_all[df_all['arquitetura'].str.lower().str.contains('randomforest|random_forest|rf', na=False)].groupby('dataset')['acuracia_teste'].mean()
+        
+        comparacao = pd.DataFrame({
+            'dataset': vqc_melhor.index,
+            'vqc_melhor': vqc_melhor.values,
+            'vqc_sem_ruido_media': vqc_sem_ruido.reindex(vqc_melhor.index).values,
+            'svm': svm.reindex(vqc_melhor.index).values,
+            'rf': rf.reindex(vqc_melhor.index).values
+        })
+        comparacao['delta_vqc_svm'] = comparacao['vqc_melhor'] - comparacao['svm']
+        comparacao['delta_vqc_rf'] = comparacao['vqc_melhor'] - comparacao['rf']
+        
+        comp_path = os.path.join(pasta_resultados, 'comparacao_baselines.csv')
+        comparacao.to_csv(comp_path, index=False)
+        
+        if verbose:
+            print("  ✅ Comparação de baselines salva: comparacao_baselines.csv")
+        
+        return comp_path
+    except Exception as e:
+        if verbose:
+            print(f"  ⚠️ Falha ao gerar comparacao_baselines.csv: {str(e)[:150]}")
+        return None
+
+
+def gerar_metadata_orchestrator(pasta_resultados: str, consolidacao_info: Dict[str, Any], verbose: bool = True) -> str:
+    """Gera metadata_orchestrator.json com inventário de arquivos e estatísticas.
+    
+    Retorna:
+    - caminho do arquivo de metadados gerado.
+    """
+    pasta_resultados = os.path.abspath(pasta_resultados)
+    
+    # Listar arquivos na raiz do diretório de resultados
+    try:
+        arquivos = sorted([f for f in os.listdir(pasta_resultados) if os.path.isfile(os.path.join(pasta_resultados, f))])
+    except Exception:
+        arquivos = []
+    
+    # Listar subpastas
+    try:
+        subpastas = sorted([d for d in os.listdir(pasta_resultados) if os.path.isdir(os.path.join(pasta_resultados, d))])
+    except Exception:
+        subpastas = []
+    
+    metadata = {
+        'tipo': 'metadata_orchestrator',
+        'versao_framework': '7.2',
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'pasta_resultados': pasta_resultados,
+        'arquivos_raiz': arquivos,
+        'subpastas': subpastas,
+        'consolidacao': {
+            'status': consolidacao_info.get('status', 'unknown'),
+            'num_csvs_individuais': consolidacao_info.get('num_csvs_individuais', 0),
+            'rows_consolidated': consolidacao_info.get('rows_consolidated', 0),
+            'columns': consolidacao_info.get('columns', [])
+        }
+    }
+    
+    meta_path = os.path.join(pasta_resultados, 'metadata_orchestrator.json')
+    with open(meta_path, 'w', encoding='utf-8') as f:
+        json.dump(metadata, f, indent=2, ensure_ascii=False)
+    
+    if verbose:
+        print("  ✅ Metadados salvos: metadata_orchestrator.json")
+    
+    return meta_path
+
+
+def consolidar_e_gerar_metadados(pasta_resultados: str, verbose: bool = True) -> Dict[str, Any]:
+    """Função unificada que executa consolidação e geração de metadados.
+    
+    Retorna:
+    - dict com sumário completo das operações.
+    """
+    if verbose:
+        print("  🔄 Iniciando consolidação automática...")
+    
+    # 1. Consolidar CSVs individuais
+    consolidacao_info = consolidar_resultados_individuais(pasta_resultados, verbose=verbose)
+    
+    # 2. Gerar comparação de baselines (se consolidação foi bem-sucedida)
+    comp_path = None
+    if consolidacao_info.get('status') == 'ok' and 'df' in consolidacao_info:
+        comp_path = gerar_comparacao_baselines(consolidacao_info['df'], pasta_resultados, verbose=verbose)
+    
+    # 3. Gerar metadata orchestrator
+    meta_path = gerar_metadata_orchestrator(pasta_resultados, consolidacao_info, verbose=verbose)
+    
+    result = {
+        'consolidacao': consolidacao_info,
+        'comparacao_baselines': comp_path,
+        'metadata_orchestrator': meta_path
+    }
+    
+    if verbose:
+        print("  ✅ Consolidação e metadados concluídos!\n")
+    
+    return result
 
 
 if __name__ == "__main__":
