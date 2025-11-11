@@ -1,4 +1,4 @@
-# ⏱️ Registro de Tempo e Previsão do Experimento
+# ⏱️ Registro de Tempo e Previsão do Experimento.
 
 ## 📊 Informações Gerais
 
@@ -107,7 +107,7 @@ Com base no tempo médio de 160s por experimento:
 - **Localização**: `resultados_2025-10-28_22-35-28/experimentos_individuais/`
 - **Formato**: exp_00001.csv até exp_00142.csv
 
-### Visualizações
+### Visualizações: 
 - **Circuitos PNG**: 142 arquivos (um por experimento)
 - **Barren Plateau 3D**: 142 arquivos (um por experimento)
 - **Localização**: `resultados_2025-10-28_22-35-28/circuitos/` e `barren_plateaus/`
