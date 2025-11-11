@@ -1,4 +1,8 @@
 # Configuração do Ruff para o Framework Investigativo VQC
+
+# Comprimento máximo de linha
+line-length = 120
+
 [lint]
 select = ["E", "F", "W"]
 ignore = [
@@ -10,12 +14,9 @@ ignore = [
     "E741",  # Ambiguous variable name (l pode representar "layer" em contextos matemáticos)
 ]
 
-# Comprimento máximo de linha
-line-length = 120
-
 [format]
 # Usar aspas duplas
 quote-style = "double"
 
-# Indentação com 4 espaços
-indent-width = 4
+# Indentação com espaços
+indent-style = "space"
