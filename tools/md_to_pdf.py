@@ -9,20 +9,20 @@ from pathlib import Path
 
 def convert_md_to_pdf(md_file: str, output_pdf: str = None):
     """Converte um arquivo Markdown para PDF."""
-    
+
     # Verificar se o arquivo existe
     if not os.path.exists(md_file):
         print(f"❌ Erro: Arquivo não encontrado: {md_file}")
         sys.exit(1)
-    
+
     # Determinar nome do PDF de saída
     if output_pdf is None:
         output_pdf = Path(md_file).stem + '.pdf'
-    
+
     # Ler o conteúdo do Markdown
     with open(md_file, 'r', encoding='utf-8') as f:
         md_content = f.read()
-    
+
     # Converter Markdown para HTML
     try:
         import markdown2
@@ -30,7 +30,7 @@ def convert_md_to_pdf(md_file: str, output_pdf: str = None):
     except ImportError:
         print("❌ Erro: markdown2 não está instalado. Execute: pip install markdown2")
         sys.exit(1)
-    
+
     # Adicionar CSS para melhor formatação
     html_with_style = f"""
     <!DOCTYPE html>
@@ -133,7 +133,7 @@ def convert_md_to_pdf(md_file: str, output_pdf: str = None):
     </body>
     </html>
     """
-    
+
     # Usar reportlab para converter HTML simples para PDF
     try:
         from reportlab.lib.pagesizes import A4
@@ -143,7 +143,7 @@ def convert_md_to_pdf(md_file: str, output_pdf: str = None):
         from reportlab.lib import colors
         from reportlab.lib.enums import TA_LEFT, TA_CENTER
         import re
-        
+
         # Criar documento PDF
         doc = SimpleDocTemplate(
             output_pdf,
@@ -153,21 +153,21 @@ def convert_md_to_pdf(md_file: str, output_pdf: str = None):
             topMargin=2*cm,
             bottomMargin=2*cm
         )
-        
+
         # Estilos
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='CustomTitle', parent=styles['Heading1'], fontSize=18, textColor=colors.HexColor('#2c3e50'), spaceAfter=12))
         styles.add(ParagraphStyle(name='CustomHeading2', parent=styles['Heading2'], fontSize=14, textColor=colors.HexColor('#34495e'), spaceAfter=10))
         styles.add(ParagraphStyle(name='CustomHeading3', parent=styles['Heading3'], fontSize=12, textColor=colors.HexColor('#7f8c8d'), spaceAfter=8))
-        
+
         story = []
-        
+
         # Processar linhas do markdown
         lines = md_content.split('\n')
         i = 0
         while i < len(lines):
             line = lines[i].strip()
-            
+
             if not line:
                 story.append(Spacer(1, 0.3*cm))
             elif line.startswith('# '):
@@ -213,24 +213,24 @@ def convert_md_to_pdf(md_file: str, output_pdf: str = None):
                 text = text.replace('`', '<font name="Courier">')
                 text = text.replace('`', '</font>')
                 story.append(Paragraph(text, styles['Normal']))
-            
+
             i += 1
-        
+
         # Gerar PDF
         doc.build(story)
         print(f"✅ PDF gerado com sucesso: {output_pdf}")
         print(f"📄 Tamanho: {os.path.getsize(output_pdf) / 1024:.1f} KB")
         return True
-        
+
     except Exception as e:
         print(f"❌ Erro ao gerar PDF: {str(e)}")
-        
+
         # Salvar HTML como fallback
         html_output = Path(md_file).stem + '.html'
         with open(html_output, 'w', encoding='utf-8') as f:
             f.write(html_with_style)
         print(f"\n📄 HTML salvo como alternativa: {html_output}")
-        print(f"   Abra no navegador e use Ctrl+P para salvar como PDF")
+        print("   Abra no navegador e use Ctrl+P para salvar como PDF")
         return False
 
 
@@ -238,8 +238,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Uso: python md_to_pdf.py <arquivo.md> [saida.pdf]")
         sys.exit(1)
-    
+
     md_file = sys.argv[1]
     output_pdf = sys.argv[2] if len(sys.argv) > 2 else None
-    
+
     convert_md_to_pdf(md_file, output_pdf)
