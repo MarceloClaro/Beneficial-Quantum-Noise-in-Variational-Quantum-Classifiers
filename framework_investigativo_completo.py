@@ -2698,10 +2698,12 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
         logger.info("\n2. COMPARAÇÃO DE INICIALIZAÇÕES")
         logger.info("-"*80)
 
-    comp_init = df.groupby('estrategia_init').agg({
-        'acuracia_teste': ['mean', 'std'],
-        'tempo_segundos': 'mean'
-    }).round(4)
+    # Build aggregation dict based on available columns
+    agg_dict = {'acuracia_teste': ['mean', 'std']}
+    if 'tempo_segundos' in df.columns:
+        agg_dict['tempo_segundos'] = 'mean'
+    
+    comp_init = df.groupby('estrategia_init').agg(agg_dict).round(4)
 
     if verbose:
         print(comp_init)
@@ -2779,21 +2781,35 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
         logger.info("\n3. ANÁLISE DE OVERFITTING")
         logger.info("-"*80)
 
-    gap_sem_ruido = df[df['tipo_ruido'] == 'sem_ruido']['gap_treino_teste'].mean()
-    mask_otimo = (df['tipo_ruido'] == 'depolarizante') & (df['nivel_ruido'] == 0.01)
-    gap_com_ruido = df[mask_otimo]['gap_treino_teste'].mean()
-    reducao_overfitting = ((gap_sem_ruido - gap_com_ruido) / gap_sem_ruido) * 100
+    # Check if required columns exist
+    if 'gap_treino_teste' in df.columns and 'tipo_ruido' in df.columns:
+        gap_sem_ruido = df[df['tipo_ruido'] == 'sem_ruido']['gap_treino_teste'].mean()
+        mask_otimo = (df['tipo_ruido'] == 'depolarizante') & (df['nivel_ruido'] == 0.01)
+        gap_com_ruido = df[mask_otimo]['gap_treino_teste'].mean()
+        
+        if not np.isnan(gap_sem_ruido) and not np.isnan(gap_com_ruido) and gap_sem_ruido != 0:
+            reducao_overfitting = ((gap_sem_ruido - gap_com_ruido) / gap_sem_ruido) * 100
+        else:
+            reducao_overfitting = 0.0
 
-    if verbose:
-        logger.info(f"Gap sem ruído: {gap_sem_ruido:.4f}")
-        logger.info(f"Gap com ruído ótimo: {gap_com_ruido:.4f}")
-        logger.info(f"Redução de overfitting: {reducao_overfitting:.1f}%")
+        if verbose:
+            logger.info(f"Gap sem ruído: {gap_sem_ruido:.4f}")
+            logger.info(f"Gap com ruído ótimo: {gap_com_ruido:.4f}")
+            logger.info(f"Redução de overfitting: {reducao_overfitting:.1f}%")
 
-    analises['overfitting'] = {
-        'gap_sem_ruido': gap_sem_ruido,
-        'gap_com_ruido': gap_com_ruido,
-        'reducao_percent': reducao_overfitting
-    }
+        analises['overfitting'] = {
+            'gap_sem_ruido': gap_sem_ruido,
+            'gap_com_ruido': gap_com_ruido,
+            'reducao_percent': reducao_overfitting
+        }
+    else:
+        if verbose:
+            logger.info("Colunas necessárias não disponíveis para análise de overfitting.")
+        analises['overfitting'] = {
+            'gap_sem_ruido': np.nan,
+            'gap_com_ruido': np.nan,
+            'reducao_percent': 0.0
+        }
 
     # 4. Effect Sizes (Cohen's d, Glass's Δ, Hedges' g)
     if verbose:
@@ -3120,12 +3136,22 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     # FIGURA 5: Architecture Trade-offs
     logger.info("Gerando Figura 5: Trade-offs de Arquitetura...")
 
-    fig5 = px.scatter(
-        df, x='tempo_segundos', y='acuracia_teste', color='arquitetura',
-        title="Figura 5: Trade-off Tempo vs. Acurácia",
-        labels={'tempo_segundos': 'Tempo (s)', 'acuracia_teste': 'Acurácia no Teste'},
-        height=500
-    )
+    # Check if tempo_segundos is available, otherwise use a placeholder
+    if 'tempo_segundos' in df.columns:
+        fig5 = px.scatter(
+            df, x='tempo_segundos', y='acuracia_teste', color='arquitetura',
+            title="Figura 5: Trade-off Tempo vs. Acurácia",
+            labels={'tempo_segundos': 'Tempo (s)', 'acuracia_teste': 'Acurácia no Teste'},
+            height=500
+        )
+    else:
+        # Fallback: use index as x-axis if tempo_segundos not available
+        fig5 = px.scatter(
+            df, x=df.index, y='acuracia_teste', color='arquitetura',
+            title="Figura 5: Acurácia por Arquitetura",
+            labels={'x': 'Experimento', 'acuracia_teste': 'Acurácia no Teste'},
+            height=500
+        )
 
     if salvar:
         fig5.update_layout(
