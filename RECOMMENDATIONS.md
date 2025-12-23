@@ -1,5 +1,4 @@
 # Recomendações para Melhoria do Projeto
-# Recommendations for Project Improvement
 
 **Projeto**: Beneficial Quantum Noise in Variational Quantum Classifiers  
 **Data**: 2025-12-22  
