@@ -2702,6 +2702,9 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
     agg_dict = {'acuracia_teste': ['mean', 'std']}
     if 'tempo_segundos' in df.columns:
         agg_dict['tempo_segundos'] = 'mean'
+    else:
+        if verbose:
+            logger.info("  ℹ️ Coluna 'tempo_segundos' não disponível, análise de tempo não será incluída.")
     
     comp_init = df.groupby('estrategia_init').agg(agg_dict).round(4)
 

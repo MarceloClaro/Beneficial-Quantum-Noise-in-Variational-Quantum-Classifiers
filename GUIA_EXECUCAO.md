@@ -68,9 +68,15 @@ pip install -r requirements.txt
 Principais pacotes instalados:
 - PennyLane >= 0.30.0 (computação quântica)
 - Optuna >= 3.0.0 (otimização Bayesiana)
-- NumPy, Pandas, Scipy (computação científica)
-- Plotly, Matplotlib (visualizações)
-- scikit-learn (machine learning)
+- NumPy >= 1.23.0 (arrays e computação numérica)
+- Pandas >= 2.0.0 (manipulação de dados)
+- Scipy >= 1.10.0 (algoritmos científicos)
+- Plotly >= 5.0.0 (visualizações interativas)
+- Matplotlib >= 3.5.0 (visualizações estáticas)
+- scikit-learn >= 1.3.0 (machine learning)
+- statsmodels >= 0.14.0 (análises estatísticas)
+- joblib >= 1.2.0 (paralelização)
+- kaleido >= 0.2.1 (exportação de imagens)
 
 ## ⚙️ Parâmetros de Execução
 

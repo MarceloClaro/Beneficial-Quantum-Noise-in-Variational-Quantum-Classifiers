@@ -60,25 +60,25 @@ case $choice in
         echo -e "\n${GREEN}Executando Modo Rápido Bayesiano...${NC}"
         export VQC_QUICK=1
         export VQC_BAYESIAN=1
-        python framework_investigativo_completo.py --bayes --trials 10 --dataset-bayes moons
+        python framework_investigativo_completo.py --bayes --trials 10 --dataset-bayes moons || exit 1
         ;;
     2)
         echo -e "\n${GREEN}Executando Modo Bayesiano Completo...${NC}"
         export VQC_BAYESIAN=1
-        python framework_investigativo_completo.py --bayes --trials 200 --dataset-bayes all
+        python framework_investigativo_completo.py --bayes --trials 200 --dataset-bayes all || exit 1
         ;;
     3)
         echo -e "\n${GREEN}Executando Modo Grid Search Rápido...${NC}"
         export VQC_QUICK=1
-        python framework_investigativo_completo.py
+        python framework_investigativo_completo.py || exit 1
         ;;
     4)
         echo -e "\n${GREEN}Executando Modo Grid Search Completo...${NC}"
-        python framework_investigativo_completo.py
+        python framework_investigativo_completo.py || exit 1
         ;;
     5)
         echo -e "\n${GREEN}Executando Modo Híbrido...${NC}"
-        python framework_investigativo_completo.py --run-both
+        python framework_investigativo_completo.py --run-both || exit 1
         ;;
     6)
         echo -e "\n${YELLOW}Modo Personalizado${NC}"
@@ -95,12 +95,12 @@ case $choice in
                 export VQC_QUICK=1
             fi
             export VQC_BAYESIAN=1
-            python framework_investigativo_completo.py --bayes --trials $trials --dataset-bayes $dataset
+            python framework_investigativo_completo.py --bayes --trials $trials --dataset-bayes $dataset || exit 1
         else
             if [ "$quick" == "s" ]; then
                 export VQC_QUICK=1
             fi
-            python framework_investigativo_completo.py
+            python framework_investigativo_completo.py || exit 1
         fi
         ;;
     *)
@@ -110,7 +110,8 @@ case $choice in
 esac
 
 # Verificar se a execução foi bem-sucedida
-if [ $? -eq 0 ]; then
+EXIT_CODE=$?
+if [ $EXIT_CODE -eq 0 ]; then
     echo -e "\n${GREEN}============================================================================${NC}"
     echo -e "${GREEN}✅ FRAMEWORK EXECUTADO COM SUCESSO!${NC}"
     echo -e "${GREEN}============================================================================${NC}"
