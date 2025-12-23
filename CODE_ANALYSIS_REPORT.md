@@ -1,5 +1,4 @@
 # Relatório de Análise e Avaliação do Código
-# Code Analysis and Evaluation Report
 
 **Projeto**: Beneficial Quantum Noise in Variational Quantum Classifiers  
 **Data da Análise**: 2025-12-22  

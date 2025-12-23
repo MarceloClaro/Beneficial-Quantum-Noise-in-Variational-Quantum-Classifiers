@@ -1,5 +1,4 @@
 # 📊 Análise e Avaliação do Código - Sumário Visual
-# Code Analysis and Evaluation - Visual Summary
 
 ---
 
