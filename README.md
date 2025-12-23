@@ -17,10 +17,13 @@ This repository presents the full investigative framework for the article **"Fro
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2025.xxxxx-b31b1b.svg)](https://arxiv.org/)
 [![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
+[![Latest Results](https://img.shields.io/badge/Latest%20Results-80.83%25%20Accuracy-success.svg)](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)
 
 > **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
 > ✨ **NOVO (v7.2)**: Consolidação e orquestração automática integrada! Veja [docs/AUTOMACAO_FRAMEWORK.md](docs/AUTOMACAO_FRAMEWORK.md) para detalhes.
+> 
+> 🎯 **RESULTADOS ATUALIZADOS (23/12/2025)**: Framework executado com sucesso! Melhor acurácia: **80.83%** (Strongly Entangling + Ruído Depolarizante 0.0011). [Ver relatório completo →](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)
 
 ## 🚀 Início Rápido
 
@@ -44,6 +47,7 @@ python framework_investigativo_completo.py
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
 - 💡 [Exemplos Práticos](examples/exemplo_uso_programatico.py)
+- 🆕 **[Resultados Atualizados Qualis A1](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)** - Execução 23/12/2025
 
 ## 📋 Sumário
 - [Resumo Científico](#-abstract)
