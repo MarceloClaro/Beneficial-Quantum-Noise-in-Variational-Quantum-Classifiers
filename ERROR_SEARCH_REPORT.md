@@ -9,12 +9,12 @@
 
 This report documents the execution of the error search framework on the codebase to identify and categorize all errors, warnings, and potential issues.
 
-### Overall Status: ✅ HEALTHY
+### Overall Status: ✅ HEALTHY (with minor warnings)
 
 - **Tests:** ✅ All 11 smoke tests PASSED
 - **Syntax:** ✅ No syntax errors found
 - **Imports:** ✅ All required imports working correctly
-- **Dependencies:** ✅ All dependencies installed and functional
+- **Dependencies:** ✅ All 13 dependencies installed and functional
 - **Code Style:** ⚠️ 69 line length violations found (E501)
 
 ---
@@ -273,14 +273,14 @@ The codebase is in **excellent health** with:
 
 The only issues found are **cosmetic** (line length violations) and do not affect functionality. The code follows best practices and is well-structured for scientific computing.
 
-### Quality Score: 95/100
+### Quality Score: 80/100
 
 **Breakdown:**
 - Functionality: 100/100 ✅
 - Testing: 100/100 ✅
 - Documentation: 100/100 ✅
 - Dependencies: 100/100 ✅
-- Code Style: 75/100 ⚠️ (only line length issues)
+- Code Style: 80/100 ⚠️ (line length issues only - non-critical)
 
 ---
 

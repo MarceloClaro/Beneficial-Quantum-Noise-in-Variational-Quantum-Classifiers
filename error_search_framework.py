@@ -246,6 +246,8 @@ class ErrorSearchFramework:
             import_name = package
             if package == "scikit-learn":
                 import_name = "sklearn"
+            elif package == "typing-extensions":
+                import_name = "typing_extensions"
 
             try:
                 __import__(import_name)
