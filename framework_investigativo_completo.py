@@ -2705,7 +2705,7 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
     else:
         if verbose:
             logger.info("  ℹ️ Coluna 'tempo_segundos' não disponível, análise de tempo não será incluída.")
-    
+
     comp_init = df.groupby('estrategia_init').agg(agg_dict).round(4)
 
     if verbose:
@@ -2789,7 +2789,7 @@ def executar_analises_estatisticas(df, verbose=True, pasta_resultados=None):
         gap_sem_ruido = df[df['tipo_ruido'] == 'sem_ruido']['gap_treino_teste'].mean()
         mask_otimo = (df['tipo_ruido'] == 'depolarizante') & (df['nivel_ruido'] == 0.01)
         gap_com_ruido = df[mask_otimo]['gap_treino_teste'].mean()
-        
+
         if not np.isnan(gap_sem_ruido) and not np.isnan(gap_com_ruido) and gap_sem_ruido != 0:
             reducao_overfitting = ((gap_sem_ruido - gap_com_ruido) / gap_sem_ruido) * 100
         else:
