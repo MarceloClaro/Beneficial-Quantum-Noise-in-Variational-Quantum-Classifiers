@@ -48,6 +48,7 @@ python framework_investigativo_completo.py
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
 - 💡 [Exemplos Práticos](examples/exemplo_uso_programatico.py)
 - 🆕 **[Resultados Atualizados Qualis A1](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)** - Execução 23/12/2025
+- 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
 
 ## 📋 Sumário
 - [Resumo Científico](#-abstract)
@@ -895,6 +896,33 @@ furnished to do so, subject to the following conditions:
 $env:VQC_QUICK="1"; & ".venv/Scripts/python.exe" framework_investigativo_completo.py
 Remove-Item Env:\VQC_QUICK; & ".venv/Scripts/python.exe" framework_investigativo_completo.py
 ```
+
+### Error Search Framework (Busca de Erros)
+
+**NOVO:** Framework automático para detecção de erros no código!
+
+```bash
+# Executar busca de erros
+python error_search_framework.py
+
+# Com auto-correção de problemas simples
+python error_search_framework.py --fix
+
+# Gerar relatório detalhado
+python error_search_framework.py --detailed
+```
+
+O framework verifica:
+- ✅ Testes unitários (pytest)
+- ✅ Erros de sintaxe Python
+- ✅ Dependências ausentes
+- ✅ Violações de estilo (ruff)
+
+**Saídas geradas:**
+- `ERROR_SEARCH_REPORT.md` - Relatório completo em Markdown
+- `error_search_results.json` - Resultados em JSON
+
+📖 **Documentação completa:** [ERROR_SEARCH_GUIDE.md](ERROR_SEARCH_GUIDE.md)
 
 ### Troubleshooting
 
