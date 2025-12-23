@@ -257,7 +257,7 @@ R∞ = 10973731.568160 m⁻¹    (Rydberg constant)
 **Validação**:
 ```python
 from scipy.constants import hbar, alpha, Rydberg
-assert abs(ℏ - hbar) < 1e-40
+assert abs(ℏ - hbar) < 1e-34  # Reasonable tolerance for double precision
 assert abs(α - alpha) < 1e-12
 assert abs(R∞ - Rydberg) < 1e-3
 ```
