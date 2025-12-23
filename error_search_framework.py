@@ -205,10 +205,39 @@ class ErrorSearchFramework:
                 syntax_results["passed"] = False
                 syntax_results["errors"].append({
                     "file": str(py_file.relative_to(self.repo_root)),
-                    "line": e.lineno,
-                    "message": str(e)
+                    "line": e.lineno if hasattr(e, 'lineno') else None,
+                    "message": str(e),
+                    "type": "SyntaxError"
                 })
                 print(f"❌ Syntax error in {py_file.relative_to(self.repo_root)}: {e}")
+            except UnicodeDecodeError as e:
+                syntax_results["passed"] = False
+                syntax_results["errors"].append({
+                    "file": str(py_file.relative_to(self.repo_root)),
+                    "line": None,
+                    "message": f"Unicode decode error: {str(e)}",
+                    "type": "UnicodeDecodeError"
+                })
+                print(f"❌ Unicode error in {py_file.relative_to(self.repo_root)}: {e}")
+            except (PermissionError, IOError) as e:
+                syntax_results["passed"] = False
+                syntax_results["errors"].append({
+                    "file": str(py_file.relative_to(self.repo_root)),
+                    "line": None,
+                    "message": f"File access error: {str(e)}",
+                    "type": type(e).__name__
+                })
+                print(f"❌ File access error in {py_file.relative_to(self.repo_root)}: {e}")
+            except Exception as e:
+                # Catch any other unexpected errors
+                syntax_results["passed"] = False
+                syntax_results["errors"].append({
+                    "file": str(py_file.relative_to(self.repo_root)),
+                    "line": None,
+                    "message": f"Unexpected error: {str(e)}",
+                    "type": type(e).__name__
+                })
+                print(f"❌ Unexpected error in {py_file.relative_to(self.repo_root)}: {e}")
 
         if syntax_results["passed"]:
             print(f"✅ All {syntax_results['total_files']} Python files have valid syntax")
@@ -237,17 +266,29 @@ class ErrorSearchFramework:
                 for line in f:
                     line = line.strip()
                     if line and not line.startswith('#'):
-                        package = line.split('>=')[0].split('==')[0].strip()
+                        # Handle various version specifiers: >=, ==, ~=, !=, <, >, etc.
+                        for separator in ['>=', '==', '~=', '!=', '<=', '<', '>']:
+                            if separator in line:
+                                package = line.split(separator)[0].strip()
+                                break
+                        else:
+                            # No version specifier found
+                            package = line.strip()
                         import_results["required_packages"].append(package)
+
+        # Package name to import name mapping
+        package_import_map = {
+            "scikit-learn": "sklearn",
+            "typing-extensions": "typing_extensions",
+            "pillow": "PIL",
+            "beautifulsoup4": "bs4",
+            "pyyaml": "yaml",
+        }
 
         # Check each package
         for package in import_results["required_packages"]:
             # Map package names to import names
-            import_name = package
-            if package == "scikit-learn":
-                import_name = "sklearn"
-            elif package == "typing-extensions":
-                import_name = "typing_extensions"
+            import_name = package_import_map.get(package, package)
 
             try:
                 __import__(import_name)
@@ -288,10 +329,10 @@ class ErrorSearchFramework:
             if passed:
                 summary["passed_checks"] += 1
 
-        # Calculate quality score
-        if self.results["tests"].get("passed", False):
-            summary["quality_score"] = 100
-        else:
+        # Calculate quality score (start at 100 and deduct points)
+        summary["quality_score"] = 100
+        
+        if not self.results["tests"].get("passed", False):
             summary["quality_score"] -= 30
 
         if not self.results["syntax"].get("passed", False):
@@ -305,6 +346,9 @@ class ErrorSearchFramework:
         if not self.results["linting"].get("passed", False):
             summary["quality_score"] -= 20
             summary["warnings"] += self.results["linting"].get("total_errors", 0)
+        
+        # Ensure score doesn't go below 0
+        summary["quality_score"] = max(0, summary["quality_score"])
 
         # Determine overall status
         if summary["critical_issues"] > 0:
