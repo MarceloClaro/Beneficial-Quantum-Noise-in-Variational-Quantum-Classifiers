@@ -2932,8 +2932,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         # Qualis A1: aprimorar layout
         fig2.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white',
@@ -2982,8 +2982,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         # Aparência consistente
         fig2b.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white', plot_bgcolor='white',
@@ -3023,8 +3023,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     if salvar:
         fig3.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white',
@@ -3070,8 +3070,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         if salvar:
             fig3b.update_layout(
                 font=dict(family='serif', size=18, color='black'),
-                title_font=dict(size=22, family='serif', color='black', bold=True),
-                legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+                title_font=dict(size=22, family='serif', color='black', weight="bold"),
+                legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
                 legend_font=dict(size=16, family='serif', color='black'),
                 margin=dict(l=60, r=40, t=80, b=60),
                 paper_bgcolor='white', plot_bgcolor='white',
@@ -3107,8 +3107,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     if salvar:
         fig4.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white',
@@ -3156,8 +3156,8 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     if salvar:
         fig5.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white',
@@ -3185,30 +3185,41 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     # FIGURA 7: Overfitting Analysis
     logger.info("Gerando Figura 7: Análise de Overfitting...")
 
-    # Garantir que os tamanhos sejam positivos (usar valor absoluto)
-    df_fig7 = df.copy()
-    df_fig7['gap_abs'] = df_fig7['gap_treino_teste'].abs()
+    # Check if required columns exist
+    if 'gap_treino_teste' in df.columns and 'acuracia_treino' in df.columns:
+        # Garantir que os tamanhos sejam positivos (usar valor absoluto)
+        df_fig7 = df.copy()
+        df_fig7['gap_abs'] = df_fig7['gap_treino_teste'].abs()
 
-    fig7 = px.scatter(
-        df_fig7, x='acuracia_treino', y='acuracia_teste', color='tipo_ruido',
-        size='gap_abs', hover_data=['dataset', 'arquitetura', 'gap_treino_teste'],
-        title="Figura 7: Análise de Overfitting (Gap Treino-Teste)",
-        labels={'acuracia_treino': 'Acurácia Treino', 'acuracia_teste': 'Acurácia Teste'},
-        height=500
-    )
+        fig7 = px.scatter(
+            df_fig7, x='acuracia_treino', y='acuracia_teste', color='tipo_ruido',
+            size='gap_abs', hover_data=['dataset', 'arquitetura', 'gap_treino_teste'],
+            title="Figura 7: Análise de Overfitting (Gap Treino-Teste)",
+            labels={'acuracia_treino': 'Acurácia Treino', 'acuracia_teste': 'Acurácia Teste'},
+            height=500
+        )
 
-    # Adicionar linha diagonal (sem overfitting)
-    fig7.add_trace(go.Scatter(
-        x=[0, 1], y=[0, 1], mode='lines',
-        line=dict(dash='dash', color='gray'),
-        name='Sem Overfitting'
-    ))
+        # Adicionar linha diagonal (sem overfitting)
+        fig7.add_trace(go.Scatter(
+            x=[0, 1], y=[0, 1], mode='lines',
+            line=dict(dash='dash', color='gray'),
+            name='Sem Overfitting'
+        ))
+    else:
+        # Fallback: create simple scatter plot without overfitting info
+        logger.info("Coluna gap_treino_teste não disponível, gerando visualização simplificada...")
+        fig7 = px.scatter(
+            df, x=df.index, y='acuracia_teste', color='tipo_ruido',
+            title="Figura 7: Acurácia por Tipo de Ruído",
+            labels={'x': 'Experimento', 'acuracia_teste': 'Acurácia Teste'},
+            height=500
+        )
 
     if salvar:
         fig7.update_layout(
             font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', bold=True),
-            legend_title_font=dict(size=18, family='serif', color='black', bold=True),
+            title_font=dict(size=22, family='serif', color='black', weight="bold"),
+            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
             legend_font=dict(size=16, family='serif', color='black'),
             margin=dict(l=60, r=40, t=80, b=60),
             paper_bgcolor='white',
