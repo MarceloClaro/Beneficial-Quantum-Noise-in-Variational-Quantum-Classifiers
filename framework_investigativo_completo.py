@@ -3135,18 +3135,6 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         figuras['figura2b'] = fig2b
         logger.info("FIGURA 2b: COMPLETED")
         logger.info("="*80)
-            if pasta_resultados is not None:
-                viz_meta['figuras'].append(path_html)
-                path_png = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.png')
-                path_pdf = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.pdf')
-                path_svg = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.svg')
-                for p in [path_png, path_pdf, path_svg]:
-                    os.makedirs(os.path.dirname(p), exist_ok=True)
-                fig2b.write_image(path_png, format='png', scale=3, width=1200, height=800)
-                fig2b.write_image(path_pdf, format='pdf', width=1200, height=800)
-                fig2b.write_image(path_svg, format='svg', width=1200, height=800)
-                viz_meta['figuras'] += [path_png, path_pdf, path_svg]
-        figuras['figura2b'] = fig2b
     except Exception as e:
         logger.warning(f"Não foi possível gerar a Figura 2b (IC95%): {str(e)[:80]}")
 
@@ -3542,44 +3530,51 @@ def analise_pca_profunda(df: pd.DataFrame, save_path: Optional[str] = None):
 
     var_exp = pca.explained_variance_ratio_
     var_cum = np.cumsum(var_exp)
-
-    logger.info(f"\nVariância explicada (primeiros 3 componentes): {var_cum[2]:.2%}")
+    
+    # Robustness: check if we have enough components
+    n_components = len(var_exp)
+    if n_components >= 3:
+        logger.info(f"\nVariância explicada (primeiros 3 componentes): {var_cum[2]:.2%}")
+    else:
+        logger.info(f"\nVariância explicada (todos {n_components} componentes): {var_cum[-1]:.2%}")
 
     for i in range(min(5, len(var_exp))):
         logger.info(f"  PC{i+1}: {var_exp[i]:.2%} (acumulado: {var_cum[i]:.2%})")
 
-    # Visualização: Scree plot + Biplot
-
-    fig = make_subplots(
-        rows=1, cols=2,
-        subplot_titles=('Scree Plot', 'Biplot PC1 vs PC2'),
-        specs=[[{'type': 'scatter'}, {'type': 'scatter'}]]
-    )
-
-    # Scree plot
-    fig.add_trace(
-        go.Scatter(x=list(range(1, len(var_exp)+1)), y=var_exp,
-                   mode='lines+markers', name='Variância'),
-        row=1, col=1
-    )
-
-    # Biplot
-    df_plot = df.copy()
-    df_plot['PC1'] = X_pca[:, 0]
-    df_plot['PC2'] = X_pca[:, 1]
-
-    for dataset in df_plot['dataset'].unique():
-        df_ds = df_plot[df_plot['dataset'] == dataset]
-        fig.add_trace(
-            go.Scatter(x=df_ds['PC1'], y=df_ds['PC2'],
-                      mode='markers', name=dataset),
-            row=1, col=2
+    # Visualização: Scree plot + Biplot (only if we have at least 2 components)
+    if n_components >= 2:
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=('Scree Plot', 'Biplot PC1 vs PC2'),
+            specs=[[{'type': 'scatter'}, {'type': 'scatter'}]]
         )
 
-    fig.update_layout(height=500, width=1200, title_text="Análise PCA")
-    if save_path is not None:
-        fig.write_html(save_path)
-        logger.info(f"✓ PCA salvo: {save_path}")
+        # Scree plot
+        fig.add_trace(
+            go.Scatter(x=list(range(1, len(var_exp)+1)), y=var_exp,
+                       mode='lines+markers', name='Variância'),
+            row=1, col=1
+        )
+
+        # Biplot
+        df_plot = df.copy()
+        df_plot['PC1'] = X_pca[:, 0]
+        df_plot['PC2'] = X_pca[:, 1]
+
+        for dataset in df_plot['dataset'].unique():
+            df_ds = df_plot[df_plot['dataset'] == dataset]
+            fig.add_trace(
+                go.Scatter(x=df_ds['PC1'], y=df_ds['PC2'],
+                          mode='markers', name=dataset),
+                row=1, col=2
+            )
+
+        fig.update_layout(height=500, width=1200, title_text="Análise PCA")
+        if save_path is not None:
+            fig.write_html(save_path)
+            logger.info(f"✓ PCA salvo: {save_path}")
+    else:
+        logger.info(f"⚠️ Apenas {n_components} componente(s) disponível(is), visualização PCA não gerada")
 
     return pca, X_pca
 
@@ -3597,6 +3592,14 @@ def analise_clustering_profunda(df: pd.DataFrame, n_clusters: int = 3, save_path
     # Preparar dados
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     X = df[numeric_cols].fillna(0)
+    
+    n_samples = len(X)
+    
+    # Robustness: check if we have enough samples for clustering
+    if n_samples < n_clusters:
+        logger.info(f"⚠️ Apenas {n_samples} amostra(s) disponível(is), mas {n_clusters} clusters solicitados")
+        logger.info(f"   Ajustando para {n_samples} cluster(s)")
+        n_clusters = max(1, n_samples)
 
     # Normalizar
     scaler = SklearnStandardScaler()
