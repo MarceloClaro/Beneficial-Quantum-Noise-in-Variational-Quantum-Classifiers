@@ -3756,7 +3756,7 @@ def otimizar_ruido_benefico_bayesiano(
         estrategia_init = trial.suggest_categorical('estrategia_init',
             ['matematico', 'quantico', 'aleatoria', 'fibonacci_spiral'])
         tipo_ruido = trial.suggest_categorical('tipo_ruido',
-            ['sem_ruido', 'depolarizante', 'amplitude', 'phase', 'crosstalk'])
+            ['sem_ruido', 'depolarizante', 'amplitude_damping', 'phase_damping', 'crosstalk'])
 
         # Nível de ruído: busca logarítmica (mais eficiente para explorar ordens de magnitude)
         if tipo_ruido == 'sem_ruido':
