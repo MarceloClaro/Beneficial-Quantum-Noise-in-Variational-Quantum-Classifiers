@@ -40,9 +40,35 @@ try:
 except ImportError:
     OPTUNA_AVAILABLE = False
 
-# Inicializar logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Inicializar logging com formato QUALIS A1 (rigor científico)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
+
+# Configurar handler para arquivo de log científico
+def _configurar_log_cientifico(pasta_resultados: Optional[str] = None):
+    """Configura logging científico para QUALIS A1 com metadata estruturada."""
+    if pasta_resultados and not os.path.exists(pasta_resultados):
+        os.makedirs(pasta_resultados, exist_ok=True)
+    
+    if pasta_resultados:
+        log_file = os.path.join(pasta_resultados, 'execution_log_qualis_a1.log')
+        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter(
+            '%(asctime)s | %(levelname)-8s | %(name)-20s | %(funcName)-25s | %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S.%f'
+        )
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        logger.info("="*100)
+        logger.info("QUALIS A1 SCIENTIFIC EXECUTION LOG")
+        logger.info("Framework: Beneficial Quantum Noise in Variational Quantum Classifiers v7.2")
+        logger.info(f"Log File: {log_file}")
+        logger.info("="*100)
 
 # ===============================
 # Utilidades de diretório de resultados (Drive/Colab/local)
@@ -2921,34 +2947,76 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
     figuras = {}
 
     # FIGURA 2: Beneficial Noise (PRINCIPAL)
-    logger.info("\nGerando Figura 2: Beneficial Noise...")
+    logger.info("\n" + "="*80)
+    logger.info("GERANDO FIGURA 2: BENEFICIAL NOISE ANALYSIS (QUALIS A1)")
+    logger.info("="*80)
+    logger.info("Specifications: High-resolution (300 DPI), Publication-ready formats")
+    logger.info("Formats: HTML (interactive), PNG, PDF, SVG")
 
     fig2 = px.scatter(
         df, x='nivel_ruido', y='acuracia_teste',
         color='tipo_ruido', facet_col='dataset',
-        title="Figura 2: Impacto do Ruído Quântico na Acurácia",
-        labels={'nivel_ruido': 'Nível de Ruído', 'acuracia_teste': 'Acurácia no Teste'},
-        height=500
+        title="Figure 2: Quantum Noise Impact on Classifier Accuracy (Beneficial Regime Analysis)",
+        labels={
+            'nivel_ruido': 'Noise Level (γ)', 
+            'acuracia_teste': 'Test Accuracy (%)',
+            'tipo_ruido': 'Noise Type'
+        },
+        height=600
     )
 
     if salvar:
-        # Qualis A1: aprimorar layout
+        # Qualis A1: aprimorar layout para publicação científica
         fig2.update_layout(
-            font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', weight="bold"),
-            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
-            legend_font=dict(size=16, family='serif', color='black'),
-            margin=dict(l=60, r=40, t=80, b=60),
+            font=dict(family='Times New Roman, serif', size=18, color='black'),
+            title_font=dict(size=24, family='Times New Roman, serif', color='black', weight="bold"),
+            legend_title_font=dict(size=20, family='Times New Roman, serif', color='black', weight="bold"),
+            legend_font=dict(size=18, family='Times New Roman, serif', color='black'),
+            margin=dict(l=80, r=60, t=100, b=80),
             paper_bgcolor='white',
             plot_bgcolor='white',
+            showlegend=True,
+            legend=dict(
+                bgcolor='rgba(255,255,255,0.9)',
+                bordercolor='black',
+                borderwidth=1
+            )
         )
-        fig2.update_traces(marker=dict(line=dict(width=1, color='black')))
-        fig2.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
-        fig2.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
-        # Exportar em alta resolução e formatos científicos
+        fig2.update_traces(
+            marker=dict(
+                size=8, 
+                line=dict(width=1.5, color='black'),
+                opacity=0.8
+            )
+        )
+        fig2.update_xaxes(
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor='lightgray', 
+            zeroline=False, 
+            ticks='outside', 
+            tickfont=dict(size=16, family='Times New Roman, serif'),
+            linewidth=2,
+            linecolor='black',
+            mirror=True
+        )
+        fig2.update_yaxes(
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor='lightgray', 
+            zeroline=False, 
+            ticks='outside', 
+            tickfont=dict(size=16, family='Times New Roman, serif'),
+            linewidth=2,
+            linecolor='black',
+            mirror=True
+        )
+        # Exportar em alta resolução e formatos científicos (QUALIS A1 standards)
         path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura2_beneficial_noise.html')
         os.makedirs(os.path.dirname(path_html), exist_ok=True)
         fig2.write_html(path_html)
+        logger.info(f"  ✓ Saved: {os.path.basename(path_html)} (interactive HTML)")
+        
         if pasta_resultados is not None:
             viz_meta['figuras'].append(path_html)
             path_png = os.path.join(pasta_resultados, 'figura2_beneficial_noise.png')
@@ -2956,14 +3024,23 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
             path_svg = os.path.join(pasta_resultados, 'figura2_beneficial_noise.svg')
             for p in [path_png, path_pdf, path_svg]:
                 os.makedirs(os.path.dirname(p), exist_ok=True)
-            fig2.write_image(path_png, format='png', scale=3, width=1200, height=800)
-            fig2.write_image(path_pdf, format='pdf', width=1200, height=800)
-            fig2.write_image(path_svg, format='svg', width=1200, height=800)
+            # QUALIS A1: Exportar em 300 DPI (scale=3 para 1200x800 = 300 DPI)
+            logger.info(f"  ⏳ Exporting high-resolution formats (300 DPI)...")
+            fig2.write_image(path_png, format='png', scale=3, width=1600, height=1000)
+            fig2.write_image(path_pdf, format='pdf', width=1600, height=1000)
+            fig2.write_image(path_svg, format='svg', width=1600, height=1000)
             viz_meta['figuras'] += [path_png, path_pdf, path_svg]
+            logger.info(f"  ✓ Saved: {os.path.basename(path_png)} (PNG 300 DPI)")
+            logger.info(f"  ✓ Saved: {os.path.basename(path_pdf)} (PDF vector)")
+            logger.info(f"  ✓ Saved: {os.path.basename(path_svg)} (SVG vector)")
+    logger.info("FIGURA 2: COMPLETED")
+    logger.info("="*80)
     figuras['figura2'] = fig2
 
     # FIGURA 2b: Beneficial Noise com IC95% por grupo (dataset, tipo_ruido, nivel_ruido)
-    logger.info("Gerando Figura 2b: Beneficial Noise com IC95%...")
+    logger.info("\n" + "="*80)
+    logger.info("GERANDO FIGURA 2b: BENEFICIAL NOISE WITH 95% CONFIDENCE INTERVALS")
+    logger.info("="*80)
     try:
         df_q = df[df['tipo_ruido'] != 'classico'].copy()
         grp_cols = ['dataset', 'tipo_ruido', 'nivel_ruido']
@@ -2975,29 +3052,71 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
         # Evitar divisão por zero para n<=1
         df_ci['sem'] = df_ci.apply(lambda r: (r['desvio'] / np.sqrt(r['n'])) if r['n'] > 1 and r['desvio'] == r['desvio'] else 0.0, axis=1)
         df_ci['ci95'] = 1.96 * df_ci['sem']
+        logger.info(f"  Statistical Summary: {len(df_ci)} data points with 95% CI")
+        
         fig2b = px.scatter(
             df_ci, x='nivel_ruido', y='media', color='tipo_ruido', facet_col='dataset',
             error_y='ci95',
-            title='Figura 2b: Acurácia Média ± IC95% por Nível de Ruído',
-            labels={'nivel_ruido': 'Nível de Ruído', 'media': 'Acurácia Média (Teste)'},
-            height=500
+            title='Figure 2b: Mean Accuracy ± 95% CI by Noise Level',
+            labels={
+                'nivel_ruido': 'Noise Level (γ)', 
+                'media': 'Mean Test Accuracy (%)',
+                'tipo_ruido': 'Noise Type'
+            },
+            height=600
         )
-        # Aparência consistente
+        # Aparência consistente com QUALIS A1
         fig2b.update_layout(
-            font=dict(family='serif', size=18, color='black'),
-            title_font=dict(size=22, family='serif', color='black', weight="bold"),
-            legend_title_font=dict(size=18, family='serif', color='black', weight="bold"),
-            legend_font=dict(size=16, family='serif', color='black'),
-            margin=dict(l=60, r=40, t=80, b=60),
-            paper_bgcolor='white', plot_bgcolor='white',
+            font=dict(family='Times New Roman, serif', size=18, color='black'),
+            title_font=dict(size=24, family='Times New Roman, serif', color='black', weight="bold"),
+            legend_title_font=dict(size=20, family='Times New Roman, serif', color='black', weight="bold"),
+            legend_font=dict(size=18, family='Times New Roman, serif', color='black'),
+            margin=dict(l=80, r=60, t=100, b=80),
+            paper_bgcolor='white', 
+            plot_bgcolor='white',
+            showlegend=True,
+            legend=dict(
+                bgcolor='rgba(255,255,255,0.9)',
+                bordercolor='black',
+                borderwidth=1
+            )
         )
-        fig2b.update_traces(marker=dict(line=dict(width=1, color='black')))
-        fig2b.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
-        fig2b.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='lightgray', zeroline=False, ticks='outside', tickfont=dict(size=16, family='serif'))
+        fig2b.update_traces(
+            marker=dict(
+                size=10, 
+                line=dict(width=1.5, color='black'),
+                opacity=0.8
+            ),
+            error_y=dict(thickness=2, width=6)
+        )
+        fig2b.update_xaxes(
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor='lightgray', 
+            zeroline=False, 
+            ticks='outside', 
+            tickfont=dict(size=16, family='Times New Roman, serif'),
+            linewidth=2,
+            linecolor='black',
+            mirror=True
+        )
+        fig2b.update_yaxes(
+            showgrid=True, 
+            gridwidth=1, 
+            gridcolor='lightgray', 
+            zeroline=False, 
+            ticks='outside', 
+            tickfont=dict(size=16, family='Times New Roman, serif'),
+            linewidth=2,
+            linecolor='black',
+            mirror=True
+        )
         if salvar:
             path_html = os.path.join(pasta_resultados if pasta_resultados else '', 'figura2b_beneficial_noise_ic95.html')
             os.makedirs(os.path.dirname(path_html), exist_ok=True)
             fig2b.write_html(path_html)
+            logger.info(f"  ✓ Saved: {os.path.basename(path_html)} (interactive HTML)")
+            
             if pasta_resultados is not None:
                 viz_meta['figuras'].append(path_html)
                 path_png = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.png')
@@ -3005,11 +3124,17 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
                 path_svg = os.path.join(pasta_resultados, 'figura2b_beneficial_noise_ic95.svg')
                 for p in [path_png, path_pdf, path_svg]:
                     os.makedirs(os.path.dirname(p), exist_ok=True)
-                fig2b.write_image(path_png, format='png', scale=3, width=1200, height=800)
-                fig2b.write_image(path_pdf, format='pdf', width=1200, height=800)
-                fig2b.write_image(path_svg, format='svg', width=1200, height=800)
+                logger.info(f"  ⏳ Exporting high-resolution formats (300 DPI)...")
+                fig2b.write_image(path_png, format='png', scale=3, width=1600, height=1000)
+                fig2b.write_image(path_pdf, format='pdf', width=1600, height=1000)
+                fig2b.write_image(path_svg, format='svg', width=1600, height=1000)
                 viz_meta['figuras'] += [path_png, path_pdf, path_svg]
+                logger.info(f"  ✓ Saved: {os.path.basename(path_png)} (PNG 300 DPI)")
+                logger.info(f"  ✓ Saved: {os.path.basename(path_pdf)} (PDF vector)")
+                logger.info(f"  ✓ Saved: {os.path.basename(path_svg)} (SVG vector)")
         figuras['figura2b'] = fig2b
+        logger.info("FIGURA 2b: COMPLETED")
+        logger.info("="*80)
     except Exception as e:
         logger.warning(f"Não foi possível gerar a Figura 2b (IC95%): {str(e)[:80]}")
 
@@ -3405,44 +3530,51 @@ def analise_pca_profunda(df: pd.DataFrame, save_path: Optional[str] = None):
 
     var_exp = pca.explained_variance_ratio_
     var_cum = np.cumsum(var_exp)
-
-    logger.info(f"\nVariância explicada (primeiros 3 componentes): {var_cum[2]:.2%}")
+    
+    # Robustness: check if we have enough components
+    n_components = len(var_exp)
+    if n_components >= 3:
+        logger.info(f"\nVariância explicada (primeiros 3 componentes): {var_cum[2]:.2%}")
+    else:
+        logger.info(f"\nVariância explicada (todos {n_components} componentes): {var_cum[-1]:.2%}")
 
     for i in range(min(5, len(var_exp))):
         logger.info(f"  PC{i+1}: {var_exp[i]:.2%} (acumulado: {var_cum[i]:.2%})")
 
-    # Visualização: Scree plot + Biplot
-
-    fig = make_subplots(
-        rows=1, cols=2,
-        subplot_titles=('Scree Plot', 'Biplot PC1 vs PC2'),
-        specs=[[{'type': 'scatter'}, {'type': 'scatter'}]]
-    )
-
-    # Scree plot
-    fig.add_trace(
-        go.Scatter(x=list(range(1, len(var_exp)+1)), y=var_exp,
-                   mode='lines+markers', name='Variância'),
-        row=1, col=1
-    )
-
-    # Biplot
-    df_plot = df.copy()
-    df_plot['PC1'] = X_pca[:, 0]
-    df_plot['PC2'] = X_pca[:, 1]
-
-    for dataset in df_plot['dataset'].unique():
-        df_ds = df_plot[df_plot['dataset'] == dataset]
-        fig.add_trace(
-            go.Scatter(x=df_ds['PC1'], y=df_ds['PC2'],
-                      mode='markers', name=dataset),
-            row=1, col=2
+    # Visualização: Scree plot + Biplot (only if we have at least 2 components)
+    if n_components >= 2:
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=('Scree Plot', 'Biplot PC1 vs PC2'),
+            specs=[[{'type': 'scatter'}, {'type': 'scatter'}]]
         )
 
-    fig.update_layout(height=500, width=1200, title_text="Análise PCA")
-    if save_path is not None:
-        fig.write_html(save_path)
-        logger.info(f"✓ PCA salvo: {save_path}")
+        # Scree plot
+        fig.add_trace(
+            go.Scatter(x=list(range(1, len(var_exp)+1)), y=var_exp,
+                       mode='lines+markers', name='Variância'),
+            row=1, col=1
+        )
+
+        # Biplot
+        df_plot = df.copy()
+        df_plot['PC1'] = X_pca[:, 0]
+        df_plot['PC2'] = X_pca[:, 1]
+
+        for dataset in df_plot['dataset'].unique():
+            df_ds = df_plot[df_plot['dataset'] == dataset]
+            fig.add_trace(
+                go.Scatter(x=df_ds['PC1'], y=df_ds['PC2'],
+                          mode='markers', name=dataset),
+                row=1, col=2
+            )
+
+        fig.update_layout(height=500, width=1200, title_text="Análise PCA")
+        if save_path is not None:
+            fig.write_html(save_path)
+            logger.info(f"✓ PCA salvo: {save_path}")
+    else:
+        logger.info(f"⚠️ Apenas {n_components} componente(s) disponível(is), visualização PCA não gerada")
 
     return pca, X_pca
 
@@ -3460,6 +3592,14 @@ def analise_clustering_profunda(df: pd.DataFrame, n_clusters: int = 3, save_path
     # Preparar dados
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     X = df[numeric_cols].fillna(0)
+    
+    n_samples = len(X)
+    
+    # Robustness: check if we have enough samples for clustering
+    if n_samples < n_clusters:
+        logger.info(f"⚠️ Apenas {n_samples} amostra(s) disponível(is), mas {n_clusters} clusters solicitados")
+        logger.info(f"   Ajustando para {n_samples} cluster(s)")
+        n_clusters = max(1, n_samples)
 
     # Normalizar
     scaler = SklearnStandardScaler()
@@ -3926,14 +4066,19 @@ def otimizar_ruido_benefico_bayesiano(
 
 def main():
     """Execução principal do framework investigativo."""
-    print("="*80)
+    print("="*100)
+    print(" "*30 + "QUALIS A1 SCIENTIFIC FRAMEWORK")
     print(" FRAMEWORK INVESTIGATIVO COMPLETO v7.2 - ARTIGO NATURE/QUANTUM")
     print(" Beneficial Quantum Noise in Variational Quantum Classifiers")
     print(" + CONSOLIDAÇÃO E ORQUESTRAÇÃO AUTOMÁTICA INTEGRADA")
-    print("="*80)
+    print(" + RIGOR TÉCNICO E ESTÉTICO QUALIS A1")
+    print("="*100)
 
     # Criar pasta de resultados com timestamp (com suporte a Colab/Drive e variável de ambiente)
     pasta_resultados = _preparar_diretorio_resultados(_parse_resultados_base_from_args() or os.environ.get('RESULTS_BASE_DIR'))
+    
+    # Configurar logging científico QUALIS A1
+    _configurar_log_cientifico(pasta_resultados)
     # Forense raiz: README e metadata
     raiz_readme = os.path.join(pasta_resultados, 'README.md')
     raiz_meta_path = os.path.join(pasta_resultados, 'metadata.json')

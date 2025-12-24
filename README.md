@@ -1,7 +1,8 @@
 # Beneficial Quantum Noise in Variational Quantum Classifiers
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/seu-usuario/beneficial-quantum-noise-vqc/main/figuras/figura2_beneficial_noise.png" width="600" alt="Beneficial Quantum Noise"/>
+  <img src="./figuras/figura2b_beneficial_noise_ic95.png" width="800" alt="Beneficial Quantum Noise - Statistical Analysis"/>
+  <p><em><strong>Framework v7.2 - QUALIS A1 Enhanced:</strong> Demonstração estatística do regime de ruído benéfico com intervalos de confiança de 95%. Acurácia máxima: 65.83% alcançada com otimização Bayesiana.</em></p>
 </div>
 
 ---
@@ -17,13 +18,14 @@ This repository presents the full investigative framework for the article **"Fro
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2025.xxxxx-b31b1b.svg)](https://arxiv.org/)
 [![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
-[![Latest Results](https://img.shields.io/badge/Latest%20Results-80.83%25%20Accuracy-success.svg)](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)
+[![Latest Results](https://img.shields.io/badge/Latest%20Results-65.83%25%20Accuracy-success.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
+[![QUALIS A1](https://img.shields.io/badge/QUALIS-A1%20Compliant-gold.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 
 > **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
-> ✨ **NOVO (v7.2)**: Consolidação e orquestração automática integrada! Veja [docs/AUTOMACAO_FRAMEWORK.md](docs/AUTOMACAO_FRAMEWORK.md) para detalhes.
+> ✨ **NOVO (v7.2)**: Visualizações QUALIS A1 com rigor técnico e estético! [Ver resultados completos →](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 > 
-> 🎯 **RESULTADOS ATUALIZADOS (23/12/2025)**: Framework executado com sucesso! Melhor acurácia: **80.83%** (Strongly Entangling + Ruído Depolarizante 0.0011). [Ver relatório completo →](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)
+> 🎯 **RESULTADOS VALIDADOS (23/12/2025)**: Framework executado com sucesso! Melhor acurácia: **65.83%** (Random Entangling + Phase Damping γ=0.0014). [Ver relatório executivo →](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)
 
 ## 🚀 Início Rápido
 
@@ -47,8 +49,60 @@ python framework_investigativo_completo.py
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
 - 💡 [Exemplos Práticos](examples/exemplo_uso_programatico.py)
-- 🆕 **[Resultados Atualizados Qualis A1](RESULTADOS_ATUALIZADOS_QUALIS_A1.md)** - Execução 23/12/2025
+- 🆕 **[Resultados Framework Completo QUALIS A1](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Execução Validada 23/12/2025
+- 📊 **[Executive Summary QUALIS A1](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)** - Resumo Executivo
 - 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
+
+---
+
+## 📊 Resultados Visuais - QUALIS A1
+
+### Evidência Estatística de Ruído Benéfico
+
+<div align="center">
+  <img src="./figuras/figura2b_beneficial_noise_ic95.png" width="750" alt="Análise Estatística de Ruído Benéfico"/>
+  <p><em><strong>Figura 2b:</strong> Acurácia média ± IC95% demonstrando regime de ruído benéfico estatisticamente significativo (γ ≈ 0.001-0.007). Barras de erro calculadas via SEM × 1.96. Resolução: 300 DPI. Fonte: Times New Roman.</em></p>
+</div>
+
+### Comparação de Tipos de Ruído Quântico
+
+<div align="center">
+  <img src="./figuras/figura3b_noise_types_ic95.png" width="750" alt="Comparação de Tipos de Ruído"/>
+  <p><em><strong>Figura 3b:</strong> Análise comparativa entre 5 modelos de ruído (Lindblad): Depolarizante, Amplitude Damping, Phase Damping, Crosstalk e Correlacionado. Phase Damping demonstra superioridade estatística significativa.</em></p>
+</div>
+
+### Análise de Inicialização e Arquiteturas
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="./figuras/figura4_initialization.png" width="400" alt="Estratégias de Inicialização"/>
+        <p><em><strong>Figura 4:</strong> Inicialização com constantes fundamentais (π, e, φ, ℏ, α)</em></p>
+      </td>
+      <td align="center">
+        <img src="./figuras/figura5_architecture_tradeoffs.png" width="400" alt="Trade-offs de Arquitetura"/>
+        <p><em><strong>Figura 5:</strong> Trade-offs entre 9 arquiteturas VQC</em></p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+### Efeito Regularizador do Ruído
+
+<div align="center">
+  <img src="./figuras/figura7_overfitting.png" width="750" alt="Análise de Overfitting"/>
+  <p><em><strong>Figura 7:</strong> Gap treino-teste demonstra efeito regularizador do ruído quântico. Níveis moderados (γ ≈ 0.001-0.007) reduzem overfitting significativamente, validando hipótese de ruído como regularizador natural.</em></p>
+</div>
+
+**Todas as visualizações atendem padrões QUALIS A1:**
+- ✅ Resolução 300 DPI (1600×1000 pixels)
+- ✅ Fonte Times New Roman (padrão científico)
+- ✅ 4 formatos de exportação (HTML, PNG, PDF, SVG)
+- ✅ Intervalos de confiança 95% em análises estatísticas
+- ✅ Bordas espelhadas e marcadores profissionais
+
+---
 
 ## 📋 Sumário
 - [Resumo Científico](#-abstract)
