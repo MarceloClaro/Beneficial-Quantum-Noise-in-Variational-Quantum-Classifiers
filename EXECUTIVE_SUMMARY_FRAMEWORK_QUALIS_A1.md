@@ -120,6 +120,34 @@ All 7 figures meet QUALIS A1 standards:
 
 ---
 
+## 📊 Visual Results Gallery
+
+### Key Finding: Beneficial Noise Region
+
+<div align="center">
+  <img src="./figuras/figura2b_beneficial_noise_ic95.png" width="700" alt="Beneficial Noise with 95% CI"/>
+  <p><strong>Figure 2b: Beneficial Noise Effect with Statistical Validation</strong></p>
+  <p><em>Mean accuracy ± 95% confidence intervals demonstrate statistically significant beneficial noise regime at γ ≈ 0.001-0.007. Error bars calculated via SEM × 1.96 ensure QUALIS A1 statistical rigor.</em></p>
+</div>
+
+### Noise Type Performance Comparison
+
+<div align="center">
+  <img src="./figuras/figura3b_noise_types_ic95.png" width="700" alt="Noise Types Comparison with 95% CI"/>
+  <p><strong>Figure 3b: Quantum Noise Types - Statistical Comparison</strong></p>
+  <p><em>Phase Damping and Depolarizing noise show superior performance with statistical significance. All noise models implemented via Lindblad formalism for physical accuracy.</em></p>
+</div>
+
+### Architectural Analysis
+
+<div align="center">
+  <img src="./figuras/figura5_architecture_tradeoffs.png" width="700" alt="Architecture Trade-offs"/>
+  <p><strong>Figure 5: VQC Architecture Performance Analysis</strong></p>
+  <p><em>Random Entangling and Strongly Entangling architectures demonstrate optimal balance between expressivity and trainability in the beneficial noise regime.</em></p>
+</div>
+
+---
+
 ## 🔬 Scientific Rigor
 
 ### Statistical Validation

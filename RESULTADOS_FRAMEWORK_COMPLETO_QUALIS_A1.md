@@ -99,6 +99,12 @@ Todas as figuras foram geradas de acordo com os **mais altos padrões de publica
 ### Lista Completa de Figuras
 
 #### 1. **Figura 2: Beneficial Noise Analysis** ⭐
+
+<div align="center">
+  <img src="./figuras/figura2_beneficial_noise.png" width="800" alt="Figura 2: Beneficial Noise Analysis - Impacto do Ruído Quântico na Acurácia"/>
+  <p><em>Figura 2: Análise do impacto do ruído quântico na acurácia dos classificadores variacionais quânticos (VQCs). A visualização demonstra claramente a região ótima onde o ruído atua como recurso benéfico ao invés de obstáculo. Resolução: 300 DPI. Formato: PNG/PDF/SVG/HTML.</em></p>
+</div>
+
 - **Arquivo:** `figura2_beneficial_noise.{html,png,pdf,svg}`
 - **Tamanho PNG:** 387 KB (alta qualidade)
 - **Descrição:** Análise do impacto do ruído quântico na acurácia dos classificadores
@@ -106,6 +112,12 @@ Todas as figuras foram geradas de acordo com os **mais altos padrões de publica
 - **Status:** ✅ QUALIS A1 Compliant
 
 #### 2. **Figura 2b: Beneficial Noise with 95% CI** ⭐⭐
+
+<div align="center">
+  <img src="./figuras/figura2b_beneficial_noise_ic95.png" width="800" alt="Figura 2b: Beneficial Noise with 95% Confidence Intervals"/>
+  <p><em>Figura 2b: Acurácia média ± intervalos de confiança de 95% por nível de ruído. As barras de erro representam 95% CI calculadas via SEM × 1.96, demonstrando rigor estatístico máximo compatível com publicações QUALIS A1. A visualização permite identificar com precisão científica as regiões onde o ruído quântico proporciona benefício estatisticamente significativo.</em></p>
+</div>
+
 - **Arquivo:** `figura2b_beneficial_noise_ic95.{html,png,pdf,svg}`
 - **Tamanho PNG:** 382 KB
 - **Descrição:** Acurácia média ± intervalos de confiança de 95% por nível de ruído
@@ -113,30 +125,60 @@ Todas as figuras foram geradas de acordo com os **mais altos padrões de publica
 - **Status:** ✅ QUALIS A1 Compliant (máximo rigor estatístico)
 
 #### 3. **Figura 3: Noise Types Comparison**
+
+<div align="center">
+  <img src="./figuras/figura3_noise_types.png" width="800" alt="Figura 3: Comparação entre Tipos de Ruído Quântico"/>
+  <p><em>Figura 3: Comparação sistemática entre os 5 tipos de ruído quântico implementados via formalismo de Lindblad: Depolarizante, Amplitude Damping, Phase Damping, Crosstalk e Correlacionado. A análise permite identificar qual tipo de ruído proporciona maior benefício para cada configuração experimental.</em></p>
+</div>
+
 - **Arquivo:** `figura3_noise_types.{html,png,pdf,svg}`
 - **Tamanho PNG:** 245 KB
 - **Descrição:** Comparação entre os 5 tipos de ruído implementados
 - **Status:** ✅ QUALIS A1 Compliant
 
 #### 4. **Figura 3b: Noise Types with 95% CI**
+
+<div align="center">
+  <img src="./figuras/figura3b_noise_types_ic95.png" width="800" alt="Figura 3b: Tipos de Ruído com Intervalos de Confiança 95%"/>
+  <p><em>Figura 3b: Comparação estatística rigorosa entre tipos de ruído com intervalos de confiança de 95%. Os resultados demonstram que Phase Damping e Depolarizante apresentam os melhores desempenhos médios, com significância estatística comprovada.</em></p>
+</div>
+
 - **Arquivo:** `figura3b_noise_types_ic95.{html,png,pdf,svg}`
 - **Tamanho PNG:** 276 KB
 - **Descrição:** Comparação estatística entre tipos de ruído com intervalos de confiança
 - **Status:** ✅ QUALIS A1 Compliant
 
 #### 5. **Figura 4: Initialization Strategies**
+
+<div align="center">
+  <img src="./figuras/figura4_initialization.png" width="800" alt="Figura 4: Estratégias de Inicialização"/>
+  <p><em>Figura 4: Impacto das diferentes estratégias de inicialização de pesos: Matemática (π, e, φ), Quântica (ℏ, α, R∞), Aleatória e Fibonacci Spiral. A análise revela que estratégias baseadas em constantes fundamentais proporcionam bias indutivo favorável.</em></p>
+</div>
+
 - **Arquivo:** `figura4_initialization.{html,png,pdf,svg}`
 - **Tamanho PNG:** 242 KB
 - **Descrição:** Impacto das estratégias de inicialização (matemática, quântica, aleatória, Fibonacci)
 - **Status:** ✅ QUALIS A1 Compliant
 
 #### 6. **Figura 5: Architecture Trade-offs**
+
+<div align="center">
+  <img src="./figuras/figura5_architecture_tradeoffs.png" width="800" alt="Figura 5: Trade-offs entre Arquiteturas VQC"/>
+  <p><em>Figura 5: Análise de trade-off entre diferentes arquiteturas de circuitos quânticos variacionais. Strongly Entangling e Random Entangling demonstram melhor equilíbrio entre expressividade e trainabilidade no regime de ruído benéfico.</em></p>
+</div>
+
 - **Arquivo:** `figura5_architecture_tradeoffs.{html,png,pdf,svg}`
 - **Tamanho PNG:** 235 KB
 - **Descrição:** Análise de trade-off entre diferentes arquiteturas VQC
 - **Status:** ✅ QUALIS A1 Compliant
 
 #### 7. **Figura 7: Overfitting Analysis**
+
+<div align="center">
+  <img src="./figuras/figura7_overfitting.png" width="800" alt="Figura 7: Análise de Overfitting"/>
+  <p><em>Figura 7: Análise do gap treino-teste demonstrando o efeito regularizador do ruído quântico. Níveis moderados de ruído (γ ≈ 0.001-0.007) reduzem significativamente o overfitting, validando a hipótese de ruído como regularizador natural.</em></p>
+</div>
+
 - **Arquivo:** `figura7_overfitting.{html,png,pdf,svg}`
 - **Tamanho PNG:** 232 KB
 - **Descrição:** Análise do gap treino-teste e overfitting
