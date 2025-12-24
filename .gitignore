@@ -50,6 +50,11 @@ resultados_*/
 *.pdf
 *.json
 
+# But allow figures in figuras/ directory
+!figuras/*.png
+!figuras/*.pdf
+!figuras/*.svg
+
 # Logs
 *.log
 
