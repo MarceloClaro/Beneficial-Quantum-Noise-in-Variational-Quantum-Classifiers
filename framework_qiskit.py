@@ -198,16 +198,30 @@ def criar_modelo_ruido_depolarizante(nivel_ruido: float) -> NoiseModel:
 def criar_modelo_ruido_amplitude_damping(nivel_ruido: float) -> NoiseModel:
     """Cria modelo de amplitude damping (perda de energia)."""
     noise_model = NoiseModel()
-    error = amplitude_damping_error(nivel_ruido)
-    noise_model.add_all_qubit_quantum_error(error, ['rx', 'ry', 'rz', 'h', 'cx', 'cz'])
+    
+    # Erro de 1 qubit
+    error_1q = amplitude_damping_error(nivel_ruido)
+    noise_model.add_all_qubit_quantum_error(error_1q, ['rx', 'ry', 'rz', 'h'])
+    
+    # Erro de 2 qubits
+    error_2q = amplitude_damping_error(nivel_ruido).tensor(amplitude_damping_error(nivel_ruido))
+    noise_model.add_all_qubit_quantum_error(error_2q, ['cx', 'cz'])
+    
     return noise_model
 
 
 def criar_modelo_ruido_phase_damping(nivel_ruido: float) -> NoiseModel:
     """Cria modelo de phase damping (perda de coerência)."""
     noise_model = NoiseModel()
-    error = phase_damping_error(nivel_ruido)
-    noise_model.add_all_qubit_quantum_error(error, ['rx', 'ry', 'rz', 'h', 'cx', 'cz'])
+    
+    # Erro de 1 qubit
+    error_1q = phase_damping_error(nivel_ruido)
+    noise_model.add_all_qubit_quantum_error(error_1q, ['rx', 'ry', 'rz', 'h'])
+    
+    # Erro de 2 qubits (aplicado após a porta de 2 qubits)
+    error_2q = phase_damping_error(nivel_ruido).tensor(phase_damping_error(nivel_ruido))
+    noise_model.add_all_qubit_quantum_error(error_2q, ['cx', 'cz'])
+    
     return noise_model
 
 

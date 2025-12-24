@@ -66,6 +66,7 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 - 📖 [Guia de Instalação](INSTALL.md)
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
 - 🆕 **[Guia Completo Qiskit](docs/GUIA_QISKIT.md)** - Framework IBM Quantum
+- 🆕 **[Resultados Qiskit](RESULTADOS_QISKIT.md)** - Visualizações e Experimentos
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
 - 💡 [Exemplos Práticos PennyLane](examples/exemplo_uso_programatico.py)
 - 🚀 **[Exemplos Qiskit Completos](examples/exemplo_qiskit_completo.py)** - Novo!
