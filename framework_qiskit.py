@@ -239,6 +239,41 @@ def criar_modelo_ruido_combinado(nivel_ruido: float) -> NoiseModel:
     return noise_model
 
 
+def criar_modelo_ruido_crosstalk(nivel_ruido: float) -> NoiseModel:
+    """Cria modelo de crosstalk (interferência entre qubits vizinhos)."""
+    noise_model = NoiseModel()
+    
+    # Erro de 1 qubit (pequeno)
+    error_1q = depolarizing_error(nivel_ruido * 0.3, 1)
+    noise_model.add_all_qubit_quantum_error(error_1q, ['rx', 'ry', 'rz', 'h'])
+    
+    # Erro de 2 qubits maior (simula crosstalk)
+    error_2q = depolarizing_error(nivel_ruido * 1.5, 2)
+    noise_model.add_all_qubit_quantum_error(error_2q, ['cx', 'cz'])
+    
+    return noise_model
+
+
+def criar_modelo_ruido_correlacionado(nivel_ruido: float) -> NoiseModel:
+    """Cria modelo de ruído correlacionado (afeta qubits de forma correlacionada)."""
+    noise_model = NoiseModel()
+    
+    # Combinar múltiplos tipos de erro de forma correlacionada
+    # Depolarizante como base
+    error_dep_1q = depolarizing_error(nivel_ruido * 0.6, 1)
+    noise_model.add_all_qubit_quantum_error(error_dep_1q, ['rx', 'ry', 'rz'])
+    
+    # Phase damping correlacionado
+    error_phase_1q = phase_damping_error(nivel_ruido * 0.4)
+    noise_model.add_all_qubit_quantum_error(error_phase_1q, ['h'])
+    
+    # 2-qubit errors com correlação
+    error_2q_corr = depolarizing_error(nivel_ruido * 0.8, 2)
+    noise_model.add_all_qubit_quantum_error(error_2q_corr, ['cx', 'cz'])
+    
+    return noise_model
+
+
 # Dicionário de modelos de ruído
 MODELOS_RUIDO_QISKIT = {
     'sem_ruido': lambda x: None,
@@ -246,6 +281,9 @@ MODELOS_RUIDO_QISKIT = {
     'amplitude_damping': criar_modelo_ruido_amplitude_damping,
     'phase_damping': criar_modelo_ruido_phase_damping,
     'combinado': criar_modelo_ruido_combinado,
+    'crosstalk': criar_modelo_ruido_crosstalk,
+    'correlacionado': criar_modelo_ruido_correlacionado,
+    'correlated_noise': criar_modelo_ruido_correlacionado,  # Alias
 }
 
 
@@ -429,6 +467,90 @@ def criar_circuito_random_entangling(n_qubits: int, n_camadas: int, seed: int = 
     return qc, params
 
 
+def criar_circuito_tree(n_qubits: int, n_camadas: int) -> Tuple[QuantumCircuit, ParameterVector]:
+    """Circuito com topologia de árvore."""
+    n_params = n_qubits * n_camadas * 2
+    params = ParameterVector('θ', n_params)
+    
+    qc = QuantumCircuit(n_qubits)
+    
+    param_idx = 0
+    for camada in range(n_camadas):
+        # Rotações
+        for q in range(n_qubits):
+            qc.ry(params[param_idx], q)
+            param_idx += 1
+            qc.rz(params[param_idx], q)
+            param_idx += 1
+        
+        # Entanglement em árvore (binary tree)
+        if camada < n_camadas - 1:
+            for level in range(int(np.log2(n_qubits)) + 1):
+                step = 2 ** (level + 1)
+                for q in range(0, n_qubits, step):
+                    if q + 2 ** level < n_qubits:
+                        qc.cx(q, q + 2 ** level)
+    
+    return qc, params
+
+
+def criar_circuito_star_entanglement(n_qubits: int, n_camadas: int) -> Tuple[QuantumCircuit, ParameterVector]:
+    """Circuito com entanglement em estrela (hub central)."""
+    n_params = n_qubits * n_camadas * 2
+    params = ParameterVector('θ', n_params)
+    
+    qc = QuantumCircuit(n_qubits)
+    
+    param_idx = 0
+    for camada in range(n_camadas):
+        # Rotações
+        for q in range(n_qubits):
+            qc.ry(params[param_idx], q)
+            param_idx += 1
+            qc.rz(params[param_idx], q)
+            param_idx += 1
+        
+        # Entanglement em estrela (qubit 0 como hub)
+        if camada < n_camadas - 1:
+            for q in range(1, n_qubits):
+                qc.cx(0, q)
+    
+    return qc, params
+
+
+def criar_circuito_qaoa(n_qubits: int, n_camadas: int) -> Tuple[QuantumCircuit, ParameterVector]:
+    """Circuito inspirado em QAOA."""
+    n_params = n_qubits * n_camadas * 2
+    params = ParameterVector('θ', n_params)
+    
+    qc = QuantumCircuit(n_qubits)
+    
+    # Hadamard inicial
+    for q in range(n_qubits):
+        qc.h(q)
+    
+    param_idx = 0
+    for camada in range(n_camadas):
+        # Mixing layer (RX)
+        for q in range(n_qubits):
+            qc.rx(params[param_idx], q)
+            param_idx += 1
+        
+        # Problem layer (RZZ entre pares adjacentes)
+        for q in range(n_qubits - 1):
+            qc.cx(q, q + 1)
+            qc.rz(params[param_idx], q + 1)
+            qc.cx(q, q + 1)
+            param_idx += 1
+        
+        # Último parâmetro para fechar a camada
+        if param_idx < len(params):
+            qc.rz(params[param_idx], 0)
+            param_idx += 1
+    
+    return qc, params
+
+
 # Dicionário de arquiteturas
 ARQUITETURAS_QISKIT = {
     'basico': criar_circuito_basico,
@@ -438,6 +560,9 @@ ARQUITETURAS_QISKIT = {
     'alternating_layers': criar_circuito_alternating_layers,
     'brickwork': criar_circuito_brickwork,
     'random_entangling': criar_circuito_random_entangling,
+    'tree': criar_circuito_tree,
+    'star_entanglement': criar_circuito_star_entanglement,
+    'qaoa': criar_circuito_qaoa,
 }
 
 
@@ -891,6 +1016,38 @@ def carregar_datasets():
         X_circles, y_circles, test_size=0.3, random_state=42
     )
     datasets['circles'] = {
+        'X_train': X_train, 'X_test': X_test,
+        'y_train': y_train, 'y_test': y_test
+    }
+    
+    # Breast Cancer
+    breast_cancer = sk_datasets.load_breast_cancer()
+    # Usar PCA para reduzir para 4 features (compatível com 4 qubits)
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components=4)
+    X_bc = pca.fit_transform(breast_cancer.data)
+    # Normalizar
+    X_bc = (X_bc - X_bc.mean(axis=0)) / (X_bc.std(axis=0) + 1e-8)
+    y_bc = breast_cancer.target
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_bc, y_bc, test_size=0.3, random_state=42, stratify=y_bc
+    )
+    datasets['breast_cancer'] = {
+        'X_train': X_train, 'X_test': X_test,
+        'y_train': y_train, 'y_test': y_test
+    }
+    
+    # Wine
+    wine = sk_datasets.load_wine()
+    # Binário: classe 0 vs. resto
+    X_wine = wine.data[:, :4]  # Primeiras 4 features
+    # Normalizar
+    X_wine = (X_wine - X_wine.mean(axis=0)) / (X_wine.std(axis=0) + 1e-8)
+    y_wine = (wine.target == 0).astype(int)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_wine, y_wine, test_size=0.3, random_state=42, stratify=y_wine
+    )
+    datasets['wine'] = {
         'X_train': X_train, 'X_test': X_test,
         'y_train': y_train, 'y_test': y_test
     }
