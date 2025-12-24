@@ -15,6 +15,7 @@ This repository presents the full investigative framework for the article **"Fro
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PennyLane](https://img.shields.io/badge/PennyLane-0.38.0-brightgreen.svg)](https://pennylane.ai/)
+[![Qiskit](https://img.shields.io/badge/Qiskit-1.0+-purple.svg)](https://qiskit.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2025.xxxxx-b31b1b.svg)](https://arxiv.org/)
 [![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
@@ -23,11 +24,15 @@ This repository presents the full investigative framework for the article **"Fro
 
 > **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
-> ✨ **NOVO (v7.2)**: Visualizações QUALIS A1 com rigor técnico e estético! [Ver resultados completos →](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
+> ✨ **NOVO (v7.2)**: 
+> - Visualizações QUALIS A1 com rigor técnico e estético! [Ver resultados completos →](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
+> - **🚀 FRAMEWORK QISKIT**: Implementação completa usando IBM Qiskit! [Ver guia →](docs/GUIA_QISKIT.md)
 > 
 > 🎯 **RESULTADOS VALIDADOS (23/12/2025)**: Framework executado com sucesso! Melhor acurácia: **65.83%** (Random Entangling + Phase Damping γ=0.0014). [Ver relatório executivo →](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)
 
 ## 🚀 Início Rápido
+
+### Versão PennyLane (Original)
 
 ```bash
 # 1. Clone o repositório
@@ -44,11 +49,26 @@ python framework_investigativo_completo.py --bayes --trials 100 --dataset-bayes 
 python framework_investigativo_completo.py
 ```
 
+### 🆕 Versão Qiskit (IBM Quantum)
+
+```bash
+# 1. Mesma instalação (requirements.txt inclui Qiskit)
+pip install -r requirements.txt
+
+# 2. Execute experimento Qiskit interativo
+python examples/exemplo_qiskit_completo.py
+
+# 3. Ou use programaticamente
+python -c "from framework_qiskit import executar_experimento_qiskit; executar_experimento_qiskit(dataset_nome='moons', n_epocas=15, pasta_resultados='resultados_qiskit')"
+```
+
 **📚 Documentação Completa**:
 - 📖 [Guia de Instalação](INSTALL.md)
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
+- 🆕 **[Guia Completo Qiskit](docs/GUIA_QISKIT.md)** - Framework IBM Quantum
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
-- 💡 [Exemplos Práticos](examples/exemplo_uso_programatico.py)
+- 💡 [Exemplos Práticos PennyLane](examples/exemplo_uso_programatico.py)
+- 🚀 **[Exemplos Qiskit Completos](examples/exemplo_qiskit_completo.py)** - Novo!
 - 🆕 **[Resultados Framework Completo QUALIS A1](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Execução Validada 23/12/2025
 - 📊 **[Executive Summary QUALIS A1](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)** - Resumo Executivo
 - 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
@@ -101,6 +121,71 @@ python framework_investigativo_completo.py
 - ✅ 4 formatos de exportação (HTML, PNG, PDF, SVG)
 - ✅ Intervalos de confiança 95% em análises estatísticas
 - ✅ Bordas espelhadas e marcadores profissionais
+
+---
+
+## 🆕 Framework Qiskit (IBM Quantum)
+
+Além da implementação PennyLane, agora oferecemos uma **implementação completa usando Qiskit (IBM)**! 
+
+### Características do Framework Qiskit
+
+**✨ Visualizações Exclusivas:**
+- 🔵 **Esfera de Bloch**: Visualização 3D de estados de qubits individuais
+- 🏙️ **State City 3D**: Densidade de probabilidade em 3D ("arranha-céus quânticos")
+- 🌐 **Q-Sphere**: Representação esférica de estados quânticos completos
+- 📊 **Diagramas de Circuitos**: Exportação em alta qualidade (matplotlib/latex)
+
+**🔬 Modelos de Ruído Realistas:**
+- Depolarizante (isotrópico)
+- Amplitude Damping (relaxação T1)
+- Phase Damping (decoerência T2)
+- Modelos combinados
+
+**🏗️ 7 Arquiteturas de Circuitos:**
+- Básico (baseline)
+- Strongly Entangling (all-to-all)
+- Hardware Efficient (otimizado para dispositivos reais)
+- Alternating Layers
+- Brickwork
+- Random Entangling
+
+**📱 Compatibilidade Total:**
+- ✅ Mesma interface do PennyLane
+- ✅ Mesmos datasets e benchmarks
+- ✅ Reproduz todos os experimentos do artigo
+- ✅ Pronto para hardware IBM Quantum real
+
+### Quick Start Qiskit
+
+```python
+from framework_qiskit import ClassificadorVQCQiskit, carregar_datasets
+
+# Carregar dataset
+datasets = carregar_datasets()
+dataset = datasets['moons']
+
+# Criar e treinar classificador
+vqc = ClassificadorVQCQiskit(
+    n_qubits=4,
+    n_camadas=2,
+    arquitetura='strongly_entangling',
+    tipo_ruido='phase_damping',
+    nivel_ruido=0.005,
+    n_epocas=20
+)
+
+vqc.fit(dataset['X_train'], dataset['y_train'])
+acuracia = vqc.score(dataset['X_test'], dataset['y_test'])
+
+# Gerar visualizações
+from framework_qiskit import visualizar_bloch_sphere
+visualizar_bloch_sphere(vqc, dataset['X_test'][0], 'bloch.png')
+```
+
+**📖 Documentação Completa**: [Guia Qiskit →](docs/GUIA_QISKIT.md)
+
+**🚀 Exemplos Interativos**: [Exemplos Qiskit →](examples/exemplo_qiskit_completo.py)
 
 ---
 
