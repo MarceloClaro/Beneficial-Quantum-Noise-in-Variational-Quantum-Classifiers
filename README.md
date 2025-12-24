@@ -21,6 +21,8 @@ This repository presents the full investigative framework for the article **"Fro
 [![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
 [![Latest Results](https://img.shields.io/badge/Latest%20Results-65.83%25%20Accuracy-success.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 [![QUALIS A1](https://img.shields.io/badge/QUALIS-A1%20Compliant-gold.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
+[![Tests](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml/badge.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml)
+[![Code Coverage](https://img.shields.io/badge/coverage-80%25+-success.svg)](tests/)
 
 > **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
@@ -62,7 +64,7 @@ python examples/exemplo_qiskit_completo.py
 python -c "from framework_qiskit import executar_experimento_qiskit; executar_experimento_qiskit(dataset_nome='moons', n_epocas=15, pasta_resultados='resultados_qiskit')"
 ```
 
-**📚 Documentação Completa**:
+**📖 Documentação Completa**:
 - 📖 [Guia de Instalação](INSTALL.md)
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
 - 🆕 **[Guia Completo Qiskit](docs/GUIA_QISKIT.md)** - Framework IBM Quantum
@@ -70,6 +72,15 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
 - 💡 [Exemplos Práticos PennyLane](examples/exemplo_uso_programatico.py)
 - 🚀 **[Exemplos Qiskit Completos](examples/exemplo_qiskit_completo.py)** - Novo!
+- 📓 **[Tutoriais Jupyter](notebooks/)** - Notebooks interativos com botões "Open in Colab"
+  - [01_introducao_vqc.ipynb](notebooks/01_introducao_vqc.ipynb) - Introdução aos VQCs
+  - [02_beneficial_noise_demo.ipynb](notebooks/02_beneficial_noise_demo.ipynb) - Demonstração de ruído benéfico
+  - [03_reproducao_experimentos.ipynb](notebooks/03_reproducao_experimentos.ipynb) - Reprodução de experimentos
+- 🧪 **[Testes Unitários](tests/)** - 67 testes com >80% de cobertura
+  - [test_constantes_fundamentais.py](tests/test_constantes_fundamentais.py) - 14 testes de valores numéricos
+  - [test_modelo_ruido.py](tests/test_modelo_ruido.py) - 21 testes de operadores de Kraus
+  - [test_schedule_ruido.py](tests/test_schedule_ruido.py) - 12 testes de annealing
+  - [test_classificador_vqc.py](tests/test_classificador_vqc.py) - 20 testes em toy datasets
 - 🆕 **[Resultados Framework Completo QUALIS A1](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Execução Validada 23/12/2025
 - 📊 **[Executive Summary QUALIS A1](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)** - Resumo Executivo
 - 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
