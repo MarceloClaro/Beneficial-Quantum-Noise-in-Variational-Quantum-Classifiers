@@ -481,9 +481,20 @@ except ImportError as _e:
         random=np.random
     )
     class AdamOptimizerStub:  # type: ignore
+        """Stub implementation of Adam optimizer when PennyLane is unavailable."""
         def __init__(self, stepsize=0.01):
             self.lr = stepsize
         def step(self, func, *args):
+            """
+            Perform a single optimization step (stub implementation).
+            
+            Args:
+                func: Cost function to optimize
+                *args: Additional arguments
+                
+            Returns:
+                Original arguments unchanged
+            """
             return args
     ADAM_OPTIMIZER_CLS = AdamOptimizerStub
     # Expor nome esperado pelo restante do código
@@ -1286,6 +1297,15 @@ class AutotunerVQC:
             dict: Melhores hiperparâmetros encontrados
         """
         def objective(trial):
+            """
+            Objective function for Optuna hyperparameter optimization.
+            
+            Args:
+                trial: Optuna trial object for suggesting hyperparameters
+                
+            Returns:
+                float: Validation accuracy (metric to maximize)
+            """
             # Sugerir hiperparâmetros
             params = self._suggest_params(trial)
 
@@ -1409,11 +1429,28 @@ class ModeloRuido:
     def __init__(self, nivel=0.01):
         self.nivel = nivel
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply quantum noise to circuit qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+            
+        Raises:
+            NotImplementedError: Must be implemented by subclasses
+        """
         raise NotImplementedError
 
 class RuidoThermal(ModeloRuido):
     """Thermal Relaxation Error: aproxima T1/T2 com canais de amplitude e fase."""
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply thermal relaxation noise to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         p = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.AmplitudeDamping(p, wires=i)
@@ -1422,6 +1459,13 @@ class RuidoThermal(ModeloRuido):
 class RuidoBitFlip(ModeloRuido):
     """Bit-Flip Error (X)."""
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply bit-flip noise (X gate with probability p) to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         p = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.BitFlip(p, wires=i)
@@ -1429,6 +1473,13 @@ class RuidoBitFlip(ModeloRuido):
 class RuidoPhaseFlip(ModeloRuido):
     """Phase-Flip Error (Z)."""
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply phase-flip noise (Z gate with probability p) to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         p = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.PhaseFlip(p, wires=i)
@@ -1436,6 +1487,16 @@ class RuidoPhaseFlip(ModeloRuido):
 class RuidoPinkNoise(ModeloRuido):
     """1/f Noise (Pink): usa PhaseDamping com variação por qubit."""
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply 1/f (pink) noise using phase damping with per-qubit variation.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+            
+        Notes:
+            Simulates low-frequency noise with Gaussian-distributed intensity per qubit
+        """
         p = self.nivel if nivel_override is None else nivel_override
         pink = np.abs(np.random.normal(loc=0, scale=p, size=n_qubits))
         for i in range(n_qubits):
@@ -1444,6 +1505,16 @@ class RuidoPinkNoise(ModeloRuido):
 class RuidoReadoutError(ModeloRuido):
     """Readout Error (aproximação via BitFlip após operações)."""
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply readout error approximated via bit-flip operations.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+            
+        Notes:
+            Models measurement errors in quantum hardware
+        """
         p = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.BitFlip(p, wires=i)
@@ -1465,6 +1536,13 @@ class RuidoDepolarizante(ModeloRuido):
     K₃ = √(p/3) Z
     """
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply depolarizing channel to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         p = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.DepolarizingChannel(p, wires=i)
@@ -1484,6 +1562,13 @@ class RuidoAmplitudeDamping(ModeloRuido):
     K₁ = [[0, √γ], [0, 0]]
     """
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply amplitude damping channel to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         g = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.AmplitudeDamping(g, wires=i)
@@ -1503,6 +1588,13 @@ class RuidoPhaseDamping(ModeloRuido):
     K₁ = [[0, 0], [0, √λ]]
     """
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply phase damping channel to all qubits.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         lmb = self.nivel if nivel_override is None else nivel_override
         for i in range(n_qubits):
             qml.PhaseDamping(lmb, wires=i)
@@ -1518,6 +1610,13 @@ class RuidoCrosstalk(ModeloRuido):
     Descrição: Aplica um canal de ruído correlacionado entre pares de qubits vizinhos (ex: CNOT com ruído).
     """
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply correlated crosstalk noise between neighboring qubit pairs.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         p = self.nivel if nivel_override is None else nivel_override
         # Aplica canal de ruído correlacionado entre pares vizinhos
         for i in range(n_qubits):
@@ -1539,6 +1638,13 @@ class RuidoCorrelacionado(ModeloRuido):
     Descrição: Aplica um canal de ruído coletivo (ex: PhaseDamping global) a todos os qubits simultaneamente.
     """
     def aplicar(self, n_qubits, nivel_override=None):
+        """
+        Apply global correlated noise affecting all qubits collectively.
+        
+        Args:
+            n_qubits: Number of qubits in the circuit
+            nivel_override: Optional noise level override (uses self.nivel if None)
+        """
         lmb = self.nivel if nivel_override is None else nivel_override
         # Aplica PhaseDamping global a todos os qubits (efeito coletivo)
         for i in range(n_qubits):
@@ -1893,6 +1999,17 @@ class ClassificadorVQC(BaseEstimator, ClassifierMixin):
         # Criar QNode (circuito quântico diferenciável)
         @qml.qnode(self.dev_, interface='autograd')
         def circuit(weights, x, nivel_ruido_runtime=None):
+            """
+            Quantum circuit definition for VQC classification.
+            
+            Args:
+                weights: Trainable parameters for the quantum circuit
+                x: Input data sample to encode
+                nivel_ruido_runtime: Runtime noise level override
+                
+            Returns:
+                Expectation value of PauliZ measurement
+            """
             return circuito_fn(weights, x, self.n_qubits, self.n_camadas, modelo_ruido, nivel_ruido_runtime)
 
         self.qnode_ = circuit
@@ -1993,6 +2110,16 @@ class ClassificadorVQC(BaseEstimator, ClassifierMixin):
 
                 # Atualizar parâmetros (função de custo compatível com autograd)
                 def custo_batch(w, b):
+                    """
+                    Batch cost function for mini-batch gradient descent.
+                    
+                    Args:
+                        w: Weight parameters
+                        b: Bias parameter
+                        
+                    Returns:
+                        Mean squared error for the batch
+                    """
                     preds = pnp.array([self.qnode_(w, pnp.array(x), nivel_runtime) + b for x in X_batch])
                     # Usar pnp.mean para permitir gradientes
                     return pnp.mean((pnp.array(y_batch) - preds) ** 2)  # type: ignore[attr-defined]
@@ -2050,6 +2177,16 @@ class ClassificadorVQC(BaseEstimator, ClassifierMixin):
                     # Criar QNode que retorna estado
                     @qml.qnode(self.dev_, interface='autograd')
                     def estado_qnode(weights, x):
+                        """
+                        Quantum node that returns density matrix for entanglement measurement.
+                        
+                        Args:
+                            weights: Circuit weights
+                            x: Input data sample
+                            
+                        Returns:
+                            Density matrix of the first qubit
+                        """
                         circuito_fn, _ = ARQUITETURAS[self.arquitetura]
                         circuito_fn(weights, x, self.n_qubits, self.n_camadas, None, None)
                         return qml.density_matrix(wires=[0])
@@ -3499,6 +3636,21 @@ def gerar_visualizacoes(df, salvar=True, pasta_resultados=None):
 # ============================================================================
 
 def analise_correlacao_profunda(df: pd.DataFrame, save_path: str = 'figura_correlacao.html'):
+    """
+    Perform deep correlation analysis on experimental results.
+    
+    Args:
+        df: DataFrame containing experimental results with numerical columns
+        save_path: Path to save the correlation heatmap visualization
+        
+    Returns:
+        pd.DataFrame: Correlation matrix of all numerical variables
+        
+    Notes:
+        - Generates an interactive heatmap using Plotly
+        - Identifies top correlations with test accuracy
+        - Uses RdBu_r colorscale for intuitive visualization
+    """
     logger.info("\n" + "="*80)
     logger.info(" ANÁLISE DE CORRELAÇÃO")
     logger.info("="*80)
@@ -3539,6 +3691,21 @@ def analise_correlacao_profunda(df: pd.DataFrame, save_path: str = 'figura_corre
 
 
 def analise_pca_profunda(df: pd.DataFrame, save_path: Optional[str] = None):
+    """
+    Perform Principal Component Analysis on experimental results.
+    
+    Args:
+        df: DataFrame containing experimental results
+        save_path: Optional path to save PCA visualization
+        
+    Returns:
+        tuple: (PCA object, transformed data) or (None, None) if sklearn unavailable
+        
+    Notes:
+        - Requires scikit-learn's advanced modules
+        - Reduces dimensionality while preserving variance
+        - Useful for identifying latent patterns in high-dimensional data
+    """
     if not SKLEARN_ADVANCED_AVAILABLE:
         logger.warning("Scikit-learn PCA não disponível")
         return None, None
