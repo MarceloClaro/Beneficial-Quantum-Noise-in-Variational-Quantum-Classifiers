@@ -189,9 +189,10 @@ qml.BasicEntanglerLayers(weights=params, wires=range(n_qubits))
 **Descrição:** Ansatz de Schuld et al. (2019) com entrelaçamento all-to-all.
 
 **Estrutura:**
-$
+
+$$
 U_{SE}(\theta, \phi, \omega) = \prod_{l=1}^{L} \left[ \prod_{i=0}^{n-1} \text{Rot}(\theta_{l,i}, \phi_{l,i}, \omega_{l,i}) \otimes \prod_{i<j} CNOT_{i,j} \right]
-$
+$$
 
 **Propriedades:**
 - **Profundidade:** $L$ camadas
