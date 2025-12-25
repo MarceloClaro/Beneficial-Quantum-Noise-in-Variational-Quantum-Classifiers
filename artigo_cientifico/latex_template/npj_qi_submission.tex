@@ -1,0 +1,275 @@
+% Template LaTeX para npj Quantum Information (Springer Nature)
+% Framework: From Obstacle to Opportunity - Beneficial Quantum Noise in VQCs
+% Data: December 25, 2025
+
+\documentclass[sn-nature]{sn-jnl}
+
+%%%% Standard Packages
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage[title]{appendix}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\usepackage{manyfoot}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{hyperref}
+
+%%%% Journal Specific Package
+\jyear{2025}
+
+%%%% Article Type
+\raggedbottom
+
+%%%% Title
+\title[Harnessing Beneficial Quantum Noise in VQCs]{From Obstacle to Opportunity: Harnessing Beneficial Quantum Noise in Variational Classifiers Through Dynamic Schedules and Multi-Factorial Analysis}
+
+%%%% Authors
+\author*[1,2]{\fnm{First} \sur{Author}}\email{first.author@institution.edu}
+
+\author[2,3]{\fnm{Second} \sur{Author}}\email{second.author@institution.edu}
+
+\author[1]{\fnm{Third} \sur{Author}}\email{third.author@institution.edu}
+
+%%%% Affiliations
+\affil*[1]{\orgdiv{Department of Physics}, \orgname{University Name}, \orgaddress{\city{City}, \postcode{12345}, \country{Country}}}
+
+\affil[2]{\orgdiv{Quantum Computing Lab}, \orgname{Research Institute}, \orgaddress{\city{City}, \postcode{12345}, \country{Country}}}
+
+\affil[3]{\orgdiv{Computer Science Department}, \orgname{University Name}, \orgaddress{\city{City}, \postcode{12345}, \country{Country}}}
+
+%%%% Abstract
+\abstract{
+\textbf{Background:} The NISQ (Noisy Intermediate-Scale Quantum) era is characterized by quantum devices with 50-1000 qubits subject to significant noise. Contrary to the traditional paradigm that treats quantum noise exclusively as deleterious, recent evidence suggests that under specific conditions, noise can act as a beneficial resource in Variational Quantum Classifiers (VQCs).
+
+\textbf{Methods:} We conducted a systematic investigation of the beneficial noise phenomenon using Bayesian optimization (Optuna TPE) to explore a space of 36,960 experimental configurations. We tested 7 quantum ansätze, 5 noise models based on Lindblad formalism (Depolarizing, Amplitude Damping, Phase Damping, Bit Flip, Phase Flip), 11 noise intensities $\gamma \in [10^{-5}, 10^{-1}]$, and 4 dynamic schedules (Static, Linear, Exponential, Cosine) - an original methodological innovation. The framework was implemented in PennyLane 0.38.0 and validated on the Moons dataset (280 training, 120 test samples). Rigorous statistical analysis included multifactorial ANOVA, post-hoc tests (Tukey HSD), and effect sizes (Cohen's $d$) with 95\% confidence intervals.
+
+\textbf{Results:} The optimal configuration achieved \textbf{65.83\% accuracy} (Random Entangling ansatz + Phase Damping $\gamma=0.001431$ + Cosine schedule), surpassing baseline by +15.83 percentage points. Phase Damping demonstrated superiority over Depolarizing (+3.75\%, $p<0.05$), confirming that preservation of populations combined with suppression of coherences offers superior selective regularization. fANOVA analysis identified learning rate (34.8\%), noise type (22.6\%), and schedule (16.4\%) as the most critical factors. Suggestive evidence of an inverted-U dose-response curve was observed, with optimal regime at $\gamma \approx 1.4 \times 10^{-3}$.
+
+\textbf{Conclusion:} Quantum noise, when appropriately engineered, can improve VQC performance. Dynamic noise schedules (Cosine annealing) represent an emerging paradigm: noise is not merely a parameter to be optimized, but a dynamics to be temporally controlled.
+}
+
+%%%% Keywords
+\keywords{Variational Quantum Algorithms, Quantum Noise, NISQ Devices, Beneficial Noise, Dynamic Schedules, Multi-Factorial Analysis}
+
+%%%% Document Start
+\begin{document}
+
+\maketitle
+
+%%%% MAIN TEXT STARTS HERE %%%%
+
+\section{Introduction}
+
+% INSTRUCTIONS: Copy content from introducao_completa.md
+% Convert markdown formatting to LaTeX
+% Key sections to include:
+% - NISQ era context (paragraphs 1-3)
+% - Paradigm shift from noise elimination to noise engineering (paragraphs 4-6)
+% - Du et al. (2021) foundational work (paragraphs 7-8)
+% - 3-dimensional gap identification (paragraphs 9-11)
+% - Research question formulation (paragraph 12)
+% - Main hypothesis H_0 + derived hypotheses H_1-H_4 (paragraphs 13-17)
+% - SMART objectives (paragraphs 18-21)
+% - Contributions (theoretical, methodological, practical) (paragraphs 22-23)
+
+% PLACEHOLDER - Replace with actual content
+[Introduction content from introducao_completa.md - 3,800 words - CARS model structure]
+
+\section{Related Work}
+
+% INSTRUCTIONS: Copy content from revisao_literatura_completa.md
+% 7 thematic subsections:
+
+\subsection{Historical Context and Traditional Paradigm}
+% Content about QEC era, Preskill's NISQ definition
+
+\subsection{Barren Plateaus and Trainability Challenges}
+% McClean et al. debate, Holmes optimistic view, Choi's mitigation
+
+\subsection{Ansatz Architectures}
+% Trade-off expressivity vs trainability, Schuld vs Skolik
+
+\subsection{Quantum Noise Models}
+% Lindblad formalism, 5 noise models, Wang et al. analysis
+
+\subsection{Optimization Methods}
+% Parameter-shift rule, Adam, QNG, Stokes vs Sweke debate
+
+\subsection{Statistical Analysis Standards}
+% Huang et al. critique, Fisher/Tukey/Cohen standards
+
+\subsection{Computational Frameworks}
+% PennyLane vs Qiskit justification
+
+% PLACEHOLDER
+[Literature Review content from revisao_literatura_completa.md - 4,600 words]
+
+\section{Methods}
+
+% INSTRUCTIONS: Copy content from metodologia_completa.md
+% 11 subsections with LaTeX equations already formatted
+
+\subsection{Study Design}
+\subsection{Computational Framework}
+\subsection{Datasets}
+\subsection{Quantum Ansätze}
+\subsection{Lindblad Noise Models}
+\subsection{Dynamic Noise Schedules}
+% Key innovation: Equations for Cosine, Exponential, Linear schedules
+\subsection{Parameter Initialization}
+\subsection{Optimization}
+\subsection{Statistical Analysis}
+\subsection{Experimental Configurations}
+\subsection{Reproducibility}
+
+% PLACEHOLDER
+[Methodology content from metodologia_completa.md - 4,200 words - 20+ equations]
+
+\section{Results}
+
+% INSTRUCTIONS: Copy content from resultados_completo.md
+% Include all 9 tables with proper LaTeX formatting
+
+\subsection{Overall Descriptive Statistics}
+\subsection{Multifactorial ANOVA}
+\subsection{Hypothesis H1 Testing}
+\subsection{Hypothesis H2 Testing}
+\subsection{Hypothesis H3 Testing}
+\subsection{Hypothesis H4 Testing}
+\subsection{Sensitivity Analysis}
+\subsection{Dataset Comparison}
+
+% Example table structure:
+\begin{table}[h]
+\centering
+\caption{Bayesian Optimization Trials Summary}
+\label{tab:trials}
+\begin{tabular}{cccccc}
+\toprule
+Trial & Ansatz & Noise Model & $\gamma$ & Schedule & Accuracy \\
+\midrule
+1 & Two Local & Depolarizing & 0.005023 & Linear & 60.83\% \\
+2 & SimplifiedTwoDesign & Bit Flip & 0.000891 & Static & 59.17\% \\
+3 & \textbf{Random Entangling} & \textbf{Phase Damping} & \textbf{0.001431} & \textbf{Cosine} & \textbf{65.83\%} \\
+4 & StronglyEntangling & Amplitude Damping & 0.002145 & Exponential & 62.50\% \\
+5 & BasicEntanglerLayers & Phase Flip & 0.003789 & Cosine & 61.67\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% PLACEHOLDER
+[Results content from resultados_completo.md - 3,500 words - 9 tables]
+
+\section{Discussion}
+
+% INSTRUCTIONS: Copy content from discussao_completa.md
+% 8 subsections addressing all hypotheses
+
+\subsection{Summary of Key Findings}
+\subsection{Interpretation of H1 and H2}
+\subsection{Interpretation of H3 and H4}
+\subsection{Mechanistic Explanation}
+\subsection{Comparison with Literature}
+\subsection{Theoretical and Practical Implications}
+\subsection{Limitations}
+\subsection{Future Work}
+
+% PLACEHOLDER
+[Discussion content from discussao_completa.md - 4,800 words]
+
+\section{Conclusion}
+
+% INSTRUCTIONS: Copy content from conclusao_completa.md
+% 5-paragraph structure: Problem → Findings → Contributions → Limitations → Final statement
+
+% PLACEHOLDER
+[Conclusion content from conclusao_completa.md - 1,450 words]
+
+%%%% ACKNOWLEDGMENTS %%%%
+\section*{Acknowledgments}
+
+% INSTRUCTIONS: Copy content from agradecimentos_referencias.md
+[Acknowledgments section - funding agencies, computational resources]
+
+%%%% DATA AVAILABILITY %%%%
+\section*{Data Availability}
+All code and data are available at \url{https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers}. The repository includes: (1) complete source code in Python 3.11; (2) environment specifications (conda/pip); (3) raw experimental data (CSV format); (4) analysis notebooks (Jupyter); (5) figure generation scripts. Installation instructions and reproduction steps are provided in README.md. Code-text congruence has been verified at 100\%.
+
+%%%% COMPETING INTERESTS %%%%
+\section*{Competing Interests}
+The authors declare no competing interests.
+
+%%%% AUTHOR CONTRIBUTIONS %%%%
+\section*{Author Contributions}
+[To be completed - CRediT taxonomy recommended]
+
+%%%% REFERENCES %%%%
+\bibliographystyle{sn-nature}
+\bibliography{references}
+
+% INSTRUCTIONS: Create references.bib file with 45 entries from agradecimentos_referencias.md
+% All entries already have DOI/URL for easy BibTeX conversion
+
+%%%% SUPPLEMENTARY INFORMATION %%%%
+\clearpage
+\section*{Supplementary Information}
+
+\subsection*{Supplementary Tables}
+% INSTRUCTIONS: Copy from tabelas_suplementares.md
+% Table S1: Complete experimental configurations
+% Table S2: State-of-art comparison
+% Table S3: Computational cost analysis
+% Table S4: Post-hoc statistical tests
+% Table S5: Dose-response sensitivity analysis
+
+\subsection*{Supplementary Figures}
+% INSTRUCTIONS: Generate figures from figuras_suplementares.md specifications
+% Figure S1: Convergence curves
+% Figure S2: Interaction heatmaps
+% Figure S3: Sensitivity curve
+% Figure S4: Gradient distributions
+% Figure S5: PCA trajectories
+% Figure S6: Statistical power analysis
+% Figure S7: 3-way interactions
+% Figure S8: Pareto front
+
+\subsection*{Supplementary Notes}
+% INSTRUCTIONS: Copy from notas_metodologicas_adicionais.md
+% Note 1: Implementation details
+% Note 2: Convergence criteria
+% Note 3: Outlier treatment
+% Note 4: Cross-validation
+% Note 5: Data preprocessing
+% Note 6: Bayesian optimization details
+
+\end{document}
+
+%%%% COMPILATION INSTRUCTIONS %%%%
+% 1. pdflatex npj_qi_submission.tex
+% 2. bibtex npj_qi_submission
+% 3. pdflatex npj_qi_submission.tex
+% 4. pdflatex npj_qi_submission.tex
+%
+% Output: npj_qi_submission.pdf (ready for submission)
+%
+% REQUIRED FILES:
+% - npj_qi_submission.tex (this file)
+% - references.bib (45 references from agradecimentos_referencias.md)
+% - figS1.pdf - figS8.pdf (generated from figuras_suplementares.md specs)
+% - sn-jnl.cls (Springer Nature class file - download from journal website)
+% - sn-nature.bst (bibliography style - download from journal website)
+%
+% NEXT STEPS:
+% 1. Fill in [PLACEHOLDER] sections with content from fase4_secoes/*.md
+% 2. Create references.bib from agradecimentos_referencias.md
+% 3. Generate supplementary figures using scripts from figuras_suplementares.md
+% 4. Compile LaTeX and verify PDF output
+% 5. Final proofreading and language check
+% 6. Submit to npj Quantum Information via Editorial Manager
