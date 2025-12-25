@@ -201,9 +201,9 @@ U_{\mathrm{SE}}(\Theta,\Phi,\Omega)
 
 com
 
-[
+$$
 \mathrm{Rot}(\theta,\phi,\omega)\equiv R_Z(\phi),R_Y(\theta),R_Z(\omega).
-]
+$$
 
 **Propriedades:**
 - **Profundidade:** $L$ camadas
