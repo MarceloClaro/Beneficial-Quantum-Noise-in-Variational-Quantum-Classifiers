@@ -171,7 +171,7 @@ Investigamos 7 arquiteturas de ansätze com diferentes trade-offs entre expressi
 **Descrição:** Ansatz de referência com entrelaçamento mínimo em cadeia.
 
 **Estrutura:**
-$\U_{BE}(\theta) = \prod_{l=1}^{L} \left[ \prod_{i=0}^{n-1} RY(\theta_{l,i}) \otimes CNOT_{i,i+1} \right]$
+$U_{BE}(\theta) = \prod_{l=1}^{L} \left[ \prod_{i=0}^{n-1} RY(\theta_{l,i}) \otimes CNOT_{i,i+1} \right]$
 
 **Propriedades:**
 - **Profundidade:** $L$ camadas
