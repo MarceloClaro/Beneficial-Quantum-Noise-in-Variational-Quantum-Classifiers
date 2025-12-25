@@ -191,13 +191,13 @@ qml.BasicEntanglerLayers(weights=params, wires=range(n_qubits))
 **Estrutura:**
 
 
-$$[
+$$
 U_{\mathrm{SE}}(\Theta,\Phi,\Omega)
 =\prod_{l=1}^{L}\left[
 \left(\bigotimes_{i=0}^{n-1}\mathrm{Rot}!\left(\theta_{l,i},\phi_{l,i},\omega_{l,i}\right)\right)
 \left(\prod_{0\le i<j\le n-1}\mathrm{CNOT}_{i,j}\right)
 \right].
-]$$
+$$
 
 com
 
