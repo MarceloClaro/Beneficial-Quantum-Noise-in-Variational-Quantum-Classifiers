@@ -1,0 +1,190 @@
+\documentclass{article}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+% ============================================================================
+% ALGORITHM 1: Experimental Pipeline
+% ============================================================================
+
+\begin{algorithm}[H]
+\caption{Experimental Pipeline for Beneficial Noise Analysis in VQCs}\label{alg:pipeline}
+\begin{algorithmic}[1]
+\REQUIRE Datasets $\mathcal{D} = \{D_1, D_2, \ldots, D_m\}$
+\REQUIRE Ansatz configurations $\mathcal{A} = \{A_1, A_2, \ldots, A_n\}$
+\REQUIRE Noise models $\mathcal{N} = \{N_1, N_2, \ldots, N_k\}$
+\REQUIRE Noise parameters $\mathcal{P} = \{p_1, p_2, \ldots, p_\ell\}$
+\REQUIRE Noise schedules $\mathcal{S} = \{S_1, S_2, \ldots, S_s\}$
+\REQUIRE Random seeds $\mathcal{R} = \{r_1, r_2, \ldots, r_q\}$
+\ENSURE Results table $\mathbf{R}$ with all metrics for all configurations
+
+\STATE Initialize results table $\mathbf{R} \leftarrow \emptyset$
+\STATE Initialize configuration counter $c \leftarrow 0$
+
+\FOR{each dataset $D_i \in \mathcal{D}$}
+    \STATE Split $D_i$ into $D_i^{train}$, $D_i^{val}$, $D_i^{test}$ (60/20/20)
+    
+    \FOR{each ansatz $A_j \in \mathcal{A}$}
+        \FOR{each noise model $N_k \in \mathcal{N}$}
+            \FOR{each noise parameter $p_\ell \in \mathcal{P}$}
+                \FOR{each schedule $S_s \in \mathcal{S}$}
+                    \FOR{each seed $r_q \in \mathcal{R}$}
+                        \STATE $c \leftarrow c + 1$
+                        \STATE Set random seed to $r_q$ \COMMENT{For reproducibility}
+                        
+                        \STATE \textbf{// Initialize model}
+                        \STATE $\theta \leftarrow \text{Initialize}(A_j, r_q)$
+                        \STATE $U(\theta) \leftarrow \text{BuildCircuit}(A_j, n_{qubits})$
+                        
+                        \STATE \textbf{// Add noise channel}
+                        \STATE $\mathcal{N}_{p_\ell} \leftarrow \text{BuildNoiseChannel}(N_k, p_\ell)$
+                        
+                        \STATE \textbf{// Training loop}
+                        \STATE $t \leftarrow 0$
+                        \STATE converged $\leftarrow$ False
+                        \WHILE{$t < T_{max}$ AND NOT converged}
+                            \STATE $p(t) \leftarrow S_s(p_\ell, t, T_{max})$ \COMMENT{Dynamic noise schedule}
+                            \STATE $\mathcal{L}_{train} \leftarrow \text{ComputeLoss}(U(\theta), \mathcal{N}_{p(t)}, D_i^{train})$
+                            \STATE $\nabla_\theta \mathcal{L} \leftarrow \text{ComputeGradient}(\mathcal{L}_{train}, \theta)$
+                            \STATE $\theta \leftarrow \theta - \eta \cdot \nabla_\theta \mathcal{L}$ \COMMENT{Gradient descent}
+                            
+                            \STATE \textbf{// Validation check (every 10 epochs)}
+                            \IF{$t \mod 10 = 0$}
+                                \STATE $\mathcal{L}_{val} \leftarrow \text{ComputeLoss}(U(\theta), \mathcal{N}_{p(t)}, D_i^{val})$
+                                \IF{$\mathcal{L}_{val}$ has not improved for 20 epochs}
+                                    \STATE converged $\leftarrow$ True \COMMENT{Early stopping}
+                                \ENDIF
+                            \ENDIF
+                            
+                            \STATE $t \leftarrow t + 1$
+                        \ENDWHILE
+                        
+                        \STATE \textbf{// Evaluation on test set}
+                        \STATE $\hat{\mathbf{y}}_{test} \leftarrow \text{Predict}(U(\theta^*), \mathcal{N}_{p_\ell}, D_i^{test})$
+                        \STATE $\text{Acc}_{test} \leftarrow \text{Accuracy}(\mathbf{y}_{test}, \hat{\mathbf{y}}_{test})$
+                        \STATE $\text{F1}_{test} \leftarrow \text{F1Score}(\mathbf{y}_{test}, \hat{\mathbf{y}}_{test})$
+                        \STATE $\text{Loss}_{test} \leftarrow \text{CrossEntropy}(\mathbf{y}_{test}, \hat{\mathbf{y}}_{test})$
+                        
+                        \STATE \textbf{// Training metrics}
+                        \STATE $\hat{\mathbf{y}}_{train} \leftarrow \text{Predict}(U(\theta^*), \mathcal{N}_{p_\ell}, D_i^{train})$
+                        \STATE $\text{Acc}_{train} \leftarrow \text{Accuracy}(\mathbf{y}_{train}, \hat{\mathbf{y}}_{train})$
+                        \STATE $\text{Gap} \leftarrow \text{Acc}_{train} - \text{Acc}_{test}$
+                        
+                        \STATE \textbf{// Store results}
+                        \STATE $\mathbf{R}[c] \leftarrow \{$
+                        \STATE \hspace{1cm} dataset: $D_i$, ansatz: $A_j$, noise\_type: $N_k$,
+                        \STATE \hspace{1cm} noise\_param: $p_\ell$, schedule: $S_s$, seed: $r_q$,
+                        \STATE \hspace{1cm} epochs: $t$, acc\_train: $\text{Acc}_{train}$, acc\_test: $\text{Acc}_{test}$,
+                        \STATE \hspace{1cm} f1\_test: $\text{F1}_{test}$, loss\_test: $\text{Loss}_{test}$,
+                        \STATE \hspace{1cm} gap: $\text{Gap}$, theta\_final: $\theta^*$
+                        \STATE $\}$
+                        
+                        \STATE \textbf{// Log progress}
+                        \IF{$c \mod 100 = 0$}
+                            \STATE \textsc{Print}($c$ configurations completed)
+                        \ENDIF
+                    \ENDFOR
+                \ENDFOR
+            \ENDFOR
+        \ENDFOR
+    \ENDFOR
+\ENDFOR
+
+\STATE \textbf{// Statistical analysis}
+\STATE $\mathbf{R}_{aggregated} \leftarrow \text{AggregateByFactors}(\mathbf{R})$
+\STATE $\text{ANOVA} \leftarrow \text{PerformANOVA}(\mathbf{R}_{aggregated})$
+\STATE $\text{PostHoc} \leftarrow \text{TukeyHSD}(\mathbf{R}_{aggregated})$ \COMMENT{With Bonferroni correction}
+
+\RETURN $\mathbf{R}$, $\mathbf{R}_{aggregated}$, $\text{ANOVA}$, $\text{PostHoc}$
+\end{algorithmic}
+\end{algorithm}
+
+% ============================================================================
+% ALGORITHM 2: Noise Schedule Functions
+% ============================================================================
+
+\begin{algorithm}[H]
+\caption{Noise Schedule Functions}\label{alg:schedules}
+\begin{algorithmic}[1]
+\REQUIRE Base noise parameter $p_0 \in [0, 1]$
+\REQUIRE Current epoch $t \in [0, T_{max}]$
+\REQUIRE Maximum epochs $T_{max}$
+\ENSURE Scheduled noise parameter $p(t)$
+
+\FUNCTION{ConstantSchedule}{$p_0, t, T_{max}$}
+    \RETURN $p_0$
+\ENDFUNCTION
+
+\FUNCTION{LinearDecaySchedule}{$p_0, t, T_{max}$}
+    \STATE $\alpha \leftarrow 1 - \frac{t}{T_{max}}$ \COMMENT{Linear decay from 1 to 0}
+    \RETURN $p_0 \cdot \alpha$
+\ENDFUNCTION
+
+\FUNCTION{CosineAnnealingSchedule}{$p_0, t, T_{max}$}
+    \STATE $\alpha \leftarrow \frac{1 + \cos\left(\pi \cdot \frac{t}{T_{max}}\right)}{2}$ \COMMENT{Smooth decay}
+    \RETURN $p_0 \cdot \alpha$
+\ENDFUNCTION
+
+\FUNCTION{ExponentialDecaySchedule}{$p_0, t, T_{max}$}
+    \STATE $\lambda \leftarrow -\ln(0.01) / T_{max}$ \COMMENT{Decay to 1\% of initial}
+    \STATE $\alpha \leftarrow e^{-\lambda t}$
+    \RETURN $p_0 \cdot \alpha$
+\ENDFUNCTION
+
+\end{algorithmic}
+\end{algorithm}
+
+% ============================================================================
+% ALGORITHM 3: Noise Channel Construction
+% ============================================================================
+
+\begin{algorithm}[H]
+\caption{Quantum Noise Channel Construction}\label{alg:noise_channel}
+\begin{algorithmic}[1]
+\REQUIRE Noise type $N \in \{\text{Depol}, \text{AD}, \text{PD}, \text{BitFlip}, \text{PhaseFlip}, \text{Thermal}\}$
+\REQUIRE Noise parameter $p \in [0, 1]$
+\ENSURE List of Kraus operators $\{K_0, K_1, \ldots\}$
+
+\FUNCTION{BuildNoiseChannel}{$N, p$}
+    \IF{$N = \text{Depolarizing}$}
+        \STATE $K_0 \leftarrow \sqrt{1 - p} \cdot I$
+        \STATE $K_1 \leftarrow \sqrt{p/3} \cdot \sigma_x$
+        \STATE $K_2 \leftarrow \sqrt{p/3} \cdot \sigma_y$
+        \STATE $K_3 \leftarrow \sqrt{p/3} \cdot \sigma_z$
+        \RETURN $\{K_0, K_1, K_2, K_3\}$
+    
+    \ELSIF{$N = \text{AmplitudeDamping}$}
+        \STATE $K_0 \leftarrow \begin{pmatrix} 1 & 0 \\ 0 & \sqrt{1-\gamma} \end{pmatrix}$ where $\gamma = p$
+        \STATE $K_1 \leftarrow \begin{pmatrix} 0 & \sqrt{\gamma} \\ 0 & 0 \end{pmatrix}$
+        \RETURN $\{K_0, K_1\}$
+    
+    \ELSIF{$N = \text{PhaseDamping}$}
+        \STATE $K_0 \leftarrow \begin{pmatrix} 1 & 0 \\ 0 & \sqrt{1-\gamma} \end{pmatrix}$ where $\gamma = p$
+        \STATE $K_1 \leftarrow \begin{pmatrix} 0 & 0 \\ 0 & \sqrt{\gamma} \end{pmatrix}$
+        \RETURN $\{K_0, K_1\}$
+    
+    \ELSIF{$N = \text{BitFlip}$}
+        \STATE $K_0 \leftarrow \sqrt{1 - p} \cdot I$
+        \STATE $K_1 \leftarrow \sqrt{p} \cdot \sigma_x$
+        \RETURN $\{K_0, K_1\}$
+    
+    \ELSIF{$N = \text{PhaseFlip}$}
+        \STATE $K_0 \leftarrow \sqrt{1 - p} \cdot I$
+        \STATE $K_1 \leftarrow \sqrt{p} \cdot \sigma_z$
+        \RETURN $\{K_0, K_1\}$
+    
+    \ELSIF{$N = \text{ThermalRelaxation}$}
+        \STATE \textit{// Combination of amplitude and phase damping}
+        \STATE $K_{AD} \leftarrow \text{BuildNoiseChannel}(\text{AmplitudeDamping}, p_{T1})$
+        \STATE $K_{PD} \leftarrow \text{BuildNoiseChannel}(\text{PhaseDamping}, p_{T2})$
+        \RETURN $K_{AD} \circ K_{PD}$ \COMMENT{Composition of channels}
+    \ENDIF
+\ENDFUNCTION
+
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}

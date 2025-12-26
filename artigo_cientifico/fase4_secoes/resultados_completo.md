@@ -163,6 +163,22 @@ Para investigar o efeito do tipo de ruído quântico, agrupamos trials por model
 2. **Crosstalk demonstrou desempenho inadequado** (50% = chance aleatória)
 3. **Variabilidade de Phase Damping foi baixa** (σ = 0.59%), sugerindo robustez
 
+**Análise de Tamanho de Efeito (Effect Size):**
+
+Para quantificar a magnitude prática da diferença entre Phase Damping e Depolarizing, calculamos o Cohen's d:
+
+$$d = \frac{\mu_{PD} - \mu_{Dep}}{\sqrt{(\sigma_{PD}^2 + \sigma_{Dep}^2)/2}} = \frac{65.42 - 61.67}{\sqrt{(0.59^2 + 1.18^2)/2}} = \frac{3.75}{0.93} = 4.03$$
+
+**Interpretação:** $d = 4.03$ representa um **efeito muito grande** segundo convenções de Cohen (1988):
+- $d = 0.2$: pequeno
+- $d = 0.5$: médio
+- $d = 0.8$: grande
+- $d > 2.0$: **muito grande**
+
+O tamanho de efeito extremamente elevado ($d = 4.03$) indica que a superioridade de Phase Damping sobre Depolarizing não é apenas estatisticamente significante, mas também **altamente relevante na prática**. Em termos probabilísticos, se selecionarmos aleatoriamente uma acurácia de Phase Damping e uma de Depolarizing, há **99.8%** de probabilidade de que Phase Damping seja superior (calculado via Cohen's U₃).
+
+**Implicação Prática:** A diferença de 3.75 pontos percentuais, combinada com baixa variabilidade, torna Phase Damping a escolha inequívoca para este problema de classificação.
+
 **Interpretação Preliminar (detalhamento na Discussão):**
 Phase Damping preserva informação clássica (populações) enquanto destrói coerências, potencialmente prevenindo overfitting sem perda excessiva de capacidade representacional.
 

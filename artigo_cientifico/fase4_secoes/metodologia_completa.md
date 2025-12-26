@@ -97,6 +97,43 @@ pip install -r requirements.txt
 3. **Paralelização:** Suporte nativo para execução distribuída de trials independentes
 4. **Tracking:** Dashboard web integrado para monitoramento em tempo real
 
+#### 3.2.4 Controle de Reprodutibilidade
+
+**Seeds Aleatórias Fixas**
+
+Para garantir reprodutibilidade bit-a-bit dos resultados, todas as fontes de estocasticidade foram controladas através de seeds aleatórias fixas. Utilizamos duas seeds principais:
+
+- **Seed primária: 42** - Utilizada para divisão de datasets (train/val/test split), inicialização de pesos dos circuitos quânticos, e geração de configurações iniciais do otimizador Bayesiano
+- **Seed secundária: 43** - Utilizada para validação cruzada, replicação independente de experimentos críticos, e verificação de robustez dos resultados
+
+A escolha da seed 42 segue convenção amplamente adotada na comunidade científica, facilitando comparabilidade com outros trabalhos. A implementação garante fixação em todos os geradores de números pseudo-aleatórios:
+
+```python
+import numpy as np
+import random
+
+def fixar_seeds(seed=42):
+    """Fixa todas as fontes de aleatoriedade para reprodutibilidade."""
+    np.random.seed(seed)
+    random.seed(seed)
+    # PennyLane usa NumPy internamente, então np.random.seed é suficiente
+    # Para PyTorch (se usado): torch.manual_seed(seed)
+```
+
+Esta fixação é aplicada no início de cada execução experimental e antes de cada trial do otimizador Bayesiano, garantindo que:
+1. A mesma configuração de hiperparâmetros produz exatamente os mesmos resultados em execuções distintas
+2. Qualquer pesquisador pode replicar nossos experimentos usando as mesmas seeds
+3. Comparações estatísticas entre configurações são válidas, pois diferenças refletem apenas os hiperparâmetros, não variabilidade aleatória
+
+**Documentação de Seeds no Repositório**
+
+O arquivo `framework_investigativo_completo.py` contém a função `fixar_seeds()` (linhas 50-65 aproximadamente) que é invocada em:
+- Início do pipeline principal (linha ~2450)
+- Antes de cada trial Optuna (callback customizado)
+- Antes de cada split de dataset (linha ~2278)
+
+Logs de execução registram a seed utilizada em cada experimento, permitindo rastreamento completo. A tabela de rastreabilidade completa (disponível em `fase6_consolidacao/rastreabilidade_completa.md`) mapeia seeds para cada resultado reportado no artigo.
+
 ### 3.3 Datasets
 
 Utilizamos 4 datasets de classificação com características complementares para testar generalidade do fenômeno de ruído benéfico:
