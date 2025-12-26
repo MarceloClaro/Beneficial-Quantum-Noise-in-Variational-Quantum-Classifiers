@@ -902,7 +902,88 @@ class OtimizadorAvancado:
             return tuple(novos_params)
 
     class QNG:
-        """Quantum Natural Gradient (aproximação)"""
+        """
+        Quantum Natural Gradient (QNG) Optimizer.
+        
+        Fundamentação Teórica:
+        ---------------------
+        O Quantum Natural Gradient generaliza o método do gradiente natural para
+        variational quantum algorithms, utilizando a geometria intrínseca do
+        espaço de estados quânticos definida pela métrica de Fubini-Study.
+        
+        Derivação Matemática:
+        --------------------
+        Para um estado parametrizado |ψ(θ)⟩, a métrica de Fubini-Study é:
+        
+        $$g_{ij}(\\theta) = \\text{Re}\\langle\\partial_i\\psi|\\partial_j\\psi\\rangle - 
+                           \\langle\\partial_i\\psi|\\psi\\rangle\\langle\\psi|\\partial_j\\psi\\rangle$$
+        
+        que corresponde ao Quantum Fisher Information Matrix (QFIM).
+        
+        Regra de Atualização:
+        --------------------
+        O QNG atualiza parâmetros seguindo a direção do gradiente natural:
+        
+        $$\\theta_{t+1} = \\theta_t - \\eta \\, g^{-1}(\\theta_t) \\nabla_{\\theta} L(\\theta_t)$$
+        
+        onde:
+        - η é a taxa de aprendizado
+        - g⁻¹(θ) é a inversa da métrica (QFIM)
+        - ∇_θ L é o gradiente da função de custo
+        
+        Vantagens do QNG:
+        ----------------
+        1. **Invariância de Reparametrização**: Independente da escolha de coordenadas
+        2. **Convergência Mais Rápida**: Em comparação com gradiente vanilla
+        3. **Evita Platôs de Barren**: Métrica captura geometria da paisagem
+        
+        Computational Complexity:
+        ------------------------
+        - Gradiente vanilla: O(p) onde p = número de parâmetros
+        - QNG completo: O(p²) para construir g + O(p³) para inverter
+        - Aproximações: Block-diagonal, stochastic estimation
+        
+        Implementação:
+        -------------
+        Esta é uma versão simplificada. Para QNG completo, seria necessário:
+        1. Calcular QFIM usando parameter shift rule
+        2. Regularizar e inverter g (pode ser mal-condicionada)
+        3. Aplicar g⁻¹ ao gradiente
+        
+        Parameters:
+        -----------
+        taxa_aprendizado : float, optional
+            Taxa de aprendizado η (padrão: 0.01)
+            Valores típicos: 0.001 - 0.1
+        reg : float, optional
+            Regularização para inversão da métrica (padrão: 1e-3)
+            Usado como: (g + reg·I)⁻¹ para estabilidade numérica
+        
+        Applications in VQC:
+        -------------------
+        - Melhora treinamento de ansätze profundos
+        - Efetivo em paisagens com platôs de Barren
+        - Reduz número de iterações necessárias
+        
+        References:
+        -----------
+        Stokes, J., et al. (2020). "Quantum Natural Gradient."
+            Quantum, 4, 269. doi:10.22331/q-2020-05-25-269
+        
+        Yamamoto, N. (2019). "On the natural gradient for variational quantum eigensolver."
+            arXiv:1909.05074
+        
+        Wierichs, D., et al. (2020). "Avoiding local minima in variational quantum eigensolvers
+            with the natural gradient optimizer." Physical Review Research, 2(4), 043246.
+            doi:10.1103/PhysRevResearch.2.043246
+        
+        Practical Notes:
+        ---------------
+        - QFIM pode ser singular em regiões do espaço de parâmetros
+        - Regularização é essencial para estabilidade
+        - Block-diagonal approximations reduzem custo computacional
+        - Combine com Adam para melhor desempenho prático
+        """
         def __init__(self, taxa_aprendizado=0.01, reg=1e-3):
             self.lr = taxa_aprendizado
             self.reg = reg  # Regularização para inversão da métrica
@@ -1425,7 +1506,44 @@ class AutotunerVQC:
 # MÓDULO 2: MODELOS DE RUÍDO QUÂNTICO
 
 class ModeloRuido:
-    """Classe base para modelos de ruído quântico."""
+    """
+    Classe base para modelos de ruído quântico.
+    
+    Fundamentação Teórica:
+    ---------------------
+    Canais quânticos ruidosos são representados matematicamente como mapas
+    completamente positivos que preservam traço (CPTP maps). Todo canal quântico
+    pode ser expresso via representação de Kraus:
+    
+    $$\\mathcal{E}(\\rho) = \\sum_k K_k \\rho K_k^\\dagger$$
+    
+    onde os operadores de Kraus {K_k} satisfazem a condição de completude:
+    
+    $$\\sum_k K_k^\\dagger K_k = \\mathbb{I}$$
+    
+    Esta condição garante a preservação de traço: Tr(ℰ(ρ)) = Tr(ρ).
+    
+    Propriedades Fundamentais:
+    -------------------------
+    1. **Preservação de Traço**: Tr(ℰ(ρ)) = Tr(ρ) = 1
+    2. **Positividade Completa**: ℰ ⊗ I_n é positivo para todo n
+    3. **Linearidade**: ℰ(aρ₁ + bρ₂) = aℰ(ρ₁) + bℰ(ρ₂)
+    
+    Parameters:
+    -----------
+    nivel : float, optional
+        Intensidade do ruído, tipicamente em [0, 1]. O significado específico
+        depende do modelo (probabilidade de erro, taxa de decaimento, etc.)
+        Padrão: 0.01
+    
+    References:
+    -----------
+    Nielsen, M. A., & Chuang, I. L. (2010). Quantum Computation and Quantum Information.
+        Cambridge University Press. Chapter 8: Quantum Noise and Quantum Operations.
+    
+    Preskill, J. (2018). "Quantum Computing in the NISQ era and beyond."
+        Quantum, 2, 79. doi:10.22331/q-2018-08-06-79
+    """
     def __init__(self, nivel=0.01):
         self.nivel = nivel
     def aplicar(self, n_qubits, nivel_override=None):
@@ -1442,7 +1560,51 @@ class ModeloRuido:
         raise NotImplementedError
 
 class RuidoThermal(ModeloRuido):
-    """Thermal Relaxation Error: aproxima T1/T2 com canais de amplitude e fase."""
+    """
+    Thermal Relaxation Error: Aproximação de relaxamento térmico via T1/T2.
+    
+    Descrição Física:
+    ----------------
+    Modela a interação do qubit com um banho térmico a temperatura T,
+    resultando em relaxamento de energia (T1) e decoerência de fase (T2).
+    Típico em qubits supercondutores: T1 ≈ 50μs, T2 ≈ 20μs (T2 ≤ 2T1).
+    
+    Implementação:
+    -------------
+    Composição sequencial de amplitude damping (T1) e phase damping (T2):
+    
+    $$\\mathcal{E}_{thermal}(\\rho) = \\mathcal{E}_{phase} \\circ \\mathcal{E}_{amplitude}(\\rho)$$
+    
+    Operadores de Kraus (Composição):
+    ---------------------------------
+    Para amplitude damping com taxa γ:
+    - K₀^{amp} = [[1, 0], [0, √(1-γ)]]
+    - K₁^{amp} = [[0, √γ], [0, 0]]
+    
+    Para phase damping com taxa λ:
+    - K₀^{phase} = [[1, 0], [0, √(1-λ)]]
+    - K₁^{phase} = [[0, 0], [0, √λ]]
+    
+    Parameters:
+    -----------
+    nivel : float
+        Taxa de decaimento térmico (p ∈ [0, 1])
+        Usado tanto para amplitude quanto phase damping
+    
+    Physical Interpretation:
+    -----------------------
+    - nivel → 0: Isolamento perfeito (sem ruído térmico)
+    - nivel ≈ 0.01: Típico para qubits supercondutores de alta qualidade
+    - nivel → 1: Forte acoplamento com ambiente (decoerência total)
+    
+    References:
+    -----------
+    Clerk, A. A., et al. (2010). "Introduction to quantum noise, measurement, and amplification."
+        Reviews of Modern Physics, 82(2), 1155. doi:10.1103/RevModPhys.82.1155
+    
+    Krantz, P., et al. (2019). "A quantum engineer's guide to superconducting qubits."
+        Applied Physics Reviews, 6(2), 021318. doi:10.1063/1.5089550
+    """
     def aplicar(self, n_qubits, nivel_override=None):
         """
         Apply thermal relaxation noise to all qubits.
@@ -1457,7 +1619,55 @@ class RuidoThermal(ModeloRuido):
             qml.PhaseDamping(p, wires=i)
 
 class RuidoBitFlip(ModeloRuido):
-    """Bit-Flip Error (X)."""
+    """
+    Bit-Flip Error: Erro clássico de troca de bit (X gate estocástico).
+    
+    Descrição Matemática:
+    --------------------
+    O canal de bit-flip aplica a porta Pauli-X com probabilidade p:
+    
+    $$\\mathcal{E}_{BF}(\\rho) = (1-p)\\rho + p X\\rho X$$
+    
+    onde X = [[0,1],[1,0]] é a matriz de Pauli-X.
+    
+    Operadores de Kraus:
+    -------------------
+    $$K_0 = \\sqrt{1-p} \\mathbb{I}, \\quad K_1 = \\sqrt{p} X$$
+    
+    Verificação de Completude:
+    -------------------------
+    $$K_0^\\dagger K_0 + K_1^\\dagger K_1 = (1-p)\\mathbb{I} + p\\mathbb{I} = \\mathbb{I}$$
+    
+    Efeito no Estado:
+    ----------------
+    - |0⟩ → |0⟩ com prob. (1-p), |1⟩ com prob. p
+    - |1⟩ → |1⟩ com prob. (1-p), |0⟩ com prob. p
+    - Estados de superposição sofrem decoerência
+    
+    Parameters:
+    -----------
+    nivel : float
+        Probabilidade de bit-flip p ∈ [0, 1]
+    
+    Physical Occurrence:
+    -------------------
+    Comum em:
+    - Qubits supercondutores: erros de excitação térmica
+    - Qubits de spin: flips devido a flutuações magnéticas
+    - Memórias quânticas: erros de armazenamento
+    
+    Typical Values:
+    --------------
+    - Hardware de alta qualidade: p ≈ 10⁻³ - 10⁻⁴
+    - Hardware NISQ típico: p ≈ 10⁻² - 10⁻³
+    
+    References:
+    -----------
+    Nielsen & Chuang (2010), Section 8.3.3: "The bit flip and phase flip channels"
+    
+    Terhal, B. M. (2015). "Quantum error correction for quantum memories."
+        Reviews of Modern Physics, 87(2), 307. doi:10.1103/RevModPhys.87.307
+    """
     def aplicar(self, n_qubits, nivel_override=None):
         """
         Apply bit-flip noise (X gate with probability p) to all qubits.
@@ -1471,7 +1681,60 @@ class RuidoBitFlip(ModeloRuido):
             qml.BitFlip(p, wires=i)
 
 class RuidoPhaseFlip(ModeloRuido):
-    """Phase-Flip Error (Z)."""
+    """
+    Phase-Flip Error: Erro de troca de fase (Z gate estocástico).
+    
+    Descrição Matemática:
+    --------------------
+    O canal de phase-flip aplica a porta Pauli-Z com probabilidade p:
+    
+    $$\\mathcal{E}_{PF}(\\rho) = (1-p)\\rho + p Z\\rho Z$$
+    
+    onde Z = [[1,0],[0,-1]] é a matriz de Pauli-Z.
+    
+    Operadores de Kraus:
+    -------------------
+    $$K_0 = \\sqrt{1-p} \\mathbb{I}, \\quad K_1 = \\sqrt{p} Z$$
+    
+    Verificação de Completude:
+    -------------------------
+    $$K_0^\\dagger K_0 + K_1^\\dagger K_1 = (1-p)\\mathbb{I} + p\\mathbb{I} = \\mathbb{I}$$
+    
+    Efeito no Estado:
+    ----------------
+    - |0⟩ → |0⟩ (invariante sob Z)
+    - |1⟩ → -|1⟩ com prob. p (mudança de fase global)
+    - |+⟩ = (|0⟩+|1⟩)/√2 → |-⟩ = (|0⟩-|1⟩)/√2 com prob. p
+    
+    Relação com Decoerência:
+    -----------------------
+    Phase-flip é equivalente a bit-flip na base {|+⟩, |-⟩}.
+    Causa perda de coerência em superposições da base computacional.
+    
+    Parameters:
+    -----------
+    nivel : float
+        Probabilidade de phase-flip p ∈ [0, 1]
+    
+    Physical Occurrence:
+    -------------------
+    Comum em:
+    - Qubits supercondutores: flutuações de fluxo magnético
+    - Qubits de spin: variações do campo magnético local
+    - Interferômetros: ruído de fase nos caminhos ópticos
+    
+    Typical Values:
+    --------------
+    - Hardware de alta qualidade: p ≈ 10⁻³ - 10⁻⁴ por gate
+    - Ruído de fase é geralmente dominante em qubits supercondutores
+    
+    References:
+    -----------
+    Nielsen & Chuang (2010), Section 8.3.3: "The bit flip and phase flip channels"
+    
+    Shor, P. W. (1995). "Scheme for reducing decoherence in quantum computer memory."
+        Physical Review A, 52(4), R2493. doi:10.1103/PhysRevA.52.R2493
+    """
     def aplicar(self, n_qubits, nivel_override=None):
         """
         Apply phase-flip noise (Z gate with probability p) to all qubits.
@@ -1485,7 +1748,65 @@ class RuidoPhaseFlip(ModeloRuido):
             qml.PhaseFlip(p, wires=i)
 
 class RuidoPinkNoise(ModeloRuido):
-    """1/f Noise (Pink): usa PhaseDamping com variação por qubit."""
+    """
+    1/f Noise (Pink Noise): Ruído de baixa frequência com espectro 1/f.
+    
+    Descrição Física:
+    ----------------
+    Ruído rosa (pink noise) é caracterizado por densidade espectral de potência
+    proporcional a 1/f, dominante em baixas frequências. Comum em dispositivos
+    eletrônicos e qubits supercondutores devido a defeitos e flutuações.
+    
+    Modelo de Implementação:
+    -----------------------
+    Usa phase damping com intensidade variável por qubit, amostrada de
+    distribuição Gaussiana:
+    
+    $$\\lambda_i \\sim |\\mathcal{N}(0, \\sigma^2)|$$
+    
+    onde σ é o parâmetro 'nivel'. Aplicamos:
+    
+    $$\\mathcal{E}_{pink}(\\rho) = \\prod_i \\mathcal{E}_{PD}^{(i)}(\\rho, \\lambda_i)$$
+    
+    Operadores de Kraus (por qubit i):
+    ----------------------------------
+    Para phase damping com parâmetro λᵢ:
+    - K₀^{(i)} = [[1, 0], [0, √(1-λᵢ)]]
+    - K₁^{(i)} = [[0, 0], [0, √λᵢ]]
+    
+    Características do Ruído 1/f:
+    ----------------------------
+    1. **Espectro**: S(f) ∝ 1/f^α com α ≈ 1
+    2. **Correlação Temporal**: Decaimento lento (memória longa)
+    3. **Origem**: Defeitos em interfaces, cargas parasitas (TLS - Two-Level Systems)
+    
+    Parameters:
+    -----------
+    nivel : float
+        Desvio padrão da distribuição Gaussiana para intensidades de ruído
+        Valores típicos: 0.001 - 0.1
+    
+    Physical Sources:
+    ----------------
+    Em qubits supercondutores:
+    - Defeitos dielétricos nas junções Josephson
+    - Flutuações de carga em interfaces substrato/filme
+    - Two-Level Systems (TLS) em materiais amorfos
+    
+    Impact on Coherence:
+    -------------------
+    - Causa dephasing não-Markoviano
+    - Limita T₂* (tempo de decoerência de ensemble)
+    - Dominante em tempos longos (< 1 MHz)
+    
+    References:
+    -----------
+    Paladino, E., et al. (2014). "1/f noise: implications for solid-state quantum information."
+        Reviews of Modern Physics, 86(2), 361. doi:10.1103/RevModPhys.86.361
+    
+    Müller, C., et al. (2019). "Towards understanding two-level-systems in amorphous solids."
+        Reports on Progress in Physics, 82(12), 124501. doi:10.1088/1361-6633/ab3a7e
+    """
     def aplicar(self, n_qubits, nivel_override=None):
         """
         Apply 1/f (pink) noise using phase damping with per-qubit variation.
@@ -1503,7 +1824,72 @@ class RuidoPinkNoise(ModeloRuido):
             qml.PhaseDamping(float(min(1.0, pink[i])) , wires=i)
 
 class RuidoReadoutError(ModeloRuido):
-    """Readout Error (aproximação via BitFlip após operações)."""
+    """
+    Readout Error: Erros de medição ao final do circuito quântico.
+    
+    Descrição do Problema:
+    ---------------------
+    Medições quânticas são imperfeitas em hardware real. Os erros principais são:
+    1. Misassignment: Ler |0⟩ quando o estado é |1⟩ e vice-versa
+    2. Relaxação durante medição (tempo de medição não negligível)
+    3. Crosstalk entre canais de medição
+    
+    Modelo Matemático:
+    -----------------
+    Matriz de confusão de readout:
+    
+    $$M = \\begin{pmatrix}
+    1-p_{0\\to1} & p_{1\\to0} \\\\
+    p_{0\\to1} & 1-p_{1\\to0}
+    \\end{pmatrix}$$
+    
+    Aproximação via Bit-Flip:
+    ------------------------
+    Implementamos readout error como bit-flip aplicado imediatamente antes
+    da medição (equivalente para propósitos de classificação):
+    
+    $$\\mathcal{E}_{RO}(\\rho) \\approx (1-p)\\rho + p X\\rho X$$
+    
+    Operadores de Kraus:
+    -------------------
+    $$K_0 = \\sqrt{1-p} \\mathbb{I}, \\quad K_1 = \\sqrt{p} X$$
+    
+    (Mesmos operadores que bit-flip, mas interpretação física diferente)
+    
+    Parameters:
+    -----------
+    nivel : float
+        Probabilidade de erro de medição p ∈ [0, 1]
+        Típico: p = (p_{0→1} + p_{1→0})/2 (erro simétrico)
+    
+    Typical Error Rates:
+    -------------------
+    - IBM Quantum: 1-5% (0.01-0.05)
+    - Google Sycamore: ~0.3-1%
+    - IonQ (trapped ions): ~0.1-0.5%
+    - State-of-the-art superconducting: ~0.3%
+    
+    Mitigation Strategies:
+    ---------------------
+    1. Calibração de matriz de readout
+    2. Repetir medições e usar votação majoritária
+    3. Técnicas de mitigação de erro quântico (QEM)
+    
+    Impact on Classification:
+    ------------------------
+    Readout error é crítico para VQC pois:
+    - Afeta diretamente a estimativa de expectation values
+    - Bias sistemático pode favorecer uma classe
+    - Deve ser caracterizado e mitigado
+    
+    References:
+    -----------
+    Maciejewski, F. B., et al. (2020). "Mitigation of readout noise in near-term quantum devices."
+        Quantum, 4, 257. doi:10.22331/q-2020-04-24-257
+    
+    Bravyi, S., et al. (2021). "Mitigating measurement errors in multiqubit experiments."
+        Physical Review A, 103(4), 042605. doi:10.1103/PhysRevA.103.042605
+    """
     def aplicar(self, n_qubits, nivel_override=None):
         """
         Apply readout error approximated via bit-flip operations.
@@ -1522,18 +1908,63 @@ class RuidoReadoutError(ModeloRuido):
 
 class RuidoDepolarizante(ModeloRuido):
     """
-    Ruído de Depolarização: ρ → (1-p)ρ + p·I/2
-
-    Referência: Preskill (2018). "Quantum Computing in the NISQ era." Quantum.
-
-    Descrição: Erro genérico mais comum em qubits supercondutores (IBM, Google).
-    O estado quântico é substituído pelo estado maximamente misto com probabilidade p.
-
+    Ruído de Depolarização: Canal quântico mais geral para qubit único.
+    
+    Descrição Matemática:
+    --------------------
+    O canal de depolarização substitui o estado quântico pelo estado
+    maximamente misto com probabilidade p:
+    
+    $$\\mathcal{E}_{depol}(\\rho) = (1-p)\\rho + \\frac{p}{3}(X\\rho X + Y\\rho Y + Z\\rho Z)$$
+    
+    Equivalentemente:
+    $$\\mathcal{E}_{depol}(\\rho) = (1-p)\\rho + \\frac{p}{2}\\mathbb{I}$$
+    
     Operadores de Kraus:
-    K₀ = √(1-p) I
-    K₁ = √(p/3) X
-    K₂ = √(p/3) Y
-    K₃ = √(p/3) Z
+    -------------------
+    $$K_0 = \\sqrt{1-p} \\mathbb{I}$$
+    $$K_1 = \\sqrt{\\frac{p}{3}} X, \\quad K_2 = \\sqrt{\\frac{p}{3}} Y, \\quad K_3 = \\sqrt{\\frac{p}{3}} Z$$
+    
+    onde X, Y, Z são as matrizes de Pauli.
+    
+    Verificação de Completude:
+    -------------------------
+    $$\\sum_{k=0}^3 K_k^\\dagger K_k = (1-p)\\mathbb{I} + \\frac{p}{3}(X^2 + Y^2 + Z^2) = \\mathbb{I}$$
+    
+    Interpretação Física:
+    --------------------
+    - Com probabilidade (1-p): o estado não é afetado
+    - Com probabilidade p/3: aplica-se X, Y ou Z aleatoriamente
+    - No limite p→1: ρ → I/2 (estado maximamente misto)
+    
+    Relevância em NISQ:
+    ------------------
+    - Modelo mais comum para erro de porta única
+    - Captura simultaneamente erros de bit-flip e phase-flip
+    - Usado em benchmarking (randomized benchmarking)
+    - Típico em gates de 1-qubit em hardware superconductor
+    
+    Parameters:
+    -----------
+    nivel : float
+        Probabilidade de depolarização p ∈ [0, 1]
+        Typical values: p ≈ 10⁻³ - 10⁻² por gate
+    
+    Typical Error Rates:
+    -------------------
+    - IBM Quantum: ~1-2 × 10⁻³ por gate
+    - Google Sycamore: ~1.6 × 10⁻³ (1-qubit)
+    - Rigetti: ~2-5 × 10⁻³
+    
+    References:
+    -----------
+    Preskill, J. (2018). "Quantum Computing in the NISQ era and beyond."
+        Quantum, 2, 79. doi:10.22331/q-2018-08-06-79
+    
+    Nielsen & Chuang (2010), Section 8.3.4: "The depolarizing channel"
+    
+    Knill, E., et al. (2008). "Randomized benchmarking of quantum gates."
+        Physical Review A, 77(1), 012307. doi:10.1103/PhysRevA.77.012307
     """
     def aplicar(self, n_qubits, nivel_override=None):
         """
@@ -1550,16 +1981,71 @@ class RuidoDepolarizante(ModeloRuido):
 
 class RuidoAmplitudeDamping(ModeloRuido):
     """
-    Amplitude Damping: Relaxamento T1 (|1⟩ → |0⟩)
-
-    Referência: Clerk et al. (2010). "Introduction to quantum noise." Rev. Mod. Phys.
-
-    Descrição: Perda de energia do qubit para o ambiente. Modela decaimento
-    exponencial com tempo característico T1. Comum em qubits supercondutores.
-
+    Amplitude Damping: Relaxamento energético T1 (|1⟩ → |0⟩).
+    
+    Descrição Física:
+    ----------------
+    Modela a perda irreversível de energia do qubit para um reservatório
+    térmico a temperatura T ≈ 0. Representa decaimento exponencial com
+    tempo característico T1 (tempo de relaxação energética).
+    
+    Descrição Matemática:
+    --------------------
+    O canal de amplitude damping é definido por:
+    
+    $$\\mathcal{E}_{AD}(\\rho) = K_0 \\rho K_0^\\dagger + K_1 \\rho K_1^\\dagger$$
+    
     Operadores de Kraus:
-    K₀ = [[1, 0], [0, √(1-γ)]]
-    K₁ = [[0, √γ], [0, 0]]
+    -------------------
+    $$K_0 = \\begin{pmatrix} 1 & 0 \\\\ 0 & \\sqrt{1-\\gamma} \\end{pmatrix}, \\quad
+      K_1 = \\begin{pmatrix} 0 & \\sqrt{\\gamma} \\\\ 0 & 0 \\end{pmatrix}$$
+    
+    onde γ = 1 - exp(-t/T1) é a taxa de decaimento.
+    
+    Verificação de Completude:
+    -------------------------
+    $$K_0^\\dagger K_0 + K_1^\\dagger K_1 = 
+      \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = \\mathbb{I}$$
+    
+    Efeito no Estado:
+    ----------------
+    - |0⟩ → |0⟩ (estado fundamental é estável)
+    - |1⟩ → √(1-γ)|1⟩ + √γ|0⟩ (decai para |0⟩)
+    - Matriz de densidade: ρ₁₁ decresce exponencialmente
+    
+    Relação com T1:
+    --------------
+    Para evolução contínua: γ(t) = 1 - e^{-t/T₁}
+    
+    Discretização: γ ≈ Δt/T₁ para Δt << T₁
+    
+    Parameters:
+    -----------
+    nivel : float
+        Taxa de decaimento γ ∈ [0, 1]
+        γ ≈ t_gate/T₁ onde t_gate é duração da porta
+    
+    Typical Values:
+    --------------
+    - Qubits supercondutores: T₁ ≈ 50-100 μs
+    - Qubits transmon (IBM): T₁ ≈ 100-200 μs
+    - Para t_gate ≈ 20 ns: γ ≈ 2×10⁻⁴
+    
+    Physical Origin:
+    ---------------
+    - Emissão espontânea de fótons
+    - Acoplamento com modos do ambiente
+    - Dielectric loss em substratos
+    
+    References:
+    -----------
+    Clerk, A. A., et al. (2010). "Introduction to quantum noise, measurement, and amplification."
+        Reviews of Modern Physics, 82(2), 1155. doi:10.1103/RevModPhys.82.1155
+    
+    Nielsen & Chuang (2010), Section 8.3.5: "The amplitude damping channel"
+    
+    Gambetta, J. M., et al. (2017). "Building logical qubits in a superconducting quantum computing system."
+        npj Quantum Information, 3(1), 2. doi:10.1038/s41534-016-0004-0
     """
     def aplicar(self, n_qubits, nivel_override=None):
         """
@@ -1576,16 +2062,77 @@ class RuidoAmplitudeDamping(ModeloRuido):
 
 class RuidoPhaseDamping(ModeloRuido):
     """
-    Phase Damping: Decoerência T2 (perda de fase)
-
-    Referência: Schlosshauer (2007). "Decoherence and the Quantum-to-Classical Transition"
-
-    Descrição: Perda de informação de fase sem perda de energia. Modela
-    decoerência com tempo característico T2. Importante em qubits de spin.
-
+    Phase Damping: Decoerência pura T2 (perda de fase sem perda de energia).
+    
+    Descrição Física:
+    ----------------
+    Modela a perda de informação de fase quântica devido a interações
+    com o ambiente que não transferem energia. Representa dephasing
+    com tempo característico T₂* ou T_φ (tempo de decoerência de fase).
+    
+    Descrição Matemática:
+    --------------------
+    O canal de phase damping é definido por:
+    
+    $$\\mathcal{E}_{PD}(\\rho) = K_0 \\rho K_0^\\dagger + K_1 \\rho K_1^\\dagger$$
+    
     Operadores de Kraus:
-    K₀ = [[1, 0], [0, √(1-λ)]]
-    K₁ = [[0, 0], [0, √λ]]
+    -------------------
+    $$K_0 = \\begin{pmatrix} 1 & 0 \\\\ 0 & \\sqrt{1-\\lambda} \\end{pmatrix}, \\quad
+      K_1 = \\begin{pmatrix} 0 & 0 \\\\ 0 & \\sqrt{\\lambda} \\end{pmatrix}$$
+    
+    onde λ = 1 - exp(-t/T₂*) é a taxa de dephasing.
+    
+    Verificação de Completude:
+    -------------------------
+    $$K_0^\\dagger K_0 + K_1^\\dagger K_1 = \\mathbb{I}$$
+    
+    Efeito no Estado:
+    ----------------
+    - Estados da base computacional {|0⟩, |1⟩} são preservados
+    - Coerências off-diagonal decaem: ρ₀₁, ρ₁₀ → 0
+    - Superposições α|0⟩ + β|1⟩ perdem fase relativa
+    
+    Relação com T2:
+    --------------
+    $$\\frac{1}{T_2} = \\frac{1}{2T_1} + \\frac{1}{T_\\phi}$$
+    
+    onde T_φ é o tempo de pure dephasing. Sempre: T₂ ≤ 2T₁
+    
+    Parameters:
+    -----------
+    nivel : float
+        Taxa de dephasing λ ∈ [0, 1]
+        λ ≈ t_gate/T₂* onde t_gate é duração da porta
+    
+    Typical Values:
+    --------------
+    - Qubits supercondutores: T₂ ≈ 20-80 μs (T₂ < T₁)
+    - Qubits transmon: T₂ ≈ 50-150 μs
+    - Para t_gate ≈ 20 ns: λ ≈ 2-4×10⁻⁴
+    
+    Physical Origin:
+    ---------------
+    - Flutuações de carga (charge noise)
+    - Flutuações de fluxo magnético (flux noise)
+    - Ruído 1/f de low-frequency
+    - Two-Level Systems (TLS) em dielétricos
+    
+    Impact on Quantum Algorithms:
+    ----------------------------
+    - Degrada superposições (essenciais para advantage quântico)
+    - Limita profundidade de circuitos quânticos
+    - Dominante em gates de Hadamard e rotações
+    
+    References:
+    -----------
+    Schlosshauer, M. (2007). "Decoherence and the Quantum-to-Classical Transition."
+        Springer. doi:10.1007/978-3-540-35775-9
+    
+    Nielsen & Chuang (2010), Section 8.3.5: "The phase damping channel"
+    
+    Ithier, G., et al. (2005). "Decoherence in a superconducting quantum bit circuit."
+        Physical Review B, 72(13), 134519. doi:10.1103/PhysRevB.72.134519
     """
     def aplicar(self, n_qubits, nivel_override=None):
         """
@@ -1603,11 +2150,74 @@ class RuidoPhaseDamping(ModeloRuido):
 # ===================== NOVOS MODELOS DE RUÍDO =====================
 class RuidoCrosstalk(ModeloRuido):
     """
-    Ruído de Cross-Talk: Erros correlacionados entre qubits vizinhos
-
-    Referência: Kandala et al. (2019). "Error mitigation extends the computational reach of a noisy quantum processor." Nature.
-
-    Descrição: Aplica um canal de ruído correlacionado entre pares de qubits vizinhos (ex: CNOT com ruído).
+    Ruído de Cross-Talk: Erros correlacionados entre qubits vizinhos.
+    
+    Descrição Física:
+    ----------------
+    Crosstalk ocorre quando operações em um qubit afetam inadvertidamente
+    qubits vizinhos devido a:
+    1. Acoplamento residual entre qubits
+    2. Interferência de sinais de controle
+    3. Leakage para níveis não-computacionais
+    4. Efeitos ZZ (sempre-on interaction)
+    
+    Modelo de Implementação:
+    -----------------------
+    Simulamos crosstalk como uma combinação de:
+    1. Depolarização local em cada qubit
+    2. Operações CNOT espúrias entre qubits adjacentes
+    3. Depolarização adicional após crosstalk
+    
+    Matematicamente (para par de qubits i, i+1):
+    
+    $$\\mathcal{E}_{XT}^{(i,i+1)}(\\rho) = \\mathcal{E}_{depol}^{(i+1)} \\circ 
+        \\text{CNOT}_{i,i+1} \\circ \\mathcal{E}_{depol}^{(i)} \\circ 
+        \\mathcal{E}_{depol}^{(i+1)}(\\rho)$$
+    
+    Efeito no Sistema:
+    -----------------
+    - Cria correlações espúrias entre qubits
+    - Degrada fidelidade de gates de 2-qubits
+    - Acumula-se com profundidade do circuito
+    - Pode criar entanglement não-intencional
+    
+    Manifestação em Hardware:
+    ------------------------
+    - **Frequency Crowding**: Qubits próximos em frequência
+    - **Flux Crosstalk**: Linhas de controle de fluxo compartilhadas
+    - **Microwave Crosstalk**: Vazamento de sinais de controle
+    - **ZZ Interaction**: Acoplamento Ising sempre-on
+    
+    Parameters:
+    -----------
+    nivel : float
+        Intensidade de crosstalk p ∈ [0, 1]
+        Usado para depolarização e probabilidade de CNOT espúrio
+    
+    Typical Impact:
+    --------------
+    - Adiciona ~0.5-2% de erro extra em gates de 2-qubits
+    - Mais severo em arquiteturas densas (high connectivity)
+    - Mitigável via: calibração, cancelamento ativo, pulse shaping
+    
+    Mitigation Strategies:
+    ---------------------
+    1. Simultaneous RB (randomized benchmarking)
+    2. Crosstalk-aware compilation
+    3. Dynamical decoupling
+    4. Echo sequences
+    
+    References:
+    -----------
+    Kandala, A., et al. (2019). "Error mitigation extends the computational reach
+        of a noisy quantum processor." Nature, 567(7749), 491-495.
+        doi:10.1038/s41586-019-1040-7
+    
+    Sarovar, M., et al. (2020). "Detecting crosstalk errors in quantum information processors."
+        Quantum, 4, 321. doi:10.22331/q-2020-09-11-321
+    
+    Tripathi, V., et al. (2021). "Suppression of crosstalk in superconducting qubits using
+        dynamical decoupling." Physical Review Applied, 18(2), 024068.
     """
     def aplicar(self, n_qubits, nivel_override=None):
         """
@@ -1631,11 +2241,78 @@ class RuidoCrosstalk(ModeloRuido):
 
 class RuidoCorrelacionado(ModeloRuido):
     """
-    Ruído Correlacionado Global: Erros coletivos afetando todos os qubits
-
-    Referência: Greenbaum (2015). "Introduction to Quantum Gate Set Tomography."
-
-    Descrição: Aplica um canal de ruído coletivo (ex: PhaseDamping global) a todos os qubits simultaneamente.
+    Ruído Correlacionado Global: Erros coletivos afetando todos os qubits.
+    
+    Descrição Física:
+    ----------------
+    Ruído correlacionado ocorre quando uma fonte de ruído externa afeta
+    múltiplos qubits simultaneamente, causando erros correlacionados
+    em vez de independentes. Comum em sistemas com:
+    1. Oscilador local compartilhado (frequency drift)
+    2. Flutuações de campo magnético global
+    3. Ruído em linhas de controle compartilhadas
+    4. Variações de temperatura do criostato
+    
+    Modelo Matemático:
+    -----------------
+    Aplicamos phase damping coletivo a todos os qubits:
+    
+    $$\\mathcal{E}_{corr}(\\rho) = \\bigotimes_{i=1}^n \\mathcal{E}_{PD}^{(i)}(\\rho, \\lambda)$$
+    
+    onde a mesma taxa λ é usada para todos os qubits (correlação perfeita).
+    
+    Diferença de Ruído Independente:
+    --------------------------------
+    - **Independente**: Cada qubit tem λᵢ diferente (descorrelacionado)
+    - **Correlacionado**: Todos usam mesmo λ (perfeitamente correlacionado)
+    - **Parcialmente Correlacionado**: λᵢ = λ_global + εᵢ (realístico)
+    
+    Efeito em Códigos Quânticos:
+    ----------------------------
+    Ruído correlacionado é *benéfico* para alguns códigos de correção
+    de erros pois:
+    - Reduz número efetivo de erros independentes
+    - Preserva certos subespaços (decoherence-free subspaces)
+    - Permite correção via técnicas especializadas
+    
+    Applications in VQC:
+    -------------------
+    - Pode melhorar performance de VQC (ruído benéfico)
+    - Reduz barren plateaus em alguns casos
+    - Permite strategies de error mitigation
+    
+    Parameters:
+    -----------
+    nivel : float
+        Taxa de dephasing correlacionado λ ∈ [0, 1]
+        Aplicada identicamente a todos os qubits
+    
+    Physical Sources:
+    ----------------
+    - **Clock Jitter**: Flutuações de timing compartilhadas
+    - **Laser Intensity Noise**: Em qubits atômicos/iônicos
+    - **Magnetic Field Drift**: Flutuações de campo DC
+    - **Microwave Phase Noise**: Ruído no oscilador local
+    
+    Beneficial vs. Detrimental:
+    --------------------------
+    - Benéfico: Para códigos com simetria (DFS codes)
+    - Benéfico: Para VQC com estrutura específica
+    - Detrimental: Para correção de erro genérica (Shor code)
+    
+    References:
+    -----------
+    Greenbaum, D. (2015). "Introduction to Quantum Gate Set Tomography."
+        arXiv:1509.02921
+    
+    Dür, W., & Briegel, H. J. (2004). "Stability of macroscopic entanglement
+        under decoherence." Physical Review Letters, 92(18), 180403.
+    
+    Zanardi, P., & Rasetti, M. (1997). "Noiseless quantum codes."
+        Physical Review Letters, 79(17), 3306. doi:10.1103/PhysRevLett.79.3306
+    
+    Holmes, Z., et al. (2021). "Barren plateaus preclude learning scramblers."
+        Physical Review Letters, 126(19), 190501. (Discusses correlated noise benefits)
     """
     def aplicar(self, n_qubits, nivel_override=None):
         """
