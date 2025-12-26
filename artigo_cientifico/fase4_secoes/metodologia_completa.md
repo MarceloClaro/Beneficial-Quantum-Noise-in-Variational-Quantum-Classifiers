@@ -270,13 +270,16 @@ Implementamos 5 modelos de ruído físico baseados em operadores de Kraus, segui
 **Definição:** Canal que substitui o estado quântico $\rho$ por estado completamente misto $\mathbb{I}/2$ com probabilidade $\gamma$.
 
 **Operadores de Kraus:**
+
 $$
+\[
 \begin{aligned}
-K_0 &= \sqrt{1 - \frac{3\gamma}{4}} \mathbb{I} \\
-K_1 &= \sqrt{\frac{\gamma}{4}} X \\
-K_2 &= \sqrt{\frac{\gamma}{4}} Y \\
-K_3 &= \sqrt{\frac{\gamma}{4}} Z
+K_0 &= \sqrt{1 - \frac{3\gamma}{4}} \, \mathbb{I} \\
+K_1 &= \sqrt{\frac{\gamma}{4}} \, X \\
+K_2 &= \sqrt{\frac{\gamma}{4}} \, Y \\
+K_3 &= \sqrt{\frac{\gamma}{4}} \, Z
 \end{aligned}
+\]
 $$
 
 **Verificação CP-TP:** $\sum_{i=0}^{3} K_i^\dagger K_i = \mathbb{I}$ ✓
