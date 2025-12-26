@@ -84,6 +84,88 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 - 🆕 **[Resultados Framework Completo QUALIS A1](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Execução Validada 23/12/2025
 - 📊 **[Executive Summary QUALIS A1](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)** - Resumo Executivo
 - 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
+- 🆕 **[Consultor Metodológico Qualis A1](CONSULTOR_METODOLOGICO_README.md)** - Ferramenta de Revisão Metodológica e Análise de Introduções
+  - 🎯 [Guia Rápido do Consultor](GUIA_RAPIDO_CONSULTOR.md) - Início em 3 passos
+  - 📄 [Exemplo de Insumos](exemplo_insumos_consultor.json) - Template JSON
+  - 🤖 [Script Consultor](consultor_metodologico.py) - Executa 7 tarefas especializadas (A-G)
+- 🆕 **[Gerador de Artigo Completo MODO B + R1](GERADOR_ARTIGO_README.md)** - Sistema Completo de Geração com Rastreabilidade
+  - 📝 [Script Gerador](gerador_artigo_completo.py) - 6 fases com quality gates
+  - 🏗️ Gera 24 arquivos: auditoria, enquadramento, literatura, IMRAD, suplementar, consolidação
+  - 📚 ABNT NBR 10520/6023 + política R1 (referências expandidas)
+
+---
+
+## 🎓 Ferramentas de Geração de Artigo (NOVO!)
+
+### 1️⃣ Consultor Metodológico Qualis A1
+
+### 1️⃣ Consultor Metodológico Qualis A1
+
+**Ferramenta de revisão e auditoria para artigos existentes**
+
+#### ✨ Funcionalidades
+
+- ✅ **Tarefa A:** Justificativa metodológica convincente (nível A1)
+- ✅ **Tarefa B:** Análise de contexto empírico específico
+- ✅ **Tarefa C:** Diagnóstico de irrelevâncias na introdução
+- ✅ **Tarefa D:** Verificação de progressão lógica
+- ✅ **Tarefa E:** Checklist de elementos obrigatórios
+- ✅ **Tarefa F:** Reescrita de primeiros parágrafos (sem alterar referências)
+- ✅ **Tarefa G:** Tabela comparativa de definições conceituais
+
+#### 🚀 Uso
+
+```bash
+# Análise completa
+./executar_consultor.sh --insumos exemplo_insumos_consultor.json --output relatorio.md
+
+# Tarefas específicas
+python consultor_metodologico.py --insumos meu_artigo.json --tarefas A,B,E
+```
+
+📖 [Documentação Completa](CONSULTOR_METODOLOGICO_README.md)
+
+---
+
+### 2️⃣ Gerador de Artigo Completo (MODO B + R1)
+
+**Sistema completo de geração com rastreabilidade código-dados**
+
+#### 🏗️ 6 Fases com Quality Gates
+
+1. **Fase 1**: Auditoria técnica do código/dados
+2. **Fase 2**: Enquadramento científico (linha de pesquisa + lacuna)
+3. **Fase 3**: Curadoria bibliográfica (35-60 refs com DOI)
+4. **Fase 4**: Redação IMRAD completa em PORTUGUÊS
+5. **Fase 5**: Material suplementar (tabelas + figuras)
+6. **Fase 6**: Auditoria de consistência código-texto
+
+#### 📝 Configuração
+
+- **MODO B**: Texto em PORTUGUÊS + normas ABNT (NBR 10520/6023)
+- **R1**: Referências expandidas (busca permitida com DOI e justificativa)
+
+#### 🚀 Uso
+
+```bash
+# Gerar artigo completo
+python gerador_artigo_completo.py \
+  --repositorio . \
+  --output artigo_gerado \
+  --periodico-primario "Nature Communications"
+```
+
+#### 📊 Saída
+
+Gera **24 arquivos** organizados em 6 pastas:
+- `fase1_auditoria/` - 3 arquivos (inventário, componentes, execução)
+- `fase2_enquadramento/` - 2 arquivos (linha pesquisa, diagrama)
+- `fase3_literatura/` - 2 arquivos (referências, síntese)
+- `fase4_redacao/` - 9 arquivos (IMRAD completo + editoriais)
+- `fase5_suplementar/` - 4 arquivos (tabelas S1-S5, figuras S1-S8)
+- `fase6_consolidacao/` - 4 arquivos (consistência, rastreabilidade, artigo final)
+
+📖 [Documentação Completa](GERADOR_ARTIGO_README.md)
 
 ---
 
