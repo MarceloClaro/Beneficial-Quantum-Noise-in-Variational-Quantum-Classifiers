@@ -142,7 +142,7 @@ Utilizamos 4 datasets de classificação com características complementares par
 
 **Pré-processamento:**
 1. StandardScaler nas 4 features originais
-2. PCA para projeção em 2D:  $$ \mathbf{X}{2D} = \mathbf{X}{4D} \cdot \mathbf{W}_{PCA} $$
+2. PCA para projeção em 2D:  $\mathbf{X}{2D}=\mathbf{X}{4D}\cdot\mathbf{W}_{PCA}$
 3. Re-normalização após PCA
 4. Divisão estratificada multiclasse
 
