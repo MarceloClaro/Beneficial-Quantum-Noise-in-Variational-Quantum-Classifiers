@@ -84,6 +84,42 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 - 🆕 **[Resultados Framework Completo QUALIS A1](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Execução Validada 23/12/2025
 - 📊 **[Executive Summary QUALIS A1](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)** - Resumo Executivo
 - 🔍 **[Error Search Framework](ERROR_SEARCH_GUIDE.md)** - Busca Automática de Erros
+- 🆕 **[Consultor Metodológico Qualis A1](CONSULTOR_METODOLOGICO_README.md)** - Ferramenta de Revisão Metodológica e Análise de Introduções
+  - 🎯 [Guia Rápido do Consultor](GUIA_RAPIDO_CONSULTOR.md) - Início em 3 passos
+  - 📄 [Exemplo de Insumos](exemplo_insumos_consultor.json) - Template JSON
+  - 🤖 [Script Consultor](consultor_metodologico.py) - Executa 7 tarefas especializadas (A-G)
+
+---
+
+## 🎓 Consultor Metodológico Qualis A1 (NOVO!)
+
+**Ferramenta especializada para revisão metodológica e análise de introduções acadêmicas**
+
+### ✨ Principais Funcionalidades
+
+- ✅ **Tarefa A:** Justificativa metodológica convincente (nível A1)
+- ✅ **Tarefa B:** Análise de contexto empírico específico
+- ✅ **Tarefa C:** Diagnóstico de irrelevâncias na introdução
+- ✅ **Tarefa D:** Verificação de progressão lógica
+- ✅ **Tarefa E:** Checklist de elementos obrigatórios
+- ✅ **Tarefa F:** Reescrita de primeiros parágrafos (sem alterar referências)
+- ✅ **Tarefa G:** Tabela comparativa de definições conceituais
+
+### 🚀 Uso Rápido
+
+```bash
+# Executar análise completa
+./executar_consultor.sh --insumos exemplo_insumos_consultor.json --output relatorio.md
+
+# Ou diretamente com Python
+python consultor_metodologico.py --insumos meu_artigo.json
+```
+
+### 📚 Documentação
+
+- 📖 [Documentação Completa do Consultor](CONSULTOR_METODOLOGICO_README.md)
+- 🚀 [Guia Rápido (3 passos)](GUIA_RAPIDO_CONSULTOR.md)
+- 📄 [Arquivo de Exemplo](exemplo_insumos_consultor.json)
 
 ---
 
