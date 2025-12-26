@@ -166,17 +166,55 @@ stats = builder.get_circuit_stats()
 print(f"Depth: {stats['depth']}, Gates: {stats['total_gates']}")
 ```
 
+### ✅ Tarefa 2: Otimização Bayesiana (hyperparameter_tuning.py)
+
+Otimização de hiperparâmetros com Optuna:
+
+```python
+from scripts.hyperparameter_tuning import otimizar_hiperparametros_qaoa
+
+# Executar otimização
+resultado = otimizar_hiperparametros_qaoa(
+    problem=problem,
+    evaluate_fn=evaluate_qaoa,
+    config=config,
+    n_trials=100
+)
+
+print(f"Melhores parâmetros: {resultado['best_params']}")
+print(f"Melhor approx_ratio: {resultado['best_value']:.4f}")
+```
+
+### ✅ Tarefa 8: Visualizações (visualization.py)
+
+Visualizações específicas para QAOA:
+
+```python
+from scripts.visualization import (
+    visualizar_convergencia_qaoa,
+    visualizar_comparacao_ruido,
+    gerar_relatorio_visual_html
+)
+
+# Convergência
+visualizar_convergencia_qaoa(historico_energia, salvar='convergencia.html')
+
+# Comparação de ruído
+visualizar_comparacao_ruido(df_resultados, salvar='comparacao.html')
+
+# Relatório completo
+gerar_relatorio_visual_html(resultados, 'relatorio_qaoa.html')
+```
+
 ---
 
 ## 🎯 Tarefas Pendentes
 
 As seguintes tarefas do plano ainda precisam ser implementadas:
 
-- [ ] **Tarefa 2**: Adaptação do Optuna para QAOA
 - [ ] **Tarefa 5**: Função de custo completa com opflow
 - [ ] **Tarefa 6**: Testes de escalabilidade MPS
 - [ ] **Tarefa 7**: Camada de abstração de backend
-- [ ] **Tarefa 8**: Visualizações QAOA-específicas
 - [ ] **Tarefa 9**: Análise estatística adaptada
 - [ ] **Tarefa 10**: Sistema de reprodutibilidade completo
 - [ ] **Tarefa 11**: Script de demonstração
@@ -298,6 +336,6 @@ MIT License - mesmo do projeto principal
 
 **Status**: 🚧 **EM DESENVOLVIMENTO**
 
-**Tarefas Completas**: 4/12 (33%)
+**Tarefas Completas**: 6/12 (50%)
 
 **Última Atualização**: 2025-12-26
