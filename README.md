@@ -28,15 +28,17 @@ This repository presents the full investigative framework for the article **"Fro
 > **Framework Investigativo Completo v8.0-QAI para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
 > ✨ **NOVO (v8.0-QAI - 26/12/2025)**: 
-> - 🎉 **MULTIFRAMEWORK COMPLETO**: Execução validada em Qiskit, Cirq e PennyLane! [Ver resultados →](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
-> - 🏆 **Qiskit melhor desempenho**: 66.67% de acurácia com phase damping
-> - ⚡ **Cirq mais rápido**: 7.7x mais rápido que Qiskit
+> - 🎉 **TODOS OS 3 FRAMEWORKS EXECUTADOS COM SUCESSO!** [Ver resultados →](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
+> - 🏆 **Qiskit**: 66.67% acurácia (melhor precisão)
+> - ⚡ **PennyLane**: 53.33% acurácia em 10s (30x mais rápido!)
+> - ⚖️ **Cirq**: 53.33% acurácia em 41s (equilíbrio)
 > - Visualizações QUALIS A1 com rigor técnico e estético! [Ver resultados completos →](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 > - **🚀 FRAMEWORK QISKIT**: Implementação completa usando IBM Qiskit! [Ver guia →](docs/GUIA_QISKIT.md)
 > 
-> 🎯 **RESULTADOS VALIDADOS**: Framework multiframework executado com sucesso!
+> 🎯 **RESULTADOS VALIDADOS - Execução Completa dos 3 Frameworks**:
 > - **Melhor acurácia histórica**: **65.83%** (Random Entangling + Phase Damping γ=0.0014)
 > - **Melhor acurácia multiframework**: **66.67%** (Qiskit + Strongly Entangling + Phase Damping γ=0.005)
+> - **Execução mais rápida**: **10.03s** (PennyLane - 30x mais veloz que Qiskit)
 > - [Ver relatório executivo →](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md) | [Ver resultados multiframework →](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
 
 ## 🚀 Início Rápido

@@ -8,20 +8,20 @@
 
 ## 📊 Resultados Principais
 
-### Framework Qiskit (IBM Quantum) - 🏆 Campeão
+### Framework Qiskit (IBM Quantum) - 🏆 Campeão de Acurácia
 - **Acurácia:** 66.67%
-- **Tempo:** 317.52 segundos
+- **Tempo:** 303.24 segundos
 - **Status:** ✅ Sucesso
 
-### Framework Cirq (Google Quantum) - ⚡ Mais Rápido
+### Framework PennyLane (Xanadu) - ⚡ Campeão de Velocidade
 - **Acurácia:** 53.33%
-- **Tempo:** 41.21 segundos (7.7x mais rápido)
+- **Tempo:** 10.03 segundos (30x mais rápido!)
 - **Status:** ✅ Sucesso
 
-### Framework PennyLane
-
-**Status:** ✅ **Harmonizado e Funcional** (API atualizada)
-**Nota:** Interface harmonizada - `n_epocas` agora passado corretamente ao construtor
+### Framework Cirq (Google Quantum) - ⚖️ Equilíbrio
+- **Acurácia:** 53.33%
+- **Tempo:** 41.03 segundos
+- **Status:** ✅ Sucesso
 
 ---
 

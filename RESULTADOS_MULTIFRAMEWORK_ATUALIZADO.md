@@ -14,15 +14,15 @@ Este documento apresenta os resultados da execução multiframework do projeto "
 
 | Framework | Status | Acurácia | Tempo (s) | Observações |
 |-----------|--------|----------|-----------|-------------|
-| **Qiskit** | ✅ Sucesso | **66.67%** | 317.52 | Melhor desempenho |
-| **Cirq** | ✅ Sucesso | 53.33% | 41.21 | Execução mais rápida |
-| **PennyLane** | ✅ Harmonizado | - | - | API atualizada, pronto para execução |
+| **Qiskit** | ✅ Sucesso | **66.67%** | 303.24 | Melhor desempenho |
+| **PennyLane** | ✅ Sucesso | 53.33% | 10.03 | **Mais rápido** - 30x mais veloz |
+| **Cirq** | ✅ Sucesso | 53.33% | 41.03 | Execução intermediária |
 
 ---
 
 ## 🏆 Destaques dos Resultados
 
-### 1. Framework Qiskit (IBM Quantum)
+### 1. Framework Qiskit (IBM Quantum) - 🏆 Campeão de Acurácia
 
 **Configuração:**
 - Arquitetura: `strongly_entangling`
@@ -35,13 +35,33 @@ Este documento apresenta os resultados da execução multiframework do projeto "
 
 **Resultados:**
 - ✅ **Acurácia de Teste: 66.67%**
-- ⏱️ Tempo de Execução: 317.52 segundos
+- ⏱️ Tempo de Execução: 303.24 segundos
 - 📊 Dataset: Moons (amostra reduzida)
 
 **Análise:**
-O framework Qiskit demonstrou o melhor desempenho entre os frameworks testados, confirmando a viabilidade da implementação em plataformas IBM Quantum. A acurácia de 66.67% é consistente com os resultados esperados para classificação binária com ruído benéfico controlado.
+O framework Qiskit demonstrou o melhor desempenho em acurácia entre os três frameworks testados, confirmando a viabilidade da implementação em plataformas IBM Quantum. A acurácia de 66.67% é consistente com os resultados esperados para classificação binária com ruído benéfico controlado.
 
-### 2. Framework Cirq (Google Quantum)
+### 2. Framework PennyLane (Xanadu) - ⚡ Campeão de Velocidade
+
+**Configuração:**
+- Arquitetura: `strongly_entangling`
+- Estratégia de Inicialização: `quantico`
+- Tipo de Ruído: `phase_damping`
+- Nível de Ruído: γ = 0.005
+- Qubits: 4
+- Camadas: 2
+- Épocas: 5
+- Seed: 42
+
+**Resultados:**
+- ✅ **Acurácia de Teste: 53.33%**
+- ⚡ **Tempo de Execução: 10.03 segundos** (30x mais rápido que Qiskit!)
+- 📊 Dataset: Moons (amostra reduzida)
+
+**Análise:**
+O framework PennyLane apresentou a execução mais rápida entre os três frameworks, sendo aproximadamente 30x mais veloz que Qiskit e 4x mais rápido que Cirq. Ideal para prototipagem rápida, iteração de experimentos e desenvolvimento inicial. A acurácia moderada reflete o trade-off entre velocidade e precisão.
+
+### 3. Framework Cirq (Google Quantum) - ⚖️ Equilíbrio
 
 **Configuração:**
 - Ansatz: `strongly_entangling`
@@ -55,11 +75,11 @@ O framework Qiskit demonstrou o melhor desempenho entre os frameworks testados, 
 
 **Resultados:**
 - ✅ **Acurácia de Teste: 53.33%**
-- ⏱️ Tempo de Execução: 41.21 segundos (7.7x mais rápido que Qiskit)
+- ⏱️ Tempo de Execução: 41.03 segundos
 - 📊 Dataset: Sintético (50 amostras)
 
 **Análise:**
-O framework Cirq apresentou execução significativamente mais rápida, adequado para prototipagem rápida e testes. A acurácia moderada reflete o trade-off entre velocidade e precisão com número reduzido de shots.
+O framework Cirq oferece um equilíbrio entre velocidade e precisão. Apresentou acurácia similar ao PennyLane, mas com tempo de execução intermediário. Adequado para experimentos que requerem um balanço entre rapidez e robustez.
 
 ---
 
@@ -68,27 +88,29 @@ O framework Cirq apresentou execução significativamente mais rápida, adequado
 ### Desempenho
 
 ```
-Qiskit:  ████████████████████ 66.67%
-Cirq:    ████████████         53.33%
+Qiskit:     ████████████████████ 66.67% 🏆 Melhor Acurácia
+PennyLane:  ████████████         53.33%
+Cirq:       ████████████         53.33%
 ```
 
 ### Tempo de Execução
 
 ```
-Cirq:    ████                 41.21s  (referência)
-Qiskit:  ████████████████████ 317.52s (7.7x mais lento)
+PennyLane:  ███                  10.03s  ⚡ MAIS RÁPIDO (30x mais veloz!)
+Cirq:       ████████             41.03s  
+Qiskit:     ████████████████████ 303.24s (referência)
 ```
 
 ### Características Distintivas
 
-| Aspecto | Qiskit | Cirq |
-|---------|--------|------|
-| **Precisão** | Alta (66.67%) | Moderada (53.33%) |
-| **Velocidade** | Moderada | Alta (7.7x mais rápida) |
-| **Maturidade** | Produção | Experimental |
-| **Ecossistema** | IBM Quantum | Google Quantum |
-| **Documentação** | Extensa | Boa |
-| **Uso Recomendado** | Produção, pesquisa rigorosa | Prototipagem, testes rápidos |
+| Aspecto | Qiskit | PennyLane | Cirq |
+|---------|--------|-----------|------|
+| **Precisão** | Alta (66.67%) 🏆 | Moderada (53.33%) | Moderada (53.33%) |
+| **Velocidade** | Lenta | **Muito Alta (30x)** ⚡ | Alta |
+| **Maturidade** | Produção | Produção | Experimental |
+| **Ecossistema** | IBM Quantum | Xanadu/Universal | Google Quantum |
+| **Documentação** | Extensa | Excelente | Boa |
+| **Uso Recomendado** | Produção, resultados finais | Prototipagem rápida, iteração | Testes intermediários |
 
 ---
 
@@ -154,14 +176,23 @@ Todos os frameworks testados utilizaram:
 
 ### Observações
 
-1. **Efeito Regularizador:** A presença controlada de ruído (γ=0.005) contribuiu para acurácias razoáveis em ambos os frameworks, demonstrando o conceito de "ruído benéfico".
+1. **Efeito Regularizador:** A presença controlada de ruído (γ=0.005) contribuiu para acurácias razoáveis em todos os frameworks, demonstrando o conceito de "ruído benéfico".
 
-2. **Variação Entre Frameworks:** A diferença de ~13% na acurácia entre Qiskit e Cirq pode ser atribuída a:
+2. **Variação Entre Frameworks:** As diferenças na acurácia podem ser atribuídas a:
    - Diferentes implementações de simuladores
-   - Número de shots (Cirq: 256 vs Qiskit padrão)
-   - Nuances algorítmicas específicas
+   - Número de shots (Cirq: 256 vs outros padrões)
+   - Nuances algorítmicas específicas de cada plataforma
+   - Estratégias de otimização distintas
 
-3. **Trade-off Velocidade/Precisão:** Cirq oferece execução 7.7x mais rápida, adequado para iteração rápida, enquanto Qiskit oferece maior precisão para resultados finais.
+3. **Trade-off Velocidade/Precisão Revelado:**
+   - **PennyLane**: Execução ultrarrápida (10s), ideal para iteração e prototipagem
+   - **Cirq**: Velocidade intermediária (41s), bom balanço
+   - **Qiskit**: Máxima precisão (66.67%), adequado para resultados finais
+
+4. **Recomendação por Fase de Projeto:**
+   - **Desenvolvimento/Experimentação**: Use PennyLane (30x mais rápido)
+   - **Validação Intermediária**: Use Cirq (equilíbrio)
+   - **Publicação/Produção**: Use Qiskit (máxima acurácia)
 
 ---
 
