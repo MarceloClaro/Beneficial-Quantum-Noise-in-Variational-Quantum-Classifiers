@@ -211,7 +211,7 @@ class QAOAExperiment:
         
         def objective(params):
             # Bind parameters
-            bound_circuit = qc.bind_parameters({builder.params[i]: params[i] for i in range(len(params))})
+            bound_circuit = qc.assign_parameters({builder.params[i]: params[i] for i in range(len(params))})
             
             # Transpile e executar
             transpiled = transpile(bound_circuit, simulator)
@@ -247,7 +247,7 @@ class QAOAExperiment:
             'nivel_ruido': nivel_ruido,
             'energia_final': energia_final,
             'approx_ratio': approx_ratio,
-            'iteracoes': opt_result.nit,
+            'iteracoes': getattr(opt_result, 'nit', getattr(opt_result, 'nfev', 0)),
             'tempo_execucao': tempo_exec,
             'convergiu': opt_result.success
         }
