@@ -1,0 +1,448 @@
+# MegaPrompt v2.0 — Geração de Artigos Científicos Qualis A1 (PR/Quantum) com Rastreabilidade Total
+
+## 🎯 OBJETIVO GERAL
+
+Gerar um artigo científico completo, rigoroso e auditável, pronto para submissão a periódicos de alto impacto (Nature, Science, Quantum, Physical Review, Qualis A1), com 100% de conivência entre código/dados e texto, garantindo reprodutibilidade, auditabilidade e máxima avaliação por bancas de revisão.
+
+---
+
+## 📖 ÍNDICE
+
+### PARTE I: Configuração e Planejamento
+1. [Seção 0: Configurações + Template JSON](#secao-0)
+2. [Glossário de Termos](#glossario)
+3. [FAQ e Troubleshooting](#faq)
+
+### PARTE II: Execução (6 Fases)
+4. [Fase 1: Auditoria Técnica + Templates](#fase-1)
+5. [Fase 2: Bibliografia + Fluxograma R0/R1](#fase-2)
+6. [Fase 3: Projeto do Artigo + Formal Problem Statement Template](#fase-3)
+7. [Fase 4: Redação + Algorithm 1 Template + Tabela Código→Método](#fase-4)
+8. [Fase 5: Material Suplementar + Especificações Detalhadas](#fase-5)
+9. [Fase 6: Consolidação + Tabela de Rastreabilidade + Checklist Expandido](#fase-6)
+
+### PARTE III: Apoio e Referência
+10. [Exemplos Práticos (Caso Beneficial Quantum Noise)](#exemplos)
+11. [Ferramentas e Workflows](#ferramentas)
+12. [Checklist de Auditoria (0-100 pontos)](#checklist-auditoria)
+13. [Cronograma Estimado](#cronograma)
+
+---
+
+<a name="secao-0"></a>
+## PARTE I: Configuração e Planejamento
+
+### Seção 0: Configurações + Template JSON
+
+**Instrução:** Preencha o arquivo `config.json` abaixo antes de iniciar a execução.
+
+**Template `config.json`:**
+```json
+{
+  "output_mode": "MODE_A",
+  "reference_policy": "R1",
+  "editorial_profile": "PROFILE_PR_QUANTUM",
+  "target_journals": {
+    "primary": "Quantum",
+    "secondary": ["Physical Review A", "Physical Review Research", "Nature Communications", "npj Quantum Information"]
+  },
+  "inputs": {
+    "code_path": "/path/to/repo_or_files",
+    "data_path": "/path/to/data_or_url",
+    "artifacts_path": "/path/to/logs_metrics_figures"
+  },
+  "user_inputs": {
+    "research_question": "[Opcional: preencher com a pergunta de pesquisa]",
+    "hypotheses": ["[Opcional: listar hipóteses]"],
+    "approved_references": ["[Opcional: listar referências se R0]"]
+  }
+}
+```
+
+**Opções Válidas:**
+- `output_mode`: `MODE_A` (inglês/LaTeX), `MODE_B` (português/ABNT)
+- `reference_policy`: `R0` (travadas), `R1` (expandidas)
+- `editorial_profile`: `PROFILE_PR_QUANTUM` (técnico), `PROFILE_GENERAL` (narrativo)
+
+**Regras Mandatórias de Integridade (não negociáveis):**
+1. **NÃO inventar detalhes:** Se algo não estiver em código/dados/logs, usar **[INFORMAÇÃO AUSENTE]**.
+2. **NÃO inventar números:** Todo valor quantitativo deve ter lastro verificável; caso contrário **[NÃO DISPONÍVEL]**.
+3. **Se R0:** É proibido alterar o conjunto de referências; quando faltar base, usar **[LACUNA DE CITAÇÃO]**.
+4. **Reprodutibilidade:** Reportar HW/SW, versões, seeds, configs, scripts e comandos.
+5. **Auditoria:** Cada seção exige rastreabilidade: **Seção → Evidência → Origem (arquivo/função/linha/config/log/seed)**.
+
+---
+
+<a name="glossario"></a>
+### Glossário de Termos
+
+- **Auditoria Técnica:** Processo de inventariar e verificar todos os componentes de um projeto de pesquisa (código, dados, configurações) para garantir que o que foi implementado corresponde ao que será reportado.
+- **Rastreabilidade:** Capacidade de traçar cada afirmação, número ou resultado em um artigo de volta à sua origem exata no código, dados ou logs de execução.
+- **Quality Gate:** Ponto de verificação ao final de cada fase para garantir que os critérios de qualidade foram atendidos antes de prosseguir.
+- **Threats to Validity:** Fatores que podem comprometer a validade das conclusões de um estudo. Dividem-se em: **interna** (causalidade), **externa** (generalização), **construto** (medição) e **estatística** (inferência).
+- **Effect Sizes:** Métricas que quantificam a magnitude de um efeito (ex: Cohen's d, Glass's Δ, Hedges' g), independentemente do tamanho da amostra.
+
+---
+
+<a name="faq"></a>
+### FAQ e Troubleshooting
+
+**P: O que fazer se o código não tem seeds fixas?**
+**R:** Documentar como **[INFORMAÇÃO AUSENTE]** e adicionar uma seção em "Threats to Validity" sobre a falta de reprodutibilidade estocástica. Executar o código múltiplas vezes (ex: 10) e reportar média e desvio padrão.
+
+**P: Como proceder se não há logs de execução?**
+**R:** Executar o pipeline completo e gerar os logs. Se a execução for inviável, marcar todos os resultados como **[NÃO DISPONÍVEL]** e focar o artigo na metodologia e no plano experimental.
+
+**P: Quando usar [INFORMAÇÃO AUSENTE] vs [NÃO DISPONÍVEL] vs [LACUNA DE CITAÇÃO]?**
+**R:**
+- **[INFORMAÇÃO AUSENTE]:** A informação deveria existir mas não foi encontrada (ex: versão de biblioteca).
+- **[NÃO DISPONÍVEL]:** A informação não pode ser gerada (ex: resultados de um pipeline que não executa).
+- **[LACUNA DE CITAÇÃO]:** Falta uma referência para suportar uma afirmação (apenas em modo R0).
+
+**P: Como adaptar para áreas fora de Computação Quântica?**
+**R:** Substituir os exemplos específicos (ansatz, qubits) pelos equivalentes da sua área (arquitetura de rede, genes, variáveis sociais). A estrutura de auditoria, rastreabilidade e rigor estatístico é universal.
+
+---
+
+<a name="fase-1"></a>
+## PARTE II: Execução (6 Fases)
+
+### Fase 1: Auditoria Técnica + Templates
+
+**Objetivo:** Produzir um inventário técnico completo e verificável do projeto.
+
+**Instrução:** Execute a auditoria e preencha os templates abaixo.
+
+**Template `analise_codigo_inicial.md`:**
+```markdown
+# Análise de Código Inicial
+
+## 1. Estrutura Técnica
+- **Contagem:** X arquivos, Y linhas, Z diretórios
+- **Dependências:** [Listar com versões]
+- **Módulos:** [Tabela: arquivo | objetivo | I/O | deps]
+- **Classes:** [Tabela: nome | propósito | métodos | instâncias]
+- **Modelos:** [Lista: nome canônico | alias no código]
+- **Técnicas Analíticas:** [Lista: técnica | referência no código]
+
+## 2. Componentes Experimentais
+- **Fatores:** [Tabela: fator | definição operacional]
+- **Níveis:** [Tabela: fator | níveis | justificativa]
+- **Total de Configurações:** [Fórmula] = X
+- **Datasets:** [Tabela: nome | tamanho | features | pré-proc | licença]
+- **Métricas:** [Tabela: métrica | definição formal | função no código]
+
+## 3. Metodologia Implementada
+- **Pré-processamento:** [Passos]
+- **Treino/Otimização:** [Algoritmo, hiperparâmetros, stopping criteria]
+- **Validação:** [Esquema, seeds, repetições]
+- **Plano Estatístico:** [Testes, correções, IC, effect sizes]
+
+## 4. Inovações e Contribuições
+- **Código Novo:** [Commits/arquivos/funções]
+- **Diferenças vs Baselines:** [O que muda, como medir]
+```
+
+**Saídas Obrigatórias:**
+- `analise_codigo_inicial.md`
+- `tabela_componentes.md` (resumo executivo técnico)
+- `mapa_execucao.md` (passo a passo reprodutível)
+- `manifesto_execucao.json` (lista de comandos, seeds, paths, configs)
+
+**Quality Gate F1:**
+- [ ] Cada item tem origem (arquivo/função/linha/config/log).
+- [ ] O total de configurações foi calculado e conferido.
+- [ ] Ausências explicitadas com [INFORMAÇÃO AUSENTE]/[NÃO DISPONÍVEL].
+
+---
+
+<a name="fase-2"></a>
+### Fase 2: Bibliografia + Fluxograma R0/R1
+
+**Objetivo:** Compilar e sintetizar a literatura relevante.
+
+**Fluxograma de Decisão R0 vs R1:**
+```mermaid
+graph TD
+    A[Precisa de referência para uma afirmação?] --> B{Modo R1?};
+    B -- Sim --> C[Buscar referência em 7 categorias];
+    C --> D{Encontrou?};
+    D -- Sim --> E[Adicionar à lista com DOI e justificativa];
+    D -- Não --> F[Marcar como [LACUNA DE CITAÇÃO] e justificar busca];
+    B -- Não --> G[Verificar na lista de referências aprovadas];
+    G --> H{Encontrou?};
+    H -- Sim --> I[Usar a referência];
+    H -- Não --> J[Marcar como [LACUNA DE CITAÇÃO]];
+```
+
+**Instrução:** Siga o fluxograma para compilar `referencias_compiladas.md` e depois redija a `sintese_literatura.md` com foco em consensos, divergências, lacunas e posicionamento.
+
+**Saídas:**
+- `referencias_compiladas.md`
+- `sintese_literatura.md`
+- `taxonomia_estado_da_arte.md` (tabela: abordagem × pressupostos × custo × falhas × evidência)
+
+**Quality Gate F2:**
+- [ ] Cada técnica central do pipeline tem referência ou [LACUNA].
+- [ ] Síntese contém contraste/avaliação (não lista de resumos).
+
+---
+
+<a name="fase-3"></a>
+### Fase 3: Projeto do Artigo + Formal Problem Statement Template
+
+**Objetivo:** Estruturar o artigo com título, hipóteses e objetivos testáveis.
+
+**Template `problema_formal.md`:**
+```markdown
+# Formal Problem Statement
+
+**Seja:**
+- $\mathcal{D} = \{ (x_i, y_i) \}_{i=1}^N$ um dataset com $N$ amostras.
+- $U(\theta)$ um circuito quântico parametrizado por $\theta \in \mathbb{R}^P$.
+- $\mathcal{N}(\cdot)$ um canal de ruído com parâmetro $p$.
+- $L(\theta, p)$ a função de custo (loss).
+
+**O problema é encontrar:**
+
+$$\theta^*, p^* = \arg\min_{\theta, p} \mathbb{E}_{(x,y) \sim \mathcal{D}_{test}} [L(y, f(x; \theta, p))]$$
+
+**Sujeito a:**
+- $p \in [0, p_{max}]$
+- Arquitetura de $U(\theta)$ fixa.
+
+**Hipótese Principal (H₀):**
+Existe um $p^* > 0$ tal que a acurácia de generalização é maior que para $p=0$.
+```
+
+**Instrução:** Preencha o `problema_formal.md`, gere `titulos_palavras_chave.md` e `hipoteses_objetivos.md` (com tabela de evidência).
+
+**Saídas:**
+- `problema_formal.md`
+- `titulos_palavras_chave.md`
+- `hipoteses_objetivos.md`
+
+**Quality Gate F3:**
+- [ ] O problema formal é compatível com a execução real do código.
+- [ ] Cada hipótese tem teste/métrica correspondente no pipeline.
+
+---
+
+<a name="fase-4"></a>
+### Fase 4: Redação + Algorithm 1 Template + Tabela Código→Método
+
+**Objetivo:** Redigir as seções principais do artigo com rigor técnico e matemático.
+
+**Template `Algorithm 1` (LaTeX):**
+```latex
+\begin{algorithm}[H]
+\caption{Experimental Pipeline for Beneficial Noise Analysis}\label{alg:pipeline}
+\begin{algorithmic}[1]
+\REQUIRE $D_{train}, D_{val}, D_{test}$, Configs $C$, Seeds $S$
+\STATE Initialize results table $R \leftarrow \emptyset$
+\FOR{each $c \in C$}
+  \FOR{each $s \in S$}
+    \STATE Set random seed to $s$
+    \STATE Initialize model $M_c$ with $c$
+    \STATE $M_c^* \leftarrow \text{Train}(M_c, D_{train}, D_{val})$
+    \STATE Metrics $m \leftarrow \text{Evaluate}(M_c^*, D_{test})$
+    \STATE Append $(c, s, m)$ to $R$
+  \ENDFOR
+\ENDFOR
+\RETURN $R$
+\end{algorithmic}
+\end{algorithm}
+```
+
+**Template Tabela Código→Método:**
+| Componente do Método | Arquivo/Função/Linha | Parâmetros | Artefatos Gerados |
+|---|---|---|---|
+| Definição do Ansatz | `circuits.py:L15-30` | `n_qubits`, `depth` | Objeto PennyLane |
+| Canal de Ruído | `noise.py:L8-20` | `p`, `noise_type` | Operador de Kraus |
+| Otimizador | `train.py:L50` | `lr`, `optimizer_name` | - |
+
+**Instrução:** Redija as seções 4.1 a 4.8 (Abstract, Introduction, Related Work, Methods, Results, Discussion, Conclusion, Editorial) seguindo as diretrizes do prompt original, mas incorporando os templates acima.
+
+**Saídas:**
+- `resumo_abstract.md`
+- `introducao_completa.md`
+- `revisao_literatura_completa.md`
+- `metodologia_completa.md` (com Algorithm 1 e Tabela Código→Método)
+- `resultados_completo.md`
+- `discussao_completa.md`
+- `conclusao_completa.md`
+- `secoes_editoriais.md`
+- `agradecimentos_referencias.md`
+
+**Quality Gate F4:**
+- [ ] Sem números sem lastro.
+- [ ] R0 respeitado (se aplicável).
+- [ ] Methods contém notação, equações, Algorithm 1, e mapa código→método.
+
+---
+
+<a name="fase-5"></a>
+### Fase 5: Material Suplementar + Especificações Detalhadas
+
+**Objetivo:** Fornecer informações adicionais para reprodutibilidade e profundidade.
+
+**Instrução:** Gere as 5 tabelas suplementares e as 8 descrições de figuras suplementares, conforme o prompt original, mas com ênfase em:
+- **Tabela S1:** CSV com 2.688 linhas (ou o total calculado na Fase 1).
+- **Tabela S2:** Comparação quantitativa com estado da arte.
+- **Tabela S4:** Testes post-hoc com correção de Bonferroni.
+- **Figuras:** Descrições detalhadas incluindo eixos, escalas, parâmetros e achado-chave.
+
+**Saídas:**
+- `tabelas_suplementares.md`
+- `tabela_s1_configuracoes.csv`
+- `figuras_suplementares.md`
+- `apendice_suplementar.md` (se houver derivações longas)
+
+**Quality Gate F5:**
+- [ ] S1 confere com total calculado na F1.
+- [ ] Cada tabela/figura aponta script/config/log (ou [INFORMAÇÃO AUSENTE]).
+- [ ] Nada “core” de metodologia ficou apenas no suplemento.
+
+---
+
+<a name="fase-6"></a>
+### Fase 6: Consolidação + Tabela de Rastreabilidade + Checklist Expandido
+
+**Objetivo:** Garantir consistência, rastreabilidade e conformidade final.
+
+**Template Tabela de Rastreabilidade:**
+| Seção | Afirmação/Número | Evidência (Arquivo/Função/Linha) | Referência (Autor, Ano) |
+|---|---|---|---|
+| 4.5 Results | Acurácia de 97.8% | `results.csv:row_1523:col_acc` | - |
+| 4.4 Methods | Equação de Lindblad | `noise.py:L8` | (Lindblad, 1976) |
+| 4.6 Discussion | Ruído como regularizador | `sintese_literatura.md` | (Du et al., 2021) |
+
+**Instrução:** Execute a verificação de consistência, preencha a tabela de rastreabilidade e consolide o artigo final.
+
+**Saídas:**
+- `relatorio_consistencia.md` (% de conivência + discrepâncias)
+- `rastreabilidade_completa.md` (tabela preenchida)
+- `manuscrito_internacional_final.tex` / `artigo_abnt_final.md`
+- `sumario_executivo.md`
+
+**Quality Gate Final:**
+- [ ] Consistência ≥ 95% (meta: 100% após ajustes)
+- [ ] Citação↔referência 100%
+- [ ] Reprodutibilidade (ambiente + scripts + seeds)
+- [ ] Ameaças à validade + scope conditions explicitados
+
+---
+
+<a name="exemplos"></a>
+## PARTE III: Apoio e Referência
+
+### Exemplos Práticos (Caso Beneficial Quantum Noise)
+
+**Exemplo de `config.json` preenchido:**
+```json
+{
+  "output_mode": "MODE_A",
+  "reference_policy": "R1",
+  "editorial_profile": "PROFILE_PR_QUANTUM",
+  "target_journals": {
+    "primary": "Quantum",
+    "secondary": ["Physical Review A", "Physical Review Research"]
+  },
+  "inputs": {
+    "code_path": "https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers",
+    "data_path": "[Gerado pelo código]",
+    "artifacts_path": "[Gerado pelo código]"
+  }
+}
+```
+
+**Exemplo de Auditoria Técnica (resumo):**
+- **Total de Configurações:** 4 datasets × 7 ansätze × 6 tipos de ruído × 2 schedules × 8 inicializações = 2.688
+- **Inovação:** Schedules de ruído dinâmicos (Linear, Cosseno)
+
+**Exemplo de Tabela de Rastreabilidade:**
+| Seção | Afirmação/Número | Evidência | Referência |
+|---|---|---|---|
+| 4.5 Results | Schedule de Cosseno 12.6% mais rápido | `results.csv:col_epochs` | - |
+| 4.4 Methods | Equação de Lindblad | `noise.py:L15` | (Lindblad, 1976) |
+
+---
+
+<a name="ferramentas"></a>
+### Ferramentas e Workflows
+
+- **LaTeX/Overleaf:** Para redação do manuscrito final (MODO A).
+- **BibTeX/Zotero:** Para gerenciamento de referências.
+- **Git/GitHub:** Para versionamento de código e artigo.
+- **Docker/conda:** Para criação de ambiente reprodutível.
+- **Scripts de Automação (Python/Bash):**
+  - `generate_s1.py`: Gera a Tabela S1 a partir dos logs.
+  - `check_consistency.py`: Verifica conivência código-texto.
+  - `build_paper.sh`: Consolida todas as seções em um único arquivo.
+
+---
+
+<a name="checklist-auditoria"></a>
+### Checklist de Auditoria (0-100 pontos)
+
+**1. Reprodutibilidade (30 pts)**
+- [ ] Ambiente documentado (10 pts)
+- [ ] Seeds fixas e reportadas (10 pts)
+- [ ] Pipeline executável (10 pts)
+
+**2. Rastreabilidade (30 pts)**
+- [ ] Tabela de rastreabilidade completa (15 pts)
+- [ ] Mapa código→método completo (15 pts)
+
+**3. Rigor Estatístico (20 pts)**
+- [ ] Testes apropriados (5 pts)
+- [ ] Correção para múltiplas comparações (5 pts)
+- [ ] Intervalos de confiança (5 pts)
+- [ ] Tamanhos de efeito (5 pts)
+
+**4. Transparência (20 pts)**
+- [ ] Código disponível publicamente (10 pts)
+- [ ] Dados disponíveis publicamente (5 pts)
+- [ ] Limitações e ameaças à validade discutidas (5 pts)
+
+**Pontuação Final:** [Soma dos pontos] / 100
+
+---
+
+<a name="cronograma"></a>
+### Cronograma Estimado
+
+- **Fase 1 (Auditoria):** 8-12 horas
+- **Fase 2 (Bibliografia):** 6-10 horas
+- **Fase 3 (Projeto):** 4-6 horas
+- **Fase 4 (Redação):** 20-30 horas
+- **Fase 5 (Suplementar):** 8-12 horas
+- **Fase 6 (Consolidação):** 6-8 horas
+- **Total:** 52-78 horas (6-10 dias úteis)
+
+---
+
+## ✅ VALIDAÇÃO FINAL
+
+Antes de submeter, verificar:
+
+- [ ] Pontuação no Checklist de Auditoria ≥ 90/100
+- [ ] Conivência código-texto ≥ 95%
+- [ ] Formato ABNT/LaTeX 100% correto
+- [ ] Todas as hipóteses testadas
+- [ ] Todos os objetivos atingidos
+- [ ] Limitações honestamente discutidas
+- [ ] Trabalhos futuros específicos propostos
+- [ ] Código e dados disponíveis publicamente
+- [ ] Material Suplementar completo
+- [ ] Sumário executivo criado
+- [ ] Todos os arquivos de auditoria entregues
+
+---
+
+**FIM DO MEGAPROMPT v2.0**
+
+**Versão:** 2.0  
+**Data:** 24 de dezembro de 2025  
+**Autor:** Manus AI  
+**Licença:** CC BY 4.0 (uso livre com atribuição)
