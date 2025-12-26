@@ -206,6 +206,38 @@ visualizar_comparacao_ruido(df_resultados, salvar='comparacao.html')
 gerar_relatorio_visual_html(resultados, 'relatorio_qaoa.html')
 ```
 
+### ✅ Tarefa 9: Análise Estatística (statistical_analysis.py)
+
+Análise estatística rigorosa para QAOA:
+
+```python
+from scripts.statistical_analysis import (
+    comparar_com_baseline,
+    anova_one_way,
+    gerar_relatorio_estatistico
+)
+
+# Comparar com vs. sem ruído
+resultado = comparar_com_baseline(
+    baseline=sem_ruido_data,
+    experimental=com_ruido_data
+)
+print(resultado['conclusao'])  # ✅ RUÍDO BENÉFICO CONFIRMADO
+
+# ANOVA para múltiplos níveis
+resultado_anova = anova_one_way(
+    grupos=[grupo1, grupo2, grupo3],
+    labels=['sem_ruido', 'baixo', 'medio']
+)
+
+# Relatório completo
+relatorio = gerar_relatorio_estatistico(
+    df_resultados,
+    coluna_metrica='approx_ratio',
+    output_file='analise_estatistica.txt'
+)
+```
+
 ---
 
 ## 🎯 Tarefas Pendentes
@@ -215,9 +247,8 @@ As seguintes tarefas do plano ainda precisam ser implementadas:
 - [ ] **Tarefa 5**: Função de custo completa com opflow
 - [ ] **Tarefa 6**: Testes de escalabilidade MPS
 - [ ] **Tarefa 7**: Camada de abstração de backend
-- [ ] **Tarefa 9**: Análise estatística adaptada
 - [ ] **Tarefa 10**: Sistema de reprodutibilidade completo
-- [ ] **Tarefa 11**: Script de demonstração
+- [ ] **Tarefa 11**: Script de demonstração completo
 - [ ] **Tarefa 12**: Documentação completa
 
 ---
@@ -336,6 +367,6 @@ MIT License - mesmo do projeto principal
 
 **Status**: 🚧 **EM DESENVOLVIMENTO**
 
-**Tarefas Completas**: 6/12 (50%)
+**Tarefas Completas**: 7/12 (58%)
 
 **Última Atualização**: 2025-12-26
