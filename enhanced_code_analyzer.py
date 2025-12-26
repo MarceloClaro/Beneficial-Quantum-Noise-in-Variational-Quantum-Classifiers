@@ -58,28 +58,28 @@ class CodeAnalyzer:
     def extract_noise_models(self) -> List[Dict]:
         """Extract noise model implementations."""
         noise_models = []
-        patterns = [
-            ('Depolarizing', r'Depolarizing|depolarizing|DepolarizingChannel'),
-            ('AmplitudeDamping', r'AmplitudeDamping|amplitude_damping'),
-            ('PhaseDamping', r'PhaseDamping|phase_damping'),
-            ('BitFlip', r'BitFlip|bit_flip'),
-            ('PhaseFlip', r'PhaseFlip|phase_flip'),
-            ('ThermalRelaxation', r'ThermalRelaxation|thermal')
+        
+        # Search for class definitions with exact class names
+        class_patterns = [
+            ('Depolarizing', r'class\s+RuidoDepolarizante'),
+            ('AmplitudeDamping', r'class\s+RuidoAmplitudeDamping'),
+            ('PhaseDamping', r'class\s+RuidoPhaseDamping'),
+            ('BitFlip', r'class\s+RuidoBitFlip'),
+            ('PhaseFlip', r'class\s+RuidoPhaseFlip'),
         ]
         
         for py_file in self.python_files:
             content = py_file.read_text(encoding='utf-8', errors='ignore')
-            for name, pattern in patterns:
-                if re.search(pattern, content, re.IGNORECASE):
-                    matches = list(re.finditer(pattern, content, re.IGNORECASE))
-                    if matches:
-                        match = matches[0]
-                        noise_models.append({
-                            'name': name,
-                            'file': str(py_file.relative_to(self.repo_path)),
-                            'line': content[:match.start()].count('\n') + 1
-                        })
-                        break
+            for name, pattern in class_patterns:
+                matches = list(re.finditer(pattern, content))
+                if matches:
+                    match = matches[0]
+                    noise_models.append({
+                        'name': name,
+                        'file': str(py_file.relative_to(self.repo_path)),
+                        'line': content[:match.start()].count('\n') + 1,
+                        'context': match.group(0)
+                    })
         
         # Remove duplicates
         seen = set()
@@ -164,22 +164,26 @@ class CodeAnalyzer:
     def extract_schedules(self) -> List[Dict]:
         """Extract noise schedule implementations."""
         schedules = []
+        # Search for specific schedule names referenced in code
         patterns = [
-            ('Constant', r'constant|Constant'),
-            ('Linear', r'linear|Linear.*decay'),
-            ('Cosine', r'cosine|Cosine.*annealing'),
-            ('Exponential', r'exponential|exp.*decay')
+            ('Static', r"schedule.*None|sem.*schedule"),
+            ('Linear', r"'linear'"),
+            ('Exponential', r"'exponencial'"),
+            ('Cosine', r"'cosine'"),
         ]
         
         for py_file in self.python_files:
             content = py_file.read_text(encoding='utf-8', errors='ignore')
             for name, pattern in patterns:
-                if re.search(pattern, content, re.IGNORECASE):
+                matches = list(re.finditer(pattern, content))
+                if matches:
+                    match = matches[0]
                     schedules.append({
                         'name': name,
-                        'file': str(py_file.relative_to(self.repo_path))
+                        'file': str(py_file.relative_to(self.repo_path)),
+                        'line': content[:match.start()].count('\n') + 1,
+                        'context': match.group(0)[:50]
                     })
-                    break
         
         # Remove duplicates
         seen = set()
