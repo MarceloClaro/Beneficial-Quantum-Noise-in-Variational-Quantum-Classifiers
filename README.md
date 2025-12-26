@@ -107,7 +107,58 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 
 ## 🎓 Ferramentas de Geração de Artigo (NOVO!)
 
-### 1️⃣ Consultor Metodológico Qualis A1
+### 🌟 MegaPrompt v2.0 - Framework Completo para Artigos Qualis A1
+
+**Sistema integrado de 6 fases para geração de artigos científicos com 100% de rastreabilidade**
+
+📚 **[Documentação Completa MegaPrompt v2.0](MEGAPROMPT_V2_README.md)** | 💡 **[Exemplos Práticos](EXEMPLOS_PRATICOS.md)** | 🔧 **[Ferramentas](tools/megaprompt_v2/)**
+
+#### ✨ Recursos Principais
+
+- **Configuração Única**: `config.json` com modo de saída (LaTeX/ABNT), política de referências (R0/R1), perfil editorial
+- **6 Fases Estruturadas**: Auditoria → Bibliografia → Estrutura → Redação → Suplementar → Consolidação
+- **Ferramentas de Automação**:
+  - `generate_s1.py`: Gera Tabela S1 com todas as configurações experimentais
+  - `check_consistency.py`: Verifica consistência código-texto (meta: ≥95%)
+  - `build_paper.sh`: Consolida todas as seções em manuscrito final
+  - `audit_checklist.py`: Checklist 0-100 pontos para Qualis A1
+- **Rastreabilidade Total**: Cada afirmação → evidência → origem (arquivo:linha)
+- **Integridade Rigorosa**: Marcadores `[INFORMAÇÃO AUSENTE]`, `[NÃO DISPONÍVEL]`, `[LACUNA DE CITAÇÃO]`
+
+#### 🚀 Quick Start
+
+```bash
+# 1. Configure o projeto
+nano config.json
+
+# 2. Gere Tabela S1
+python tools/megaprompt_v2/generate_s1.py
+
+# 3. Consolide o manuscrito
+bash tools/megaprompt_v2/build_paper.sh
+
+# 4. Verifique consistência
+python tools/megaprompt_v2/check_consistency.py
+
+# 5. Execute auditoria
+python tools/megaprompt_v2/audit_checklist.py
+```
+
+#### 📊 Checklist de Auditoria (0-100 pontos)
+
+- **Reprodutibilidade (30 pts)**: Ambiente, seeds, pipeline
+- **Rastreabilidade (30 pts)**: Tabela completa, mapa código→método
+- **Rigor Estatístico (20 pts)**: Testes, correções, IC, effect sizes
+- **Transparência (20 pts)**: Código público, dados, limitações
+
+**Meta**: ≥ 90/100 pontos para submissão
+
+#### 🎯 Periódicos-Alvo
+
+- **MODE_A** (English/LaTeX): Nature, Science, Quantum, Physical Review, npj QI
+- **MODE_B** (Portuguese/ABNT): Periódicos brasileiros Qualis A1
+
+---
 
 ### 1️⃣ Consultor Metodológico Qualis A1
 
