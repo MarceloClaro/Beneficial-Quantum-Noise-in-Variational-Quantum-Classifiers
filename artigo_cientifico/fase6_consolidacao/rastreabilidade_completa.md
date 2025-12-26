@@ -72,20 +72,31 @@
 
 ### Discrepância 1: Número de Modelos de Ruído
 - **Afirmado no Abstract:** "5 modelos de ruído"
-- **Encontrado pelo Analyzer:** 3 modelos (Depolarizing, AmplitudeDamping, PhaseDamping)
-- **Possível Explicação:** BitFlip e PhaseFlip podem estar implementados mas não detectados, ou abstract superestima
-- **AÇÃO REQUERIDA:** Verificar código-fonte e ajustar abstract ou adicionar BitFlip/PhaseFlip ao code_analysis_report.json
+- **Encontrado pelo Analyzer:** 5 modelos (Depolarizing, AmplitudeDamping, PhaseDamping, BitFlip, PhaseFlip) ✅
+- **Status:** ✅ **RESOLVIDO** - Analyzer atualizado encontra todos os 5 modelos em framework_investigativo_completo.py
 
 ### Discrepância 2: Número de Schedules
 - **Afirmado no Abstract:** "4 schedules dinâmicos (Static, Linear, Exponential, Cosine)"
-- **Encontrado pelo Analyzer:** 2 schedules (Constant, Linear)
-- **Possível Explicação:** Exponential e Cosine podem estar implementados mas não detectados
-- **AÇÃO REQUERIDA:** Verificar função de schedules no código e atualizar analyzer
+- **Encontrado pelo Analyzer:** 4 schedules (Static, Linear, Exponential, Cosine) ✅
+- **Status:** ✅ **RESOLVIDO** - Analyzer atualizado encontra todos os 4 schedules
 
-### Discrepância 3: Seeds Não Explícitas no Methods
+### Discrepância 3: Seeds Não Explícitas no Methods (RESOLVIDA)
 - **Encontrado pelo Analyzer:** Seeds [42, 43]
-- **No Methods:** Não mencionados explicitamente
-- **AÇÃO REQUERIDA:** Adicionar "Seeds aleatórias: 42, 43" na seção 3.X de metodologia_completa.md
+- **No Methods:** Agora explicitamente documentadas na seção 3.2.4 ✅
+- **Status:** ✅ **RESOLVIDO** - Seção completa adicionada em metodologia_completa.md
+
+### Esclarecimento sobre Configurações Totais
+- **Abstract menciona:** 36.960 configurações teóricas = 7 × 5 × 11 × 4 × 4 × 2 × 3
+  - 7 ansätze
+  - 5 modelos de ruído ✅
+  - 11 intensidades γ
+  - 4 schedules ✅
+  - 4 datasets (Moons, Circles, Iris, Wine - planejados)
+  - 2 seeds (42, 43) ✅
+  - 3 taxas de aprendizado
+
+- **Execução real (Quick Mode):** 5 trials no dataset Moons para validação do framework
+- **Nota:** O abstract corretamente usa "espaço teórico de 36.960 configurações" reconhecendo a diferença entre espaço total planejado e validação executada
 
 ---
 
