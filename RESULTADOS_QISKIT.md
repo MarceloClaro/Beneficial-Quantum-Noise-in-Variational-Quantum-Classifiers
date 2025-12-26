@@ -2,9 +2,11 @@
 
 ## 📊 Status da Execução
 
-**Data**: 24/12/2025  
-**Framework**: Qiskit v7.2  
-**Status**: ✅ Framework implementado e funcional
+**Data**: 26/12/2025 (Atualizado)  
+**Framework**: Qiskit v7.2 / v8.0-QAI  
+**Status**: ✅ Framework implementado e funcional - **MULTIFRAMEWORK VALIDADO**
+
+> 🆕 **ATUALIZAÇÃO 26/12/2025**: Execução multiframework completa realizada! Qiskit alcançou **66.67% de acurácia**, melhor desempenho entre todos os frameworks testados. Ver [RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md) para detalhes completos.
 
 ## 🎯 Experimentos Realizados
 

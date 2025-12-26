@@ -18,19 +18,28 @@ This repository presents the full investigative framework for the article **"Fro
 [![Qiskit](https://img.shields.io/badge/Qiskit-1.0+-purple.svg)](https://qiskit.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2025.xxxxx-b31b1b.svg)](https://arxiv.org/)
-[![Framework v7.2](https://img.shields.io/badge/Framework-v7.2-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
-[![Latest Results](https://img.shields.io/badge/Latest%20Results-65.83%25%20Accuracy-success.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
+[![Framework v8.0-QAI](https://img.shields.io/badge/Framework-v8.0--QAI-orange.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers)
+[![Multiframework](https://img.shields.io/badge/Multiframework-Qiskit%20%7C%20Cirq%20%7C%20PennyLane-blueviolet.svg)](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
+[![Latest Results](https://img.shields.io/badge/Latest%20Results-66.67%25%20Qiskit-success.svg)](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
 [![QUALIS A1](https://img.shields.io/badge/QUALIS-A1%20Compliant-gold.svg)](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 [![Tests](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml/badge.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml)
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25+-success.svg)](tests/)
 
-> **Framework Investigativo Completo v7.2 para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
+> **Framework Investigativo Completo v8.0-QAI para Análise Sistemática de Ruído Quântico Benéfico em Classificadores Variacionais Quânticos (VQCs)**
 >
-> ✨ **NOVO (v7.2)**: 
+> ✨ **NOVO (v8.0-QAI - 26/12/2025)**: 
+> - 🎉 **TODOS OS 3 FRAMEWORKS EXECUTADOS COM SUCESSO!** [Ver resultados →](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
+> - 🏆 **Qiskit**: 66.67% acurácia (melhor precisão)
+> - ⚡ **PennyLane**: 53.33% acurácia em 10s (30x mais rápido!)
+> - ⚖️ **Cirq**: 53.33% acurácia em 41s (equilíbrio)
 > - Visualizações QUALIS A1 com rigor técnico e estético! [Ver resultados completos →](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)
 > - **🚀 FRAMEWORK QISKIT**: Implementação completa usando IBM Qiskit! [Ver guia →](docs/GUIA_QISKIT.md)
 > 
-> 🎯 **RESULTADOS VALIDADOS (23/12/2025)**: Framework executado com sucesso! Melhor acurácia: **65.83%** (Random Entangling + Phase Damping γ=0.0014). [Ver relatório executivo →](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md)
+> 🎯 **RESULTADOS VALIDADOS - Execução Completa dos 3 Frameworks**:
+> - **Melhor acurácia histórica**: **65.83%** (Random Entangling + Phase Damping γ=0.0014)
+> - **Melhor acurácia multiframework**: **66.67%** (Qiskit + Strongly Entangling + Phase Damping γ=0.005)
+> - **Execução mais rápida**: **10.03s** (PennyLane - 30x mais veloz que Qiskit)
+> - [Ver relatório executivo →](EXECUTIVE_SUMMARY_FRAMEWORK_QUALIS_A1.md) | [Ver resultados multiframework →](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
 
 ## 🚀 Início Rápido
 
@@ -67,6 +76,7 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 **📖 Documentação Completa**:
 - 📖 [Guia de Instalação](INSTALL.md)
 - 🎯 [Guia Rápido de Uso](docs/GUIA_RAPIDO_v7.2.md)
+- 🆕 **[Resultados Multiframework v8.0-QAI](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)** - **NOVO! Comparação Qiskit vs Cirq vs PennyLane**
 - 🆕 **[Guia Completo Qiskit](docs/GUIA_QISKIT.md)** - Framework IBM Quantum
 - 🆕 **[Resultados Qiskit](RESULTADOS_QISKIT.md)** - Visualizações e Experimentos
 - 📂 [Estrutura do Projeto](STRUCTURE.md)
