@@ -97,17 +97,15 @@ if 'pennylane' in config['enabled_frameworks']:
                 n_camadas=2,
                 arquitetura=cfg['arquitetura'],
                 estrategia_init=cfg['estrategia_init'],
+                tipo_ruido=cfg['tipo_ruido'],
+                nivel_ruido=cfg['nivel_ruido'],
+                n_epocas=10,  # Reduzido para execução rápida
                 seed=config['default_seed']
             )
             
-            if cfg['tipo_ruido'] != 'sem_ruido':
-                vqc.tipo_ruido = cfg['tipo_ruido']
-                vqc.nivel_ruido = cfg['nivel_ruido']
-            
             vqc.fit(
                 dataset_moons['X_train'],
-                dataset_moons['y_train'],
-                n_epocas=10  # Reduzido para execução rápida
+                dataset_moons['y_train']
             )
             
             acc_train = vqc.score(dataset_moons['X_train'], dataset_moons['y_train'])

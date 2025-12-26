@@ -78,16 +78,15 @@ if 'pennylane' in config['enabled_frameworks']:
             n_camadas=2,
             arquitetura=config_pnl['arquitetura'],
             estrategia_init=config_pnl['estrategia_init'],
+            tipo_ruido=config_pnl['tipo_ruido'],
+            nivel_ruido=config_pnl['nivel_ruido'],
+            n_epocas=5,  # Muito reduzido para execução rápida
             seed=config['default_seed']
         )
         
-        vqc.tipo_ruido = config_pnl['tipo_ruido']
-        vqc.nivel_ruido = config_pnl['nivel_ruido']
-        
         vqc.fit(
             dataset_moons['X_train'][:30],  # Subset reduzido
-            dataset_moons['y_train'][:30],
-            n_epocas=5  # Muito reduzido
+            dataset_moons['y_train'][:30]
         )
         
         acc_test = vqc.score(dataset_moons['X_test'][:15], dataset_moons['y_test'][:15])
