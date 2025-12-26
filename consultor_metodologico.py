@@ -1200,7 +1200,25 @@ Exemplos de uso:
         # Executa tarefas específicas
         tarefas_solicitadas = [t.strip().upper() for t in args.tarefas.split(',')]
         print(f"\n🎯 Executando tarefas: {', '.join(tarefas_solicitadas)}")
-        # (implementar execução seletiva)
+        
+        # Mapeia letras para métodos
+        mapa_tarefas = {
+            'A': 'tarefa_a_justificativa_metodologica',
+            'B': 'tarefa_b_contexto_especifico',
+            'C': 'tarefa_c_diagnostico_irrelevancias',
+            'D': 'tarefa_d_progressao_logica',
+            'E': 'tarefa_e_checklist_elementos',
+            'F': 'tarefa_f_reescrever_inicio',
+            'G': 'tarefa_g_tabela_comparativa'
+        }
+        
+        for tarefa in tarefas_solicitadas:
+            if tarefa in mapa_tarefas:
+                metodo_nome = mapa_tarefas[tarefa]
+                metodo = getattr(consultor, metodo_nome)
+                consultor.resultados[f'tarefa_{tarefa.lower()}'] = metodo()
+            else:
+                print(f"⚠️  Tarefa '{tarefa}' não reconhecida. Tarefas válidas: A-G")
     else:
         # Executa todas as tarefas
         consultor.executar_todas_tarefas()
