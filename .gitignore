@@ -49,6 +49,7 @@ resultados_*/
 *.png
 *.pdf
 *.json
+!qai_config.json
 
 # But allow figures in figuras/ directory
 !figuras/*.png
