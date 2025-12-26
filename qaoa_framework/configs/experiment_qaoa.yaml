@@ -1,0 +1,43 @@
+# configs/experiment_qaoa.yaml
+# Configuração de Experimentos QAOA para Análise de Ruído Benéfico
+
+run:
+  run_id: "AUTO"  # AUTO gera timestamp único
+  description: "QAOA 100 qubits com análise de ruído benéfico"
+
+reproducibility:
+  seeds: [1, 2, 3, 4, 5]  # Múltiplas seeds para análise estatística
+
+problem:
+  type: "maxcut"  # Tipo de problema (maxcut, tsp)
+  n_nodes: 100    # Número de nós/qubits
+  graph_type: "erdos_renyi"  # Tipo de grafo (erdos_renyi, regular, complete)
+  edge_probability: 0.5  # Probabilidade de conexão (para erdos_renyi)
+
+model:
+  algorithm: "qaoa"
+  p_layers: 3  # Profundidade do circuito QAOA
+
+noise:
+  enabled: true
+  model: "depolarizing"  # depolarizing, amplitude_damping, phase_damping, thermal
+  schedule: "linear"  # constant, linear, exponential
+  params:
+    p: [0.0, 0.005, 0.01]  # Níveis de ruído a testar
+
+optimization:
+  optimizer: "COBYLA"  # COBYLA, SLSQP, Powell, Nelder-Mead
+  maxiter: 200  # Máximo de iterações
+  initial_params: "random"  # random, zeros, heuristic
+
+frameworks:
+  qiskit:
+    backend: "aer_simulator"  # aer_simulator, ibmq_qasm_simulator
+    method: "matrix_product_state"  # automatic, statevector, matrix_product_state
+    shots: 1024  # Número de medições
+
+output:
+  save_results: true
+  save_circuits: false
+  save_manifesto: true
+  output_dir: "qaoa_framework/results"
