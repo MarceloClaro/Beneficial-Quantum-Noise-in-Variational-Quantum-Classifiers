@@ -97,9 +97,11 @@ class TestClassificadorVQC:
         
         vqc = ClassificadorVQC(
             n_qubits=2,
-            n_camadas=1,
+            n_camadas=2,  # Increased from 1 to 2 for more expressivity
             arquitetura='basico',
-            n_epocas=5,
+            n_epocas=15,  # Increased from 5 to 15 for better convergence
+            taxa_aprendizado=0.05,  # Increased from 0.01 to 0.05
+            batch_size=10,  # Add explicit batch size
             seed=42
         )
         vqc.fit(X_train, y_train)
