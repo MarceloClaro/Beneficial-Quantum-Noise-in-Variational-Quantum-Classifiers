@@ -707,3 +707,84 @@ execution_log_qualis_a1.log
 - 4.6 Discussão (interpretar resultados + comparar com literatura)
 - 4.7 Conclusão
 - 4.1 Resumo/Abstract (escrever por último)
+
+
+
+
+## 🔬 Experimentos Multi-Framework (ATUALIZADO 2025-12-27)
+
+### Configuração Experimental
+
+**Dataset:** Iris
+- Amostras: 150
+- Features: 4
+- Classes: 3 (Iris: setosa, versicolor, virginica)
+
+**Arquitetura VQC:**
+- Qubits: 4
+- Camadas variacionais: 2
+- Shots por medição: 512
+- Épocas de treinamento: 3
+- Repetições por framework: 3
+
+**Frameworks Comparados:**
+1. **Qiskit** (IBM Quantum) v1.0.0
+   - Simulador: Aer StatevectorSimulator
+   - Transpiler: Level 3 + SABRE routing
+   
+2. **PennyLane** (Xanadu) v0.35.0
+   - Device: default.qubit
+   - Optimization: Circuit optimization passes
+   
+3. **Cirq** (Google) v1.3.0
+   - Simulator: Cirq DensityMatrixSimulator
+   - Optimization: Cirq optimization pipeline
+
+**Stack de Otimização Completo:**
+1. Transpiler Level 3 (gate fusion, parallelization)
+2. Beneficial Noise (phase damping, γ=0.005)
+3. TREX Error Mitigation (readout correction)
+4. AUEC Adaptive Control (unified error correction)
+
+### Circuitos Implementados
+
+Os circuitos VQC implementados seguem a estrutura:
+
+**Feature Map (Encoding):**
+```
+H gates em todos os qubits
+Rz(xi) para cada feature xi
+```
+
+**Camadas Variacionais (x2):**
+```
+Ry(θi,j) + Rz(φi,j) em cada qubit
+CNOT(qi, qi+1) para entanglement
+```
+
+**Medição:**
+```
+Medição no eixo Z de todos os qubits
+```
+
+Ver diagramas completos em Material Suplementar (Figuras S1-S3).
+
+### Protocolo Estatístico
+
+**Testes Aplicados:**
+- ANOVA: Comparação entre frameworks (α=0.05)
+- Shapiro-Wilk: Test de normalidade
+- Levene: Test de homoscedasticidade
+- Cohen's d: Tamanho de efeito pareado
+
+**Métricas Coletadas:**
+- Acurácia de classificação (principal)
+- Loss function (cross-entropy)
+- Norma do gradiente (estabilidade)
+- Tempo de execução
+
+**Reprodutibilidade:**
+- Seed fixo: 42
+- Logs completos salvos
+- Código versionado (Git)
+
