@@ -751,19 +751,22 @@ class ScheduleRuido:
     def linear(epoca, n_epocas, nivel_inicial, nivel_final):
         """Linear annealing: p(t) = p_f + (p_i - p_f)(1 - t)"""
         t = epoca / max(1, n_epocas - 1)
-        return nivel_final + (nivel_inicial - nivel_final) * (1 - t)
+        nivel = nivel_final + (nivel_inicial - nivel_final) * (1 - t)
+        return max(0.0, nivel)  # Prevenir valores negativos por erro de ponto flutuante
 
     @staticmethod
     def exponencial(epoca, n_epocas, nivel_inicial, nivel_final):
         """Exponential decay: p(t) = p_f + (p_i - p_f)exp(-t/τ)"""
         tau = max(1, n_epocas / 3)
-        return nivel_final + (nivel_inicial - nivel_final) * np.exp(-epoca / tau)
+        nivel = nivel_final + (nivel_inicial - nivel_final) * np.exp(-epoca / tau)
+        return max(0.0, nivel)  # Prevenir valores negativos por erro de ponto flutuante
 
     @staticmethod
     def cosseno(epoca, n_epocas, nivel_inicial, nivel_final):
         """Cosine annealing: p(t) = p_f + (p_i - p_f) * 0.5(1 + cos(πt))"""
         t = epoca / max(1, n_epocas - 1)
-        return nivel_final + (nivel_inicial - nivel_final) * 0.5 * (1 + np.cos(np.pi * t))
+        nivel = nivel_final + (nivel_inicial - nivel_final) * 0.5 * (1 + np.cos(np.pi * t))
+        return max(0.0, nivel)  # Prevenir valores negativos por erro de ponto flutuante
 
     @staticmethod
     def adaptativo(epoca, n_epocas, nivel_inicial, nivel_final, historico_custo=None):
