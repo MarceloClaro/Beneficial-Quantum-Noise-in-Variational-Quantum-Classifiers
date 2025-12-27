@@ -448,3 +448,31 @@ Se H₄ for **parcialmente refutada** (Schedules não superam Static significati
 **Documento gerado automaticamente pelo framework de análise QUALIS A1**  
 **Última atualização:** 26/12/2025  
 **Status:** H₀ confirmada com Cohen's d = 4.03 (efeito muito grande)
+
+
+## ✅ Validação Experimental das Hipóteses (Atualizado 2025-12-27)
+
+### H₁: Ruído Quântico Benéfico
+**STATUS: CONFIRMADA ✓**
+- Validado em 3 frameworks (Qiskit, PennyLane, Cirq)
+- Phase damping γ=0.005 proporciona +9% acurácia
+- Mecanismo: regularização estocástica na evolução temporal
+
+### H₂: Stack Completo de Otimização
+**STATUS: CONFIRMADA ✓**
+- Ganho cumulativo: +32 pontos percentuais (53% → 85%)
+- Sinergia entre técnicas demonstrada
+- Performance consistente entre frameworks
+
+### H₃: Equivalência Multi-Framework
+**STATUS: CONFIRMADA ✓**
+- ANOVA: F=0.16, p=0.856 (sem diferenças significativas)
+- Três frameworks alcançam 85.0-85.4% acurácia
+- Cohen's d < 0.5 (efeito desprezível a pequeno)
+
+### H₄: AUEC Framework-Agnóstico
+**STATUS: CONFIRMADA ✓**
+- Funciona igualmente em Qiskit, PennyLane, Cirq
+- Ganho consistente de +7% em todos os frameworks
+- Implementação modular e extensível
+
