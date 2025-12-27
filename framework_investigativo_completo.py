@@ -674,6 +674,79 @@ class ScheduleRuido:
     Referência: Smith (2017). "Cyclical Learning Rates" + adaptações para ruído quântico
     """
 
+    def __init__(self, tipo='linear', nivel_inicial=0.05, nivel_final=0.01):
+        """
+        Inicializa schedule de ruído.
+        
+        Args:
+            tipo: Tipo de schedule ('linear', 'exponencial', 'cosine', 'cosseno', 'constante', 'adaptativo')
+            nivel_inicial: Nível de ruído no início do treinamento
+            nivel_final: Nível de ruído no final do treinamento
+        """
+        self.tipo = tipo
+        self.nivel_inicial = nivel_inicial
+        self.nivel_final = nivel_final
+        
+        # Map tipo to method
+        self._schedule_map = {
+            'linear': self.linear,
+            'exponencial': self.exponencial,
+            'cosine': self.cosseno,
+            'cosseno': self.cosseno,  # Alias
+            'constante': self.constante,
+            'adaptativo': self.adaptativo,
+        }
+    
+    def calcular_nivel(self, epoca, n_epocas):
+        """
+        Calcula nível de ruído para a época atual.
+        
+        Args:
+            epoca: Época atual (0-indexed)
+            n_epocas: Total de épocas
+            
+        Returns:
+            float: Nível de ruído calculado
+        """
+        if self.tipo in self._schedule_map:
+            return self._schedule_map[self.tipo](
+                epoca, n_epocas, self.nivel_inicial, self.nivel_final
+            )
+        else:
+            # Fallback to constant
+            return self.nivel_inicial
+    
+    def calcular_nivel_adaptativo(self, epoca, n_epocas, variancia_gradiente):
+        """
+        Calcula nível adaptativo baseado em variância do gradiente.
+        
+        Args:
+            epoca: Época atual
+            n_epocas: Total de épocas
+            variancia_gradiente: Variância do gradiente (métrica de barren plateau)
+            
+        Returns:
+            float: Nível de ruído ajustado
+        """
+        # Base level from standard schedule
+        nivel_base = self.cosseno(epoca, n_epocas, self.nivel_inicial, self.nivel_final)
+        
+        # Adjust based on gradient variance (high variance = barren plateau = increase noise)
+        if variancia_gradiente < 1e-8:
+            # Barren plateau detected
+            fator_ajuste = 1.5
+        elif variancia_gradiente > 1e-5:
+            # Good gradients
+            fator_ajuste = 0.8
+        else:
+            fator_ajuste = 1.0
+        
+        return min(self.nivel_inicial, nivel_base * fator_ajuste)
+    
+    def constante(self, epoca, n_epocas, nivel_inicial, nivel_final):
+        """Constant noise level."""
+        return nivel_inicial
+
     @staticmethod
     def linear(epoca, n_epocas, nivel_inicial, nivel_final):
         """Linear annealing: p(t) = p_f + (p_i - p_f)(1 - t)"""
@@ -693,14 +766,14 @@ class ScheduleRuido:
         return nivel_final + (nivel_inicial - nivel_final) * 0.5 * (1 + np.cos(np.pi * t))
 
     @staticmethod
-    def adaptativo(epoca, n_epocas, nivel_inicial, nivel_final, historico_custo):
+    def adaptativo(epoca, n_epocas, nivel_inicial, nivel_final, historico_custo=None):
         """
         Adaptive annealing: reduz ruído mais rápido se convergindo bem.
 
         Se custo está caindo (boa convergência): acelera redução de ruído
         Se custo estável (platô): mantém ruído para exploração
         """
-        if len(historico_custo) < 3:
+        if historico_custo is None or len(historico_custo) < 3:
             return ScheduleRuido.cosseno(epoca, n_epocas, nivel_inicial, nivel_final)
 
         # Calcular taxa de mudança do custo (últimas 3 épocas)
@@ -2551,6 +2624,7 @@ def circuito_strongly_entangling(weights, x, n_qubits, n_camadas, modelo_ruido=N
 
 # Dicionário de arquiteturas disponíveis
 ARQUITETURAS = {
+    'basico': (circuito_basico, lambda nq, nc: nc * nq),  # Alias for basic_entangler
     'basic_entangler': (circuito_basico, lambda nq, nc: nc * nq),
     'strongly_entangling': (circuito_strongly_entangling, lambda nq, nc: nc * nq * 3),
     'hardware_efficient': (circuito_hardware_efficient, lambda nq, nc: nc * nq),
