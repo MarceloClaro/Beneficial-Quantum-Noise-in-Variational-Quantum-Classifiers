@@ -89,14 +89,17 @@ class TestPennyLaneLibraries:
             return qml.expval(qml.PauliZ(0))
         
         # Use PennyLane numpy for requires_grad support
-        x_val = pnp.array(np.pi / 4, requires_grad=True)
+        x_val = pnp.array(pnp.pi / 4, requires_grad=True)
         grad_fn = qml.grad(circuit)
         gradient = grad_fn(x_val)
         
         # Handle tuple returns (newer PennyLane versions may return tuples)
         if isinstance(gradient, tuple):
             # If it's a tuple, extract the first element (the actual gradient)
-            gradient = gradient[0] if len(gradient) > 0 else gradient
+            if len(gradient) > 0:
+                gradient = gradient[0]
+            else:
+                raise ValueError("qml.grad returned an empty tuple")
         
         # Handle both scalar and 0-d array returns
         if isinstance(gradient, np.ndarray):
