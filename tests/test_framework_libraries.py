@@ -94,7 +94,7 @@ class TestPennyLaneLibraries:
         gradient = grad_fn(x_val)
         
         # Gradient should be a scalar or 0-d array
-        if isinstance(gradient, (np.ndarray, pnp.ndarray)):
+        if isinstance(gradient, np.ndarray):
             gradient = float(gradient)
         
         assert isinstance(gradient, (float, np.floating)), f"Gradient type: {type(gradient)}, value: {gradient}"
@@ -254,7 +254,13 @@ class TestQiskitLibraries:
             # Qiskit 1.x StatevectorSampler API
             job = sampler.run([qc], shots=100)
             result = job.result()
-            assert hasattr(result, 'quasi_dists') or hasattr(result[0].data, 'meas'), "No measurement results found"
+            # Check for measurement results in result object
+            if hasattr(result, 'quasi_dists'):
+                assert result.quasi_dists, "No quasi_dists in result"
+            elif len(result) > 0 and hasattr(result[0].data, 'meas'):
+                assert result[0].data.meas, "No measurement results found"
+            else:
+                raise AssertionError("No measurement results found in result")
         except TypeError:
             # Aer Sampler API
             job = sampler.run(qc, shots=100)
@@ -416,8 +422,7 @@ class TestCrossFrameworkCompatibility:
         """Test seed-based reproducibility across frameworks.
         
         Verifies that setting the same random seed produces identical
-        results when parameters are generated outside the QNode and
-        passed as arguments, ensuring true reproducibility.
+        results across multiple executions.
         """
         import pennylane as qml
         from qiskit import QuantumCircuit, transpile
@@ -427,6 +432,8 @@ class TestCrossFrameworkCompatibility:
         seed = 42
         
         # PennyLane - Generate random parameter explicitly outside QNode
+        # to ensure reproducibility (parameters generated inside QNode
+        # are evaluated at definition time, not execution time)
         np.random.seed(seed)
         param1 = np.random.random()
         
