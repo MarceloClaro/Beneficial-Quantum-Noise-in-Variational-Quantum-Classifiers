@@ -15,9 +15,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import pytest
 import warnings
 
-# Filter out deprecation warnings from quantum libraries
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
+# Filter out specific deprecation warnings from quantum libraries
+# Only suppress known warnings from quantum frameworks
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="pennylane.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="qiskit.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="cirq.*")
+warnings.filterwarnings("ignore", category=PendingDeprecationWarning, module="qiskit.*")
 
 
 @pytest.fixture(scope="session", autouse=True)
