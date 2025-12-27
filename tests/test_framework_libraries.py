@@ -387,19 +387,26 @@ class TestCrossFrameworkCompatibility:
         
         seed = 42
         
-        # PennyLane
+        # PennyLane - Generate random parameter explicitly
         np.random.seed(seed)
+        param1 = np.random.random()
+        
         dev = qml.device('default.qubit', wires=1)
         @qml.qnode(dev)
-        def pl_circuit():
-            qml.RX(np.random.random(), wires=0)
+        def pl_circuit(param):
+            qml.RX(param, wires=0)
             return qml.expval(qml.PauliZ(0))
-        pl_result1 = pl_circuit()
+        pl_result1 = pl_circuit(param1)
         
+        # Reset seed and generate same parameter
         np.random.seed(seed)
-        pl_result2 = pl_circuit()
+        param2 = np.random.random()
+        pl_result2 = pl_circuit(param2)
         
-        assert np.allclose(pl_result1, pl_result2)
+        # Verify parameters are identical
+        assert np.allclose(param1, param2), f"Parameters differ: {param1} vs {param2}"
+        # Verify results are identical
+        assert np.allclose(pl_result1, pl_result2), f"Results differ: {pl_result1} vs {pl_result2}"
         print(f"✓ Seed reproducibility: PennyLane deterministic with seed={seed}")
     
     def test_performance_scaling(self):
