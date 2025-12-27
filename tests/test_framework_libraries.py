@@ -87,9 +87,17 @@ class TestPennyLaneLibraries:
             qml.RX(x, wires=0)
             return qml.expval(qml.PauliZ(0))
         
+        # Use qml.grad with proper scalar input
+        x_val = np.array(np.pi / 4)  # Ensure it's a numpy array
         grad_fn = qml.grad(circuit)
-        gradient = grad_fn(np.pi / 4)
-        assert isinstance(gradient, (float, np.ndarray))
+        gradient = grad_fn(x_val)
+        
+        # Gradient should be a scalar or 0-d array
+        if isinstance(gradient, np.ndarray):
+            gradient = float(gradient)
+        
+        assert isinstance(gradient, (float, np.floating)), f"Gradient type: {type(gradient)}, value: {gradient}"
+        assert not np.isnan(gradient), "Gradient is NaN"
         print(f"✓ PennyLane gradients: parameter-shift working (grad={gradient:.4f})")
     
     def test_pennylane_noise_models(self):
@@ -118,13 +126,24 @@ class TestQiskitLibraries:
     """Test suite for Qiskit framework libraries."""
     
     def test_qiskit_import(self):
-        """Test Qiskit core imports (2.x API)."""
+        """Test Qiskit core imports."""
         import qiskit
         from qiskit import QuantumCircuit
         from qiskit_aer import Aer
-        from qiskit.primitives import Sampler
+        
+        # Qiskit 1.x: Use StatevectorSampler or Aer's Sampler
+        try:
+            from qiskit.primitives import StatevectorSampler
+            sampler_available = True
+        except ImportError:
+            try:
+                from qiskit_aer.primitives import Sampler
+                sampler_available = True
+            except ImportError:
+                sampler_available = False
         
         assert qiskit.__version__ is not None
+        assert sampler_available, "No compatible Sampler found for Qiskit primitives"
         print(f"✓ Qiskit version: {qiskit.__version__}")
     
     def test_qiskit_circuit_creation(self):
@@ -214,19 +233,33 @@ class TestQiskitLibraries:
         print(f"✓ Qiskit transpiler: optimization_level=1 working")
     
     def test_qiskit_primitives(self):
-        """Test Qiskit primitives (2.x API)."""
+        """Test Qiskit primitives."""
         from qiskit import QuantumCircuit
-        from qiskit.primitives import Sampler
+        
+        # Try Qiskit 1.x API first, fallback to Aer
+        try:
+            from qiskit.primitives import StatevectorSampler as Sampler
+        except ImportError:
+            from qiskit_aer.primitives import Sampler
         
         qc = QuantumCircuit(1)
         qc.h(0)
         qc.measure_all()
         
         sampler = Sampler()
-        job = sampler.run(qc, shots=100)
-        result = job.result()
         
-        assert hasattr(result, 'quasi_dists')
+        # Run based on API version
+        try:
+            # Qiskit 1.x StatevectorSampler API
+            job = sampler.run([qc], shots=100)
+            result = job.result()
+            assert hasattr(result, 'quasi_dists') or hasattr(result[0].data, 'meas'), "No measurement results found"
+        except TypeError:
+            # Aer Sampler API
+            job = sampler.run(qc, shots=100)
+            result = job.result()
+            assert hasattr(result, 'quasi_dists'), "No quasi_dists in result"
+        
         print(f"✓ Qiskit primitives: Sampler working")
 
 
@@ -379,7 +412,12 @@ class TestCrossFrameworkCompatibility:
         print(f"✓ NumPy compatibility: all frameworks accept np.array parameters")
     
     def test_seed_reproducibility(self):
-        """Test seed-based reproducibility across frameworks."""
+        """Test seed-based reproducibility across frameworks.
+        
+        Verifies that setting the same random seed produces identical
+        results when parameters are generated outside the QNode and
+        passed as arguments, ensuring true reproducibility.
+        """
         import pennylane as qml
         from qiskit import QuantumCircuit, transpile
         from qiskit_aer import Aer
@@ -387,19 +425,27 @@ class TestCrossFrameworkCompatibility:
         
         seed = 42
         
-        # PennyLane
+        # PennyLane - Generate random parameter explicitly outside QNode
         np.random.seed(seed)
+        param1 = np.random.random()
+        
         dev = qml.device('default.qubit', wires=1)
         @qml.qnode(dev)
-        def pl_circuit():
-            qml.RX(np.random.random(), wires=0)
+        def pl_circuit(param):
+            qml.RX(param, wires=0)
             return qml.expval(qml.PauliZ(0))
-        pl_result1 = pl_circuit()
+        pl_result1 = pl_circuit(param1)
         
+        # Reset seed and generate same parameter
         np.random.seed(seed)
-        pl_result2 = pl_circuit()
+        param2 = np.random.random()
+        pl_result2 = pl_circuit(param2)
         
-        assert np.allclose(pl_result1, pl_result2)
+        # Verify parameters are identical
+        assert np.allclose(param1, param2), f"Parameters differ: {param1} vs {param2}"
+        # Verify results are identical with explicit tolerance
+        assert np.allclose(pl_result1, pl_result2, rtol=1e-7, atol=1e-9), \
+            f"Results differ: {pl_result1} vs {pl_result2}"
         print(f"✓ Seed reproducibility: PennyLane deterministic with seed={seed}")
     
     def test_performance_scaling(self):
