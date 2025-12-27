@@ -10,7 +10,12 @@ import sys
 from pathlib import Path
 
 import pytest
-import torch
+
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 # Add the parent directory to the path so we can import the main module
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -177,7 +182,11 @@ def test_pennylane_basic_functionality():
         params = np.array([0.5])
         result = circuit(params)
 
-        assert isinstance(result, (float, np.floating, torch.Tensor))
+        # PennyLane can return torch.Tensor if torch is available
+        valid_types = (float, np.floating)
+        if HAS_TORCH:
+            valid_types = (float, np.floating, torch.Tensor)
+        assert isinstance(result, valid_types)
     except Exception as e:
         pytest.fail(f"PennyLane basic functionality test failed: {e}")
 
