@@ -124,14 +124,7 @@ jobs:
           fi
           
           # Validate YAML syntax
-          python -c "
-import yaml
-with open('$CONFIG_FILE', 'r') as f:
-    config = yaml.safe_load(f)
-    print(f'Configuration loaded successfully')
-    print(f'Seed: {config.get(\"seed\", \"NOT FOUND\")}')
-    print(f'Datasets: {len(config.get(\"datasets\", []))}')
-          "
+          python -c 'import yaml; config = yaml.safe_load(open("'"$CONFIG_FILE"'", "r")); print(f"Configuration loaded successfully"); print(f"Seed: {config.get(\"seed\", \"NOT FOUND\")}"); print(f"Datasets: {len(config.get(\"datasets\", []))}")'
           
           # Verify equivalences document
           if [ ! -f "docs/equivalencias_e_limitacoes.md" ]; then
@@ -175,33 +168,10 @@ with open('$CONFIG_FILE', 'r') as f:
           echo "Starting at: $(date)"
           
           # Generate environment manifest
-          python -c "
-import json, sys, platform, os
-manifest = {
-  'run_id': '${{ steps.run_id.outputs.run_id }}',
-  'timestamp': '$(date -Iseconds)',
-  'git_commit': '$(git rev-parse HEAD)',
-  'git_branch': '$(git branch --show-current)',
-  'python_version': sys.version,
-  'platform': platform.platform(),
-  'cpu_count': os.cpu_count()
-}
-print(json.dumps(manifest, indent=2))
-with open('manifests/environment_manifest.json', 'w') as f:
-  json.dump(manifest, f, indent=2)
-          "
+          python -c 'import json, sys, platform, os; manifest = {"run_id": "'"${{ steps.run_id.outputs.run_id }}"'", "timestamp": "'"$(date -Iseconds)"'", "git_commit": "'"$(git rev-parse HEAD)"'", "git_branch": "'"$(git branch --show-current)"'", "python_version": sys.version, "platform": platform.platform(), "cpu_count": os.cpu_count()}; print(json.dumps(manifest, indent=2)); f = open("manifests/environment_manifest.json", "w"); json.dump(manifest, f, indent=2); f.close()'
           
           # Verify all frameworks are importable
-          python -c "
-try:
-    import pennylane
-    import qiskit
-    import cirq
-    print('✓ All frameworks successfully imported')
-except ImportError as e:
-    print(f'ERROR: {e}')
-    sys.exit(1)
-          "
+          python -c 'import sys; exec("try:\n    import pennylane, qiskit, cirq\n    print(\"✓ All frameworks successfully imported\")\nexcept ImportError as e:\n    print(f\"ERROR: {e}\")\n    sys.exit(1)")'
           
           echo "status=completed" >> $GITHUB_OUTPUT
           echo "Completed at: $(date)"
@@ -305,20 +275,7 @@ except ImportError as e:
           if [ ! -f "generate_comparative_results.py" ]; then
             echo "ERROR: generate_comparative_results.py not found"
             echo "Creating minimal analysis wrapper..."
-            python -c "
-import os, json
-run_id = '${{ steps.run_id.outputs.run_id }}'
-analysis = {
-  'run_id': run_id,
-  'frameworks': ['pennylane', 'qiskit', 'cirq'],
-  'status': 'simulated',
-  'message': 'Comparative analysis would be generated here'
-}
-os.makedirs(f'results/comparisons/{run_id}', exist_ok=True)
-with open(f'results/comparisons/{run_id}/stats_report.json', 'w') as f:
-  json.dump(analysis, f, indent=2)
-print('Simulated analysis created')
-            "
+            python -c 'import os, json; run_id = "'"${{ steps.run_id.outputs.run_id }}"'"; analysis = {"run_id": run_id, "frameworks": ["pennylane", "qiskit", "cirq"], "status": "simulated", "message": "Comparative analysis would be generated here"}; os.makedirs(f"results/comparisons/{run_id}", exist_ok=True); f = open(f"results/comparisons/{run_id}/stats_report.json", "w"); json.dump(analysis, f, indent=2); f.close(); print("Simulated analysis created")'
             echo "status=simulated" >> $GITHUB_OUTPUT
           else
             # Generate comparative analysis
@@ -343,40 +300,7 @@ print('Simulated analysis created')
           if [ ! -f "generate_figures.py" ]; then
             echo "ERROR: generate_figures.py not found"
             echo "Creating minimal figure generation wrapper..."
-            python -c "
-import os, json, matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import numpy as np
-
-run_id = '${{ steps.run_id.outputs.run_id }}'
-fig_dir = f'figures/{run_id}'
-os.makedirs(fig_dir, exist_ok=True)
-
-# Create sample figures
-fig, ax = plt.subplots()
-ax.plot([1, 2, 3], [1, 2, 3])
-ax.set_title('Sample Performance Comparison')
-plt.savefig(f'{fig_dir}/performance_comparison.png')
-plt.close()
-
-fig, ax = plt.subplots()
-ax.plot([1, 2, 3], [3, 2, 1])
-ax.set_title('Sample Sensitivity Curve')
-plt.savefig(f'{fig_dir}/sensitivity_curves.png')
-plt.close()
-
-# Create manifest
-manifest = {
-  'run_id': run_id,
-  'figures': ['performance_comparison.png', 'sensitivity_curves.png'],
-  'status': 'simulated'
-}
-with open(f'{fig_dir}/figure_manifest.json', 'w') as f:
-  json.dump(manifest, f, indent=2)
-
-print(f'Simulated figures created in {fig_dir}')
-            "
+            python -c 'import os, json, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt; import numpy as np; run_id = "'"${{ steps.run_id.outputs.run_id }}"'"; fig_dir = f"figures/{run_id}"; os.makedirs(fig_dir, exist_ok=True); fig, ax = plt.subplots(); ax.plot([1, 2, 3], [1, 2, 3]); ax.set_title("Sample Performance Comparison"); plt.savefig(f"{fig_dir}/performance_comparison.png"); plt.close(); fig, ax = plt.subplots(); ax.plot([1, 2, 3], [3, 2, 1]); ax.set_title("Sample Sensitivity Curve"); plt.savefig(f"{fig_dir}/sensitivity_curves.png"); plt.close(); manifest = {"run_id": run_id, "figures": ["performance_comparison.png", "sensitivity_curves.png"], "status": "simulated"}; f = open(f"{fig_dir}/figure_manifest.json", "w"); json.dump(manifest, f, indent=2); f.close(); print(f"Simulated figures created in {fig_dir}")'
             echo "status=simulated" >> $GITHUB_OUTPUT
           else
             # Generate figures
@@ -401,43 +325,33 @@ print(f'Simulated figures created in {fig_dir}')
           # Update CHANGELOG_EXECUCOES.md
           if [ -f "CHANGELOG_EXECUCOES.md" ]; then
             echo "Updating CHANGELOG_EXECUCOES.md..."
-            python -c "
-import os
-from datetime import datetime
-
-run_id = '${{ steps.run_id.outputs.run_id }}'
-changelog_entry = f'''
-
-## Run {run_id}
-**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
-**Type:** GitHub Actions Automated Execution
-**Status:** Completed
-
-### Phases Executed:
-- Phase 1: Repository Inventory ✓
-- Phase 2: Configuration Standardization ✓
-- Phase 3: Improvements Validation ✓
-- Phase 4: Environment Preparation ✓
-- Phase 5: PennyLane Baseline ${'✓' if '${{ steps.phase5.outcome }}' == 'success' else '⚠'}
-- Phase 6: Qiskit Execution ${'✓' if '${{ steps.phase6.outcome }}' == 'success' else '⚠'}
-- Phase 7: Cirq Execution ${'✓' if '${{ steps.phase7.outcome }}' == 'success' else '⚠'}
-- Phase 8: Comparative Analysis ${'✓' if '${{ steps.phase8.outcome }}' == 'success' else '⚠'}
-- Phase 9: Figure Generation ${'✓' if '${{ steps.phase9.outcome }}' == 'success' else '⚠'}
-- Phase 10: Documentation Update (current)
-- Phase 11: Consistency Verification (pending)
-- Phase 12: Quality Gates (pending)
-
-### Artifacts:
-- Results available in GitHub Actions artifacts
-- Retention: 30 days
-
-'''
-
-with open('CHANGELOG_EXECUCOES.md', 'a') as f:
-    f.write(changelog_entry)
-
-print('CHANGELOG updated successfully')
-            "
+            {
+              echo ""
+              echo "## Run ${{ steps.run_id.outputs.run_id }}"
+              echo "**Date:** $(date '+%Y-%m-%d %H:%M:%S UTC')"
+              echo "**Type:** GitHub Actions Automated Execution"
+              echo "**Status:** Completed"
+              echo ""
+              echo "### Phases Executed:"
+              echo "- Phase 1: Repository Inventory ✓"
+              echo "- Phase 2: Configuration Standardization ✓"
+              echo "- Phase 3: Improvements Validation ✓"
+              echo "- Phase 4: Environment Preparation ✓"
+              echo "- Phase 5: PennyLane Baseline ${{ steps.phase5.outcome }}"
+              echo "- Phase 6: Qiskit Execution ${{ steps.phase6.outcome }}"
+              echo "- Phase 7: Cirq Execution ${{ steps.phase7.outcome }}"
+              echo "- Phase 8: Comparative Analysis ${{ steps.phase8.outcome }}"
+              echo "- Phase 9: Figure Generation ${{ steps.phase9.outcome }}"
+              echo "- Phase 10: Documentation Update (current)"
+              echo "- Phase 11: Consistency Verification (pending)"
+              echo "- Phase 12: Quality Gates (pending)"
+              echo ""
+              echo "### Artifacts:"
+              echo "- Results available in GitHub Actions artifacts"
+              echo "- Retention: 30 days"
+              echo ""
+            } >> CHANGELOG_EXECUCOES.md
+            echo "CHANGELOG updated successfully"
           else
             echo "CHANGELOG_EXECUCOES.md not found, creating..."
             echo "# Execution History" > CHANGELOG_EXECUCOES.md
@@ -446,33 +360,33 @@ print('CHANGELOG updated successfully')
           fi
           
           # Create documentation summary
-          cat > docs/execution_plan/latest_run_summary.md << EOF
-# Latest Execution Summary
-
-**Run ID:** ${{ steps.run_id.outputs.run_id }}
-**Date:** $(date)
-**Triggered by:** GitHub Actions
-
-## Phase Results
-
-| Phase | Status | Notes |
-|-------|--------|-------|
-| 1 - Inventory | ${{ steps.phase1.outcome }} | Repository structure validated |
-| 2 - Configuration | ${{ steps.phase2.outcome }} | Config file validated |
-| 3 - Improvements | ${{ steps.phase3.outcome }} | Smoke tests executed |
-| 4 - Environment | ${{ steps.phase4.outcome }} | All frameworks imported |
-| 5 - PennyLane | ${{ steps.phase5.outcome }} | Baseline execution |
-| 6 - Qiskit | ${{ steps.phase6.outcome }} | Qiskit execution |
-| 7 - Cirq | ${{ steps.phase7.outcome }} | Cirq execution |
-| 8 - Analysis | ${{ steps.phase8.outcome }} | Comparative statistics |
-| 9 - Figures | ${{ steps.phase9.outcome }} | Publication-ready plots |
-| 10 - Documentation | In Progress | Updating docs |
-
-## Artifacts
-
-Download from GitHub Actions artifacts section (30-day retention).
-
-EOF
+          {
+            echo "# Latest Execution Summary"
+            echo ""
+            echo "**Run ID:** ${{ steps.run_id.outputs.run_id }}"
+            echo "**Date:** $(date)"
+            echo "**Triggered by:** GitHub Actions"
+            echo ""
+            echo "## Phase Results"
+            echo ""
+            echo "| Phase | Status | Notes |"
+            echo "|-------|--------|-------|"
+            echo "| 1 - Inventory | ${{ steps.phase1.outcome }} | Repository structure validated |"
+            echo "| 2 - Configuration | ${{ steps.phase2.outcome }} | Config file validated |"
+            echo "| 3 - Improvements | ${{ steps.phase3.outcome }} | Smoke tests executed |"
+            echo "| 4 - Environment | ${{ steps.phase4.outcome }} | All frameworks imported |"
+            echo "| 5 - PennyLane | ${{ steps.phase5.outcome }} | Baseline execution |"
+            echo "| 6 - Qiskit | ${{ steps.phase6.outcome }} | Qiskit execution |"
+            echo "| 7 - Cirq | ${{ steps.phase7.outcome }} | Cirq execution |"
+            echo "| 8 - Analysis | ${{ steps.phase8.outcome }} | Comparative statistics |"
+            echo "| 9 - Figures | ${{ steps.phase9.outcome }} | Publication-ready plots |"
+            echo "| 10 - Documentation | In Progress | Updating docs |"
+            echo ""
+            echo "## Artifacts"
+            echo ""
+            echo "Download from GitHub Actions artifacts section (30-day retention)."
+            echo ""
+          } > docs/execution_plan/latest_run_summary.md
           
           echo "status=completed" >> $GITHUB_OUTPUT
           echo "Completed at: $(date)"
@@ -485,66 +399,7 @@ EOF
           echo "Starting at: $(date)"
           
           # Create consistency report
-          python -c "
-import os, json
-from pathlib import Path
-
-run_id = '${{ steps.run_id.outputs.run_id }}'
-report = {
-  'run_id': run_id,
-  'checks': [],
-  'issues': [],
-  'summary': {}
-}
-
-# Check if results exist
-frameworks = ['pennylane', 'qiskit', 'cirq']
-for fw in frameworks:
-    result_dir = Path(f'results/{fw}/{run_id}')
-    if result_dir.exists():
-        report['checks'].append(f'{fw} results directory exists')
-        # Check for expected files
-        expected_files = ['metrics.csv', 'summary.csv']
-        for file in expected_files:
-            file_path = result_dir / file
-            if file_path.exists():
-                report['checks'].append(f'{fw}/{file} found')
-            else:
-                report['issues'].append(f'{fw}/{file} missing')
-    else:
-        report['issues'].append(f'{fw} results directory missing')
-
-# Check comparative analysis
-comp_dir = Path(f'results/comparisons/{run_id}')
-if comp_dir.exists():
-    report['checks'].append('Comparative analysis directory exists')
-else:
-    report['issues'].append('Comparative analysis directory missing')
-
-# Check figures
-fig_dir = Path(f'figures/{run_id}')
-if fig_dir.exists():
-    report['checks'].append('Figures directory exists')
-else:
-    report['issues'].append('Figures directory missing')
-
-# Summary
-report['summary'] = {
-  'total_checks': len(report['checks']),
-  'total_issues': len(report['issues']),
-  'status': 'PASS' if len(report['issues']) == 0 else 'WARNINGS'
-}
-
-# Save report
-os.makedirs('docs/execution_plan', exist_ok=True)
-with open(f'docs/execution_plan/consistency_report_{run_id}.json', 'w') as f:
-    json.dump(report, f, indent=2)
-
-print(json.dumps(report, indent=2))
-print(f\"\\nConsistency Check: {report['summary']['status']}\")
-print(f\"Checks passed: {report['summary']['total_checks']}\")
-print(f\"Issues found: {report['summary']['total_issues']}\")
-          "
+          python -c 'import os, json; from pathlib import Path; run_id = "'"${{ steps.run_id.outputs.run_id }}"'"; report = {"run_id": run_id, "checks": [], "issues": [], "summary": {}}; frameworks = ["pennylane", "qiskit", "cirq"]; [report["checks"].append(f"{fw} results directory exists") if Path(f"results/{fw}/{run_id}").exists() else report["issues"].append(f"{fw} results directory missing") for fw in frameworks]; [[report["checks"].append(f"{fw}/{file} found") if (Path(f"results/{fw}/{run_id}") / file).exists() else report["issues"].append(f"{fw}/{file} missing") for file in ["metrics.csv", "summary.csv"]] if Path(f"results/{fw}/{run_id}").exists() else None for fw in frameworks]; report["checks"].append("Comparative analysis directory exists") if Path(f"results/comparisons/{run_id}").exists() else report["issues"].append("Comparative analysis directory missing"); report["checks"].append("Figures directory exists") if Path(f"figures/{run_id}").exists() else report["issues"].append("Figures directory missing"); report.update({"summary": {"total_checks": len(report["checks"]), "total_issues": len(report["issues"]), "status": "PASS" if len(report["issues"]) == 0 else "WARNINGS"}}); os.makedirs("docs/execution_plan", exist_ok=True); f = open(f"docs/execution_plan/consistency_report_{run_id}.json", "w"); json.dump(report, f, indent=2); f.close(); print(json.dumps(report, indent=2)); print(f"\nConsistency Check: {report[\"summary\"][\"status\"]}"); print(f"Checks passed: {report[\"summary\"][\"total_checks\"]}"); print(f"Issues found: {report[\"summary\"][\"total_issues\"]}")'
           
           echo "status=completed" >> $GITHUB_OUTPUT
           echo "Completed at: $(date)"
@@ -556,56 +411,7 @@ print(f\"Issues found: {report['summary']['total_issues']}\")
           echo "Starting at: $(date)"
           
           # Final quality check
-          python -c "
-import json
-
-run_id = '${{ steps.run_id.outputs.run_id }}'
-
-# Define quality gates
-quality_gates = {
-  'phases_completed': 0,
-  'phases_total': 12,
-  'required_artifacts': [],
-  'optional_artifacts': [],
-  'overall_status': 'UNKNOWN'
-}
-
-# Count completed phases
-phases = {
-  'phase1': '${{ steps.phase1.outcome }}',
-  'phase2': '${{ steps.phase2.outcome }}',
-  'phase3': '${{ steps.phase3.outcome }}',
-  'phase4': '${{ steps.phase4.outcome }}',
-  'phase5': '${{ steps.phase5.outcome }}',
-  'phase6': '${{ steps.phase6.outcome }}',
-  'phase7': '${{ steps.phase7.outcome }}',
-  'phase8': '${{ steps.phase8.outcome }}',
-  'phase9': '${{ steps.phase9.outcome }}',
-  'phase10': '${{ steps.phase10.outcome }}',
-  'phase11': '${{ steps.phase11.outcome }}'
-}
-
-completed = sum(1 for outcome in phases.values() if outcome == 'success')
-quality_gates['phases_completed'] = completed
-
-# Determine overall status
-if completed >= 11:  # All phases except current (12)
-    quality_gates['overall_status'] = 'PASS'
-elif completed >= 8:  # At least infrastructure + some execution
-    quality_gates['overall_status'] = 'PARTIAL'
-else:
-    quality_gates['overall_status'] = 'FAIL'
-
-# Save quality gate report
-with open(f'quality_gates_report_{run_id}.json', 'w') as f:
-    json.dump(quality_gates, f, indent=2)
-
-print(json.dumps(quality_gates, indent=2))
-print(f\"\\n{'='*60}\")
-print(f\"QUALITY GATE: {quality_gates['overall_status']}\")
-print(f\"Completed: {completed}/{quality_gates['phases_total']} phases\")
-print(f\"{'='*60}\")
-          "
+          python -c 'import json; run_id = "'"${{ steps.run_id.outputs.run_id }}"'"; quality_gates = {"phases_completed": 0, "phases_total": 12, "required_artifacts": [], "optional_artifacts": [], "overall_status": "UNKNOWN"}; phases = {"phase1": "'"${{ steps.phase1.outcome }}"'", "phase2": "'"${{ steps.phase2.outcome }}"'", "phase3": "'"${{ steps.phase3.outcome }}"'", "phase4": "'"${{ steps.phase4.outcome }}"'", "phase5": "'"${{ steps.phase5.outcome }}"'", "phase6": "'"${{ steps.phase6.outcome }}"'", "phase7": "'"${{ steps.phase7.outcome }}"'", "phase8": "'"${{ steps.phase8.outcome }}"'", "phase9": "'"${{ steps.phase9.outcome }}"'", "phase10": "'"${{ steps.phase10.outcome }}"'", "phase11": "'"${{ steps.phase11.outcome }}"'"}; completed = sum(1 for outcome in phases.values() if outcome == "success"); quality_gates["phases_completed"] = completed; quality_gates["overall_status"] = "PASS" if completed >= 11 else ("PARTIAL" if completed >= 8 else "FAIL"); f = open(f"quality_gates_report_{run_id}.json", "w"); json.dump(quality_gates, f, indent=2); f.close(); print(json.dumps(quality_gates, indent=2)); print(f"\n{\"=\"*60}"); print(f"QUALITY GATE: {quality_gates[\"overall_status\"]}"); print(f"Completed: {completed}/{quality_gates[\"phases_total\"]} phases"); print(f"{\"=\"*60}")'
           
           echo "status=completed" >> $GITHUB_OUTPUT
           echo "Completed at: $(date)"
