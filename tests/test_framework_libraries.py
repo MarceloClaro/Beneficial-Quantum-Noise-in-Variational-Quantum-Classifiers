@@ -79,6 +79,7 @@ class TestPennyLaneLibraries:
     def test_pennylane_gradients(self):
         """Test PennyLane gradient computation."""
         import pennylane as qml
+        from pennylane import numpy as pnp
         
         dev = qml.device('default.qubit', wires=1)
         
@@ -87,13 +88,13 @@ class TestPennyLaneLibraries:
             qml.RX(x, wires=0)
             return qml.expval(qml.PauliZ(0))
         
-        # Use qml.grad with proper scalar input
-        x_val = np.array(np.pi / 4)  # Ensure it's a numpy array
+        # Use PennyLane numpy for trainable parameters
+        x_val = pnp.array(np.pi / 4, requires_grad=True)
         grad_fn = qml.grad(circuit)
         gradient = grad_fn(x_val)
         
         # Gradient should be a scalar or 0-d array
-        if isinstance(gradient, np.ndarray):
+        if isinstance(gradient, (np.ndarray, pnp.ndarray)):
             gradient = float(gradient)
         
         assert isinstance(gradient, (float, np.floating)), f"Gradient type: {type(gradient)}, value: {gradient}"
