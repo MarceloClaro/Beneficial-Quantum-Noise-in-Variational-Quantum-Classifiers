@@ -139,20 +139,25 @@ class TestQiskitLibraries:
         
         # Qiskit 1.x: Try StatevectorSampler, fallback to Aer Sampler
         sampler_available = False
+        sampler_sources_tried = []
         try:
             from qiskit.primitives import StatevectorSampler
             sampler_available = True
             sampler_source = "qiskit.primitives.StatevectorSampler"
         except ImportError:
+            sampler_sources_tried.append("qiskit.primitives.StatevectorSampler")
             try:
                 from qiskit_aer.primitives import Sampler
                 sampler_available = True
                 sampler_source = "qiskit_aer.primitives.Sampler"
             except ImportError:
+                sampler_sources_tried.append("qiskit_aer.primitives.Sampler")
                 sampler_source = "None"
         
         assert qiskit.__version__ is not None
-        assert sampler_available, f"No compatible Sampler found (tried {sampler_source})"
+        if not sampler_available:
+            error_msg = f"No compatible Sampler found. Tried imports: {', '.join(sampler_sources_tried)}"
+            assert False, error_msg
         print(f"✓ Qiskit version: {qiskit.__version__} (Sampler: {sampler_source})")
     
     def test_qiskit_circuit_creation(self):
