@@ -52,7 +52,17 @@
 
 ## 🧬 Abstract
 
-This repository presents the full investigative framework for the article **"From Obstacle to Opportunity: Harnessing Beneficial Quantum Noise in Variational Classifiers"**. We systematically demonstrate, through 8,280 controlled experiments, that quantum noise can act as a natural regularizer, an optimizer for variational landscapes, and a facilitator of generalization in VQCs. All code, data, and scientific artifacts are provided for full reproducibility and Qualis A1 compliance.
+This repository presents the full investigative framework for the article **"From Obstacle to Opportunity: Harnessing Beneficial Quantum Noise in Variational Classifiers"**. We systematically demonstrate, through 8,280 controlled experiments across **4 quantum frameworks** (PennyLane, Qiskit, Cirq, and QAOA), that quantum noise can act as a natural regularizer, an optimizer for variational landscapes, and a facilitator of generalization in VQCs.
+
+**Key Innovations:**
+- **Multiframework Validation**: Best accuracy 66.67% (Qiskit), fastest execution 10.03s (PennyLane 30x speedup)
+- **QAOA Scalability**: Framework extends to 100 qubits with unified beneficial noise analysis
+- **TREX Error Mitigation**: Advanced readout error correction integrated
+- **AUEC Framework**: Novel Adaptive Unified Error Correction (original scientific contribution)
+
+All code, data, and scientific artifacts are provided for full reproducibility and Qualis A1 compliance.
+
+**🌐 Website:** [https://marceloclaro.github.io/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/](https://marceloclaro.github.io/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/)
 
 ---
 
@@ -75,8 +85,11 @@ This repository presents the full investigative framework for the article **"Fro
 [![Multiframework](https://img.shields.io/badge/Multiframework-Qiskit%20%7C%20Cirq%20%7C%20PennyLane-blueviolet.svg)](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
 [![QAOA 100 Qubits](https://img.shields.io/badge/QAOA-100%20Qubits-success.svg)](README_QAOA_100QUBITS.md)
 [![Latest Results](https://img.shields.io/badge/Latest%20Results-66.67%25%20Qiskit-success.svg)](RESULTADOS_MULTIFRAMEWORK_ATUALIZADO.md)
+[![TREX](https://img.shields.io/badge/TREX-Error%20Mitigation-blue.svg)](trex_error_mitigation.py)
+[![AUEC](https://img.shields.io/badge/AUEC-Original%20Framework-gold.svg)](adaptive_unified_error_correction.py)
 [![Tests](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml/badge.svg)](https://github.com/MarceloClaro/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/actions/workflows/tests.yml)
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25+-success.svg)](tests/)
+[![Website](https://img.shields.io/badge/Website-Online-brightgreen.svg)](https://marceloclaro.github.io/Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers/)
 
 ### 🎯 Conformidade com Padrões Internacionais
 
@@ -84,10 +97,13 @@ This repository presents the full investigative framework for the article **"Fro
 |---------|--------|-----------|
 | **Reprodutibilidade** | ✅ 100% | Seeds fixas, ambiente documentado, código versionado |
 | **Rigor Estatístico** | ✅ 95% | ANOVA, effect sizes, IC 95%, power analysis |
-| **Documentação** | ✅ Completa | 50+ docs MD, README 1,355 linhas, API reference |
+| **Documentação** | ✅ Completa | 50+ docs MD, README 3,000+ linhas, API reference completa |
 | **Visualizações** | ✅ 300 DPI | PNG/PDF/SVG, Times New Roman, acessível |
-| **Código Público** | ✅ GitHub + Zenodo | DOI permanente, MIT License |
+| **Código Público** | ✅ GitHub + Zenodo | DOI permanente, MIT License, 100% aberto |
 | **Testes Unitários** | ✅ 67 testes | 80%+ cobertura, CI/CD automatizado |
+| **Multiframework** | ✅ 4 frameworks | PennyLane + Qiskit + Cirq + QAOA validados |
+| **Error Mitigation** | ✅ TREX + AUEC | Técnicas avançadas implementadas e documentadas |
+| **Website Público** | ✅ Online | Documentação interativa com visualizações |
 
 ---
 
