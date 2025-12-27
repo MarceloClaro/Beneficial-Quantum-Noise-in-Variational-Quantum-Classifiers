@@ -1,0 +1,150 @@
+# CPU-Optimized Configuration for Multiframework Validation
+# Optimized for CPU execution with reduced computational load while maintaining scientific validity
+# Estimated runtime: 2-3 hours for validation grid (432 configurations)
+
+experiment:
+  name: "multiframework_validation_cpu_optimized"
+  description: "CPU-optimized validation run with reduced epochs and shots"
+  version: "1.0.0"
+  run_mode: "validation"  # Options: minimal, validation, full
+
+# Reproducibility - Centralized Seeds
+reproducibility:
+  global_seed: 42
+  numpy_seed: 42
+  random_seed: 42
+  torch_seed: 42
+  framework_seeds:
+    pennylane: 42
+    qiskit: 42
+    cirq: 42
+  
+# Experimental Design - VALIDATION GRID (432 configs)
+# Reduced from full grid (2,688) for faster CPU execution
+factors:
+  datasets:
+    - iris        # 4 classes, 150 samples
+    - wine        # 3 classes, 178 samples
+    - breast_cancer  # 2 classes, 569 samples
+    - digits      # 10 classes, 1797 samples (subset to 4 classes: 0,1,2,3)
+  
+  noise_models:
+    # Selected 3 most important (from 5 total)
+    - sem_ruido          # Baseline
+    - depolarizante      # Most common
+    - amplitude_damping  # Physically motivated
+    # Excluded for validation: phase_damping, phase_amplitude_damping
+  
+  ansatze:
+    # Selected 3 most diverse (from 6 total)
+    - basic_entangler       # Simple
+    - strongly_entangling   # Complex
+    - hardware_efficient    # Practical
+    # Excluded for validation: real_amplitudes, efficient_su2, two_local
+  
+  dynamic_schedules:
+    # Selected 2 most important (from 4 total)
+    - linear_crescente  # Standard
+    - cosine_annealing  # Advanced
+    # Excluded for validation: exponencial, fibonacci
+  
+  noise_levels:
+    - 0.0    # No noise baseline
+    - 0.005  # Low noise (sweet spot from literature)
+    - 0.01   # Moderate noise
+    # Excluded: 0.001 (too similar to 0.005), 0.02+ (too high)
+
+# Circuit Configuration
+circuit:
+  n_qubits: 4
+  depth: 2
+  entanglement: "linear"  # Options: linear, circular, full
+  data_encoding: "angle"  # Options: angle, amplitude, iqp
+
+# Optimizer Configuration - CPU Optimized
+optimizer:
+  name: "Adam"
+  learning_rate: 0.01
+  betas: [0.9, 0.999]
+  epsilon: 1.0e-08
+  gradient_method: "parameter_shift"  # CPU-friendly
+  
+# Training Configuration - REDUCED FOR CPU
+training:
+  epochs: 30           # Reduced from 100 (sufficient for convergence)
+  batch_size: 16       # Reduced from 32 (lower memory)
+  validation_split: 0.2
+  early_stopping:
+    enabled: true
+    patience: 10
+    min_delta: 0.001
+  
+# Error Mitigation - Standard Config
+error_mitigation:
+  trex:
+    enabled: true
+    calibration_shots: 1000
+    method: "tensored"
+  auec:
+    enabled: true
+    components: ["gate_errors", "decoherence", "drift"]
+    batch_size: 10
+    adaptation_rate: 0.1
+
+# Framework-Specific Settings
+pennylane:
+  device: "default.mixed"  # CPU-only device
+  shots: null              # Analytic mode (fastest, no shots)
+  diff_method: "parameter-shift"
+  interface: "numpy"
+  
+qiskit:
+  backend: "qasm_simulator"
+  shots: 512               # Reduced from 1024 (2x faster)
+  optimization_level: 1     # Reduced from 2 (faster transpilation)
+  noise_model:
+    basis_gates: ["u1", "u2", "u3", "cx"]
+    coupling_map: "linear"
+  transpilation_cache: true  # Cache to avoid redundant work
+  
+cirq:
+  simulator: "density_matrix"  # Use state_vector when no noise
+  shots: 512               # Reduced from 1024 (2x faster)
+  optimize_circuit: true
+  decompose_gates: true
+  
+# Statistical Analysis
+statistics:
+  confidence_interval: 0.95
+  multiple_comparisons: "bonferroni"
+  effect_sizes: ["cohen_d", "hedges_g"]
+  anova:
+    type: "mixed"
+    factors: ["noise_model", "ansatz", "schedule"]
+
+# Output Configuration
+output:
+  formats: ["csv", "json", "html"]
+  save_models: false       # Don't save models (save disk space)
+  save_checkpoints: false  # Don't save checkpoints
+  save_visualizations: true
+  compression: "gzip"
+  
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s"
+  file: "execution_log.log"
+  console: true
+
+# Resource Limits (CPU Optimization)
+resources:
+  max_memory_gb: 8
+  max_threads: 4
+  timeout_per_config_sec: 300  # 5 minutes max per config
+  
+# Validation Specific
+validation:
+  subset_fraction: 1.0  # Use all validation grid configs
+  quick_test: false      # Set to true for even faster testing (10 configs)
+  save_intermediate: true

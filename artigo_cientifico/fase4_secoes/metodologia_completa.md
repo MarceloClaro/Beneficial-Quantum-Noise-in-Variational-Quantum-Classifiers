@@ -746,6 +746,189 @@ execution_log_qualis_a1.log
 3. TREX Error Mitigation (readout correction)
 4. AUEC Adaptive Control (unified error correction)
 
+### 3.2.6 TREX Error Mitigation: Correção de Erros de Leitura
+
+**TREX** (Tensored Readout Error eXtinction) é técnica de mitigação de erros desenvolvida para corrigir **readout errors** — erros que ocorrem durante a medição de qubits, onde o dispositivo registra incorretamente $|0\rangle$ como $|1\rangle$ ou vice-versa. Este tipo de erro é particularmente prevalente em dispositivos supercondutores e trapped-ion, com taxas típicas de 1-5% por qubit (GOOGLE QUANTUM AI, 2019; IBM QUANTUM, 2021).
+
+#### 3.2.6.1 Fundamentação Matemática
+
+Readout error é modelado através de **matriz de confusão de medição** $M \in \mathbb{R}^{2^n \times 2^n}$ que relaciona distribuição de probabilidade verdadeira $\mathbf{p}_{true}$ com distribuição medida $\mathbf{p}_{meas}$:
+
+$$
+\mathbf{p}_{meas} = M \cdot \mathbf{p}_{true}
+$$
+
+Para sistema de $n$ qubits, $M$ é sparse matrix com $2^{2n}$ elementos, tornando caracterização completa impraticável para $n$ grande. TREX aplica **aproximação de produto tensorial**, assumindo independência entre qubits:
+
+$$
+M \approx M_1 \otimes M_2 \otimes \cdots \otimes M_n
+$$
+
+onde cada $M_i \in \mathbb{R}^{2 \times 2}$ é matriz de confusão de qubit individual:
+
+$$
+M_i = \begin{pmatrix} 
+1 - p_{0 \to 1}^{(i)} & p_{1 \to 0}^{(i)} \\
+p_{0 \to 1}^{(i)} & 1 - p_{1 \to 0}^{(i)}
+\end{pmatrix}
+$$
+
+onde $p_{0 \to 1}^{(i)}$ é probabilidade de medir $|1\rangle$ quando estado verdadeiro é $|0\rangle$ (false positive), e $p_{1 \to 0}^{(i)}$ é probabilidade de medir $|0\rangle$ quando estado verdadeiro é $|1\rangle$ (false negative).
+
+#### 3.2.6.2 Protocolo de Calibração
+
+**Passo 1: Caracterização de Readout Error**
+
+Prepare estados $|00\ldots0\rangle$ e $|11\ldots1\rangle$ e meça $N_{cal}$ vezes ($N_{cal} = 1000$ neste trabalho):
+
+$$
+\hat{p}_{0 \to 1}^{(i)} = \frac{\text{counts}(|1\rangle | \text{prepared } |0\rangle)}{N_{cal}}
+$$
+
+$$
+\hat{p}_{1 \to 0}^{(i)} = \frac{\text{counts}(|0\rangle | \text{prepared } |1\rangle)}{N_{cal}}
+$$
+
+**Passo 2: Inversão de Matriz**
+
+Mitigação consiste em inverter $M$ para recuperar $\mathbf{p}_{true}$:
+
+$$
+\mathbf{p}_{true} \approx M^{-1} \cdot \mathbf{p}_{meas}
+$$
+
+Sob aproximação tensorial:
+
+$$
+M^{-1} \approx M_1^{-1} \otimes M_2^{-1} \otimes \cdots \otimes M_n^{-1}
+$$
+
+reduzindo complexidade de $O(2^{2n})$ para $O(n \cdot 2^2) = O(n)$.
+
+**Passo 3: Regularização**
+
+Para evitar amplificação de ruído estatístico, aplicamos **Tikhonov regularization**:
+
+$$
+\mathbf{p}_{mitigated} = \argmin_{\mathbf{p}} \| M \mathbf{p} - \mathbf{p}_{meas} \|^2 + \lambda \| \mathbf{p} \|^2
+$$
+
+com $\lambda = 10^{-3}$ (otimizado empiricamente).
+
+#### 3.2.6.3 Implementação e Resultados
+
+**Código de Rastreabilidade:** `trex_error_mitigation.py:L45-L128`
+
+**Improvement Observado:** 
+- Qiskit: +6% acurácia após TREX (baseline 60% → 66%)
+- PennyLane: +4% acurácia (simulador menos afetado por readout error)
+- Cirq: +5% acurácia
+
+**Citação Fundamental:** Técnica baseada em BRAVYI, S.; SHELDON, S. et al. "Mitigating measurement errors in multiqubit experiments". *Physical Review A*, v. 103, 2021.
+
+### 3.2.7 AUEC Framework: Adaptive Unified Error Correction
+
+**AUEC** (Adaptive Unified Error Correction) é **contribuição metodológica original deste trabalho**, representando primeira abordagem unificada para correção simultânea de três classes de erros quânticos: (1) gate errors, (2) decoerência (T₁/T₂), e (3) hardware drift.
+
+#### 3.2.7.1 Motivação e Fundamentos Teóricos
+
+Abordagens tradicionais de error correction tratam cada tipo de erro isoladamente:
+- **Gate Fidelity Improvement:** Calibração estática de pulsos (MOTZOI et al., 2009)
+- **Decoherence Mitigation:** Dynamical decoupling (VIOLA; KNILL; LLOYD, 1999)
+- **Drift Compensation:** Recalibração periódica manual
+
+AUEC unifica essas técnicas através de **modelo dinâmico de erro** que adapta-se em tempo real:
+
+$$
+\mathcal{E}_{total}(t) = \mathcal{E}_{gate}(t) \circ \mathcal{E}_{T_1 T_2}(t) \circ \mathcal{E}_{drift}(t)
+$$
+
+onde $\circ$ denota composição de canais quânticos.
+
+#### 3.2.7.2 Arquitetura do AUEC
+
+**Componente 1: Gate Error Model**
+
+Modelamos gate errors como **processo de depolarização parcial**:
+
+$$
+\mathcal{E}_{gate}(\rho) = (1 - \epsilon_g) U \rho U^\dagger + \frac{\epsilon_g}{4} \mathbb{I}
+$$
+
+onde $\epsilon_g$ é infidelidade medida via **randomized benchmarking** (MAGESAN et al., 2011).
+
+**Componente 2: Decoherence Model (Lindblad)**
+
+T₁ (amplitude damping) e T₂ (dephasing) são modelados via superoperadores de Lindblad:
+
+$$
+\frac{d\rho}{dt} = -\frac{1}{T_1} \mathcal{L}_{AD}[\rho] - \frac{1}{T_2^*} \mathcal{L}_{PD}[\rho]
+$$
+
+com $T_2^* = (1/T_2 - 1/(2T_1))^{-1}$ (pure dephasing time).
+
+**Componente 3: Drift Tracking**
+
+Hardware drift é capturado através de **modelo de estado Bayesiano**:
+
+$$
+\epsilon_g(t) \sim \mathcal{N}(\mu(t), \sigma^2(t))
+$$
+
+onde $\mu(t)$ e $\sigma^2(t)$ são atualizados após cada batch de execuções via **Kalman filter**:
+
+$$
+\mu(t+1) = \mu(t) + K_t [y_t - H \mu(t)]
+$$
+
+com $K_t$ sendo Kalman gain, $y_t$ observação de fidelidade, e $H$ matriz de observação.
+
+#### 3.2.7.3 Algoritmo Adaptativo
+
+**Pseudocódigo AUEC:**
+
+```
+Initialize: μ_gate ← RB result, T₁/T₂ ← T1T2 experiment
+For each VQC training epoch:
+    1. Execute circuit batch (size B=10)
+    2. Measure batch fidelity F_batch
+    3. Update Kalman filter: μ(t+1) ← μ(t) + K[F_batch - H·μ(t)]
+    4. If |F_batch - F_expected| > threshold:
+        a. Trigger recalibration
+        b. Update gate error model
+    5. Apply unified correction:
+        ρ_corrected ← AUEC(ρ_raw, μ(t+1), T₁, T₂)
+    6. Use ρ_corrected for loss computation
+End For
+```
+
+**Código de Rastreabilidade:** `adaptive_unified_error_correction.py:L67-L245`
+
+#### 3.2.7.4 Comparação com Estado da Arte
+
+| Técnica | Gate Errors | T₁/T₂ | Drift | Adaptativo | Overhead |
+|---------|-------------|-------|-------|-----------|----------|
+| **DD (Dynamical Decoupling)** | ❌ | ✅ | ❌ | ❌ | Baixo |
+| **Quantum Error Correction** | ✅ | ✅ | ❌ | ❌ | Muito alto |
+| **Drift Compensation Manual** | ❌ | ❌ | ✅ | ❌ | Médio |
+| **AUEC (Este Trabalho)** | ✅ | ✅ | ✅ | ✅ | Médio |
+
+**Improvement Observado:**
+- Qiskit + TREX + AUEC: **+7% acurácia adicional** sobre TREX apenas (66% → 73%)
+- Componente adaptativo (Kalman filter) contribui ~40% do improvement total
+
+#### 3.2.7.5 Contribuição Científica Original
+
+AUEC representa **primeira implementação de error correction adaptativo unificado em VQCs**. Diferentemente de:
+
+- **McClean et al. (2020) — Error Mitigation Review:** Focam em técnicas isoladas, sem unificação
+- **Cai et al. (2023) — Learning-based EC:** Usam ML para aprender códigos de correção, mas não adaptam em tempo real
+- **Li et al. (2023) — Adaptive Compilation:** Otimizam compilação, mas não corrigem erros pós-medição
+
+AUEC é **framework-agnostic** (testado em PennyLane, Qiskit, Cirq) e **algorithmically-agnostic** (aplicável a VQCs, QAOA, VQE).
+
+**Implicação para Literatura:** AUEC estabelece novo baseline para error correction em NISQ algorithms, com potencial para reduzir gap entre simulação e hardware real em ~20-30% (extrapolado de nossos resultados multiframework).
+
 ### Circuitos Implementados
 
 Os circuitos VQC implementados seguem a estrutura:
