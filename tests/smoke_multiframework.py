@@ -128,7 +128,8 @@ def test_qiskit_minimal():
     print("=" * 60)
     
     try:
-        from qiskit import QuantumCircuit, Aer, execute
+        from qiskit import QuantumCircuit
+        from qiskit_aer import Aer
         import numpy as np
         
         # Set seed
@@ -143,7 +144,7 @@ def test_qiskit_minimal():
         
         # Execute
         backend = Aer.get_backend('qasm_simulator')
-        job = execute(qc, backend, shots=100, seed_simulator=42)
+        job = backend.run(qc, shots=100, seed_simulator=42)
         result = job.result()
         counts = result.get_counts()
         
