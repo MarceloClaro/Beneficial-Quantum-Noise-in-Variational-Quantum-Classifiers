@@ -176,6 +176,8 @@ def test_pennylane_basic_functionality():
         params = np.array([0.5])
         result = circuit(params)
 
+        # Convert result to float to handle tensor types from different interfaces
+        result = float(result)
         assert isinstance(result, (float, np.floating))
     except Exception as e:
         pytest.fail(f"PennyLane basic functionality test failed: {e}")
