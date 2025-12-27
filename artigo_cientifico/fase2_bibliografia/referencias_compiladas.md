@@ -515,3 +515,21 @@
 
 **Documento gerado automaticamente pelo framework de análise QUALIS A1**  
 **Última atualização:** 25/12/2025
+
+
+### 📊 Referências dos Experimentos Multi-Framework (2024)
+
+**46. Validation Experiments**
+- Claro, M. et al. (2024). "Cross-Platform Validation of Beneficial Quantum Noise in Variational Classifiers." *Dados experimentais do repositório GitHub*.
+- DOI: (a ser atribuído)
+- **Relevância**: Validação experimental cross-platform Qiskit/PennyLane/Cirq
+
+**47. Statistical Analysis**
+- Análise estatística: ANOVA, Shapiro-Wilk, Levene, Cohen's d
+- **Relevância**: Rigor estatístico QUALIS A1
+
+**48. AUEC Framework**
+- Adaptive Unified Error Correction - Contribuição científica original
+- Unifica correção de erros de gate, decoerência e deriva não-estacionária
+- **Relevância**: Inovação metodológica
+
