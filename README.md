@@ -100,13 +100,12 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 13. [Galeria Visual](#-galeria-visual-circuitos-plators-3d-e-contrastes)
 14. [Circuitos Quânticos & Insights](#-circuitos-quânticos-ótimos-análise-detalhada)
 15. [Estatísticas Experimentais](#-estatísticas-experimentais-completas)
-16. [Checklist Qualis A1](#-checklist-qualis-a1)
-17. [Limitações](#-limitações-e-escopo)
-18. [Contribuindo](#-contribuindo)
-19. [Licença](#-licença)
-20. [Contato](#-contato-e-agradecimentos)
-14. [Contribuindo](#-contribuindo)
-15. [Licença](#-licença)
+16. [**Fórmula Empírica γ*** → Predição do Ruído Ótimo](#-fórmula-empírica-para-predição-do-ruído-ótimo-γ)
+17. [Checklist Qualis A1](#-checklist-qualis-a1)
+18. [Limitações](#-limitações-e-escopo)
+19. [Contribuindo](#-contribuindo)
+20. [Licença](#-licença)
+21. [Contato](#-contato-e-agradecimentos)
 
 ---
 
