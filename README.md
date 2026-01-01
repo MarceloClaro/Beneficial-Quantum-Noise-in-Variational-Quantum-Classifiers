@@ -1614,7 +1614,7 @@ Mecanismo:
 
 ```
 Descoberta Surpreendente:
-├─ Todos os datasets convergem para γ* ≈ 0.005
+├─ Todos os datasets convergem para ≈ 0.005
 ├─ Diferença: apenas ±0.001 (20% variação)
 ├─ Todos os ruídos mostram máximo em γ* ≈ 0.005
 └─ MESMO EM DIFERENTES QUBITS/CIRCUITOS!
