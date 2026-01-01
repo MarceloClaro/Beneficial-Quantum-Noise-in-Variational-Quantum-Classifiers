@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vqc-drug-a1"
+version = "10.1.0"
+description = "Mathematically-optimised quantum drug screening – QUALIS A1 ready"
+authors = [{name = "Marcelo Claro Laranjeira", email = "marceloclaro@gmail.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pennylane>=0.32",
+    "torch>=2.0",
+    "optuna>=3.4",
+    "statsmodels>=0.14",
+    "rdkit>=2023.9",
+    "scikit-learn>=1.3",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "click>=8.0",
+    "requests>=2.31",
+]
+
+[project.scripts]
+vqc-drug-a1 = "src.cli:main"
+k8-cli = "src.v10_cli:main"
+
+[project.urls]
+Homepage = "https://github.com/marceloclaro/vqc-drug-a1"
+Repository = "https://github.com/marceloclaro/vqc-drug-a1"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --tb=short"

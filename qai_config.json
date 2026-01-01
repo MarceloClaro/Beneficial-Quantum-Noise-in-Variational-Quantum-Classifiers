@@ -1,0 +1,9 @@
+{
+  "version": "8.0-QAI",
+  "strict_mode": true,
+  "default_seed": 42,
+  "bonferroni_alpha": 0.05,
+  "power_analysis_target": 0.80,
+  "output_dir": "./resultados_qualis_a1",
+  "enabled_frameworks": ["pennylane", "cirq", "qiskit"]
+}

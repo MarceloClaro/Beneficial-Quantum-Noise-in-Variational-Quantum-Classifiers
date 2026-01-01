@@ -1,0 +1,30 @@
+pennylane>=0.33.0
+autoray>=0.6.0,<0.7.0
+numpy>=1.23.0
+pandas>=2.0.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+plotly>=5.0.0
+matplotlib>=3.5.0
+statsmodels>=0.14.0
+optuna>=3.0.0
+joblib>=1.2.0
+kaleido>=0.2.1
+pathlib>=1.0.1
+typing-extensions>=4.0.0
+# Qiskit dependencies for IBM Quantum implementation
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+qiskit-ibm-runtime>=0.18.0
+# Cirq dependencies for Google Quantum implementation
+cirq>=1.0.0
+sympy>=1.11.0
+# Testing dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+# OpenTelemetry dependencies for tracing
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+# Chemistry dependencies (optional - use conda for RDKit if pip fails)
+# rdkit - Install via: conda install -c conda-forge rdkit
+chembl-webresource-client>=0.10.0

@@ -1,0 +1,43 @@
+# configs/experiment_demo.yaml
+# Configuração de Demonstração QAOA (execução rápida)
+
+run:
+  run_id: "AUTO"
+  description: "Demo QAOA com análise de ruído benéfico"
+
+reproducibility:
+  seeds: [1, 2]  # Apenas 2 seeds para demonstração
+
+problem:
+  type: "maxcut"
+  n_nodes: 10    # Apenas 10 nós para execução rápida
+  graph_type: "erdos_renyi"
+  edge_probability: 0.5
+
+model:
+  algorithm: "qaoa"
+  p_layers: 2  # Circuito mais raso para demonstração
+
+noise:
+  enabled: true
+  model: "depolarizing"
+  schedule: "constant"
+  params:
+    p: [0.0, 0.005]  # Apenas 2 níveis de ruído
+
+optimization:
+  optimizer: "COBYLA"
+  maxiter: 50  # Menos iterações para demonstração
+  initial_params: "random"
+
+frameworks:
+  qiskit:
+    backend: "aer_simulator"
+    method: "automatic"  # Statevector para problemas pequenos
+    shots: 512  # Menos medições
+
+output:
+  save_results: true
+  save_circuits: false
+  save_manifesto: true
+  output_dir: "qaoa_framework/results"
