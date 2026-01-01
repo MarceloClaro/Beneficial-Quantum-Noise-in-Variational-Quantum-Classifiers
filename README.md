@@ -87,17 +87,21 @@ python -c "from framework_qiskit import executar_experimento_qiskit; executar_ex
 
 1. [Abstract & Badges](#-abstract)
 2. [Início Rápido](#-início-rápido)
-3. [Visão Geral](#-visão-geral-e-paradigma)
-4. [Reprodutibilidade](#-reprodutibilidade)
-5. [**PARTE 1: Para Leigos** → Conceitos Intuitivos](#-parte-1-o-começo---explicando-para-leigos)
-6. [**PARTE 2: Para Mestrandos** → Fundamentos Matemáticos](#-parte-2-a-profundidade---para-mestrandos-e-pesquisadores)
-7. [**PARTE 3: Para PhDs** → Análise Teórica Profunda](#-parte-3-a-descoberta---para-phds-em-físicamatemática-quântica)
-8. [**PARTE 4: Resultados Experimentais** → Dados Multiframework](#-parte-4-os-dados---resultados-experimentais)
-9. [**PARTE 5: Implicações e Roadmap** → Próximos Passos](#-parte-5-implicações-e-próximos-passos)
-10. [**PARTE 6: Fundamentos Matemáticos** → Para Teóricos](#-parte-6-fundamentos-matemáticos-completos-para-teóricos)
-11. [**PARTE 7: Referências** → Citações e Conclusão](#-parte-7-referências-e-recursos)
-12. [Checklist Qualis A1](#-checklist-qualis-a1)
-13. [Limitações](#-limitações-e-escopo)
+3. [Documentação Complementar](#-documentação-complementar)
+4. [Visão Geral](#-visão-geral-e-paradigma)
+5. [Reprodutibilidade](#-reprodutibilidade)
+6. [**PARTE 1: Para Leigos** → Conceitos Intuitivos](#-parte-1-o-começo---explicando-para-leigos)
+7. [**PARTE 2: Para Mestrandos** → Fundamentos Matemáticos](#-parte-2-a-profundidade---para-mestrandos-e-pesquisadores)
+8. [**PARTE 3: Para PhDs** → Análise Teórica Profunda](#-parte-3-a-descoberta---para-phds-em-físicamatemática-quântica)
+9. [**PARTE 4: Resultados Experimentais** → Dados Multiframework](#-parte-4-os-dados---resultados-experimentais)
+10. [**PARTE 5: Implicações e Roadmap** → Próximos Passos](#-parte-5-implicações-e-próximos-passos)
+11. [**PARTE 6: Fundamentos Matemáticos** → Para Teóricos](#-parte-6-fundamentos-matemáticos-completos-para-teóricos)
+12. [**PARTE 7: Referências** → Citações e Conclusão](#-parte-7-referências-e-recursos)
+13. [Checklist Qualis A1](#-checklist-qualis-a1)
+14. [Limitações](#-limitações-e-escopo)
+15. [Contribuindo](#-contribuindo)
+16. [Licença](#-licença)
+17. [Contato](#-contato-e-agradecimentos)
 14. [Contribuindo](#-contribuindo)
 15. [Licença](#-licença)
 
@@ -910,7 +914,85 @@ Fornecemos evidência empírica de que o ruído age como regularizador via quebr
 
 ---
 
-## 📝 Contribuindo
+## � Documentação Complementar
+
+Para explorar diferentes aspectos do projeto em profundidade, consulte:
+
+### 🔧 Configuração e Instalação
+- **[INSTALL.md](INSTALL.md)** - Guia completo de instalação passo-a-passo
+  - Pré-requisitos do sistema (Python 3.9+, pip, git)
+  - Instalação rápida com ambiente virtual
+  - Instalação completa com todas as dependências
+  - Configuração de variáveis de ambiente (.env)
+  - Script de verificação de instalação automático
+  - Troubleshooting completo para problemas comuns
+
+### 🎯 Guias Específicos de Frameworks
+- **[docs/GUIA_QISKIT.md](docs/GUIA_QISKIT.md)** - Guia Completo do Framework Qiskit
+  - Introdução ao Qiskit e suas vantagens
+  - Setup específico do Qiskit
+  - Exemplos práticos com circuitos quânticos
+  - Integração com simuladores Qiskit Aer
+  - Otimização de circuitos para hardware real
+  - Casos de uso: VQC, QAOA, VQE com ruído benéfico
+
+### 📂 Estrutura do Projeto
+- **[STRUCTURE.md](STRUCTURE.md)** - Mapa Completo da Arquitetura
+  - Organização de diretórios (scripts, frameworks, resultados)
+  - Descrição de cada módulo Python principal
+  - Fluxo de dados entre componentes
+  - Configurações do projeto (configs/, templates/)
+  - Documentação interna (docs/, exemplos/)
+  - Diretórios de resultados experimentais
+
+### 📖 Recursos Adicionais no README
+- **[QUICKSTART.md](QUICKSTART.md)** - Guia Rápido para Início Imediato
+- **[docs/GUIA_RAPIDO_v8.md](docs/GUIA_RAPIDO_v8.md)** - Referência Rápida v8.0-QAI
+- **[examples/](examples/)** - Exemplos Práticos Comentados
+  - `exemplo_uso_programatico.py` - Uso direto da biblioteca
+  - `exemplo_qiskit_completo.py` - Exemplo completo com Qiskit
+  - `exemplo_insumos_consultor.json` - Configuração de entrada
+
+### 📓 Tutoriais Interativos
+- **[notebooks/](notebooks/)** - Jupyter Notebooks Educacionais
+  - Tutorials passo-a-passo
+  - Análise exploratória de dados
+  - Visualização de resultados
+  - Reprodução de experimentos
+
+### 🧪 Testes e Validação
+- **[tests/](tests/)** - 67+ Testes Unitários (>80% cobertura)
+  - Validação de cada módulo
+  - Testes de integração entre frameworks
+  - Verificação de reprodutibilidade
+  - Execute com: `pytest tests/ -v`
+
+### 🔍 Busca Automática de Erros
+- **[ERROR_SEARCH_GUIDE.md](ERROR_SEARCH_GUIDE.md)** - Framework de Busca de Erros
+  - Error search framework para debugging automático
+  - Análise de logs de execução
+  - Identificação de padrões de erro
+
+### 📊 Análise e Validação
+- **[RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md)** - Resultados Consolidados
+- **[CHECKLIST_AUDITORIA_COMPLETO.md](CHECKLIST_AUDITORIA_COMPLETO.md)** - Auditoria Técnica Completa
+- **[VERIFICACAO_REPRODUTIBILIDADE.md](docs/VERIFICACAO_REPRODUTIBILIDADE.md)** - Validação r=0.9999
+
+### 🚀 Fluxos de Trabalho Completos
+- **[WORKFLOW_ARTIGO.md](WORKFLOW_ARTIGO.md)** - Pipeline para Geração de Artigo Científico
+- **[WORKFLOW_EXEMPLO.md](WORKFLOW_EXEMPLO.md)** - Exemplo Completo de Reprodução
+- **[PLAYBOOK_REPRODUCAO_QAOA.md](PLAYBOOK_REPRODUCAO_QAOA.md)** - Reprodução de QAOA
+
+### 🎓 Aprendizado Progressivo
+Recomendamos ler na seguinte ordem:
+1. **Iniciantes**: Leia este README (seções 1-2), depois [QUICKSTART.md](QUICKSTART.md)
+2. **Desenvolvedo**: Consulte [INSTALL.md](INSTALL.md), depois [STRUCTURE.md](STRUCTURE.md)
+3. **Avançado**: Explore [docs/GUIA_QISKIT.md](docs/GUIA_QISKIT.md) e código-fonte
+4. **Pesquisadores**: Leia [RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md](RESULTADOS_FRAMEWORK_COMPLETO_QUALIS_A1.md) completo
+
+---
+
+## �📝 Contribuindo
 
 Contribuições são bem-vindas! Áreas prioritárias:
 
