@@ -1,0 +1,4 @@
+nome,status,erro
+Sem Ruído,Erro,'Number of qubits (100) in circuit-162 is greater than maximum (30) in the coupling_map'
+Com Ruído Depolarizing,Erro,'Number of qubits (100) in circuit-185 is greater than maximum (30) in the coupling_map'
+Com Ruído Phase Damping,Erro,'Number of qubits (100) in circuit-190 is greater than maximum (30) in the coupling_map'

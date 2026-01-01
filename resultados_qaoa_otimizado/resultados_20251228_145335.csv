@@ -1,0 +1,6 @@
+Experimento,Tipo Ruído,Nível Ruído,Energia Final,Iterações,Tempo (s),Status,Run Timestamp,Run ID,Qubits,P-layers,Shots,Max Iter,Seed,Energia Normalizada (%),Melhora vs Sem Ruído (%),Classificação,AUE,TREX,Tempo total (s),Número de Experimentos,Observações
+Sem Ruído,Nenhum,0.0,4.6171875,10,0.1795027256011963,sucesso,2025-12-28T14:53:35.340011,run_20251228_145335,6,2,128,10,42,78.48605577689243,0.0,negligenciável,0.0,25.722102461319,,,
+Ruído Depolarizing,Depolarizing,0.001,5.609375,10,0.3385980129241943,sucesso,2025-12-28T14:53:35.340011,run_20251228_145335,6,2,128,10,42,95.3519256308101,21.489001692047378,Ruído benéfico,20.49017691220454,16.566473475601388,,,
+Ruído Phase Damping,Phase Damping,0.001,5.140625,10,0.2217299938201904,sucesso,2025-12-28T14:53:35.340011,run_20251228_145335,6,2,128,10,42,87.38379814077025,11.336717428087987,Ruído benéfico,9.906454273149928,23.184166072582563,,,
+Ruído Amplitude Damping,Amplitude Damping,0.001,5.8828125,10,0.2177274227142334,sucesso,2025-12-28T14:53:35.340011,run_20251228_145335,6,2,128,10,42,100.0,27.411167512690355,Ruído benéfico,27.411167512690355,27.019161971715313,,,
+Resumo do Run,,,,,,,2025-12-28T14:53:35.340011,run_20251228_145335,6,2,128,10,42,,,,,,0.9608349800109863,4,Resultados enriquecidos com metadados e métricas derivadas

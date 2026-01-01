@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-12-28T14:08:44.427236",
+  "tempo_total_segundos": 0.5361025333404541,
+  "num_experimentos": 3,
+  "experimentos": [
+    {
+      "nome": "Sem Ru\u00eddo",
+      "status": "Erro",
+      "erro": "'Number of qubits (100) in circuit-162 is greater than maximum (30) in the coupling_map'"
+    },
+    {
+      "nome": "Com Ru\u00eddo Depolarizing",
+      "status": "Erro",
+      "erro": "'Number of qubits (100) in circuit-185 is greater than maximum (30) in the coupling_map'"
+    },
+    {
+      "nome": "Com Ru\u00eddo Phase Damping",
+      "status": "Erro",
+      "erro": "'Number of qubits (100) in circuit-190 is greater than maximum (30) in the coupling_map'"
+    }
+  ]
+}

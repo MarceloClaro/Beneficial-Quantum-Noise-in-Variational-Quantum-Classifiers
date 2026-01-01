@@ -1,0 +1,17 @@
+2026-01-01 10:52:40 | INFO     | __main__             | _configurar_log_cientifico | ====================================================================================================
+2026-01-01 10:52:40 | INFO     | __main__             | _configurar_log_cientifico | QUALIS A1 SCIENTIFIC EXECUTION LOG
+2026-01-01 10:52:40 | INFO     | __main__             | _configurar_log_cientifico | Framework: Beneficial Quantum Noise in Variational Quantum Classifiers v7.2
+2026-01-01 10:52:40 | INFO     | __main__             | _configurar_log_cientifico | Log File: C:\Users\marce\Downloads\Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers-main (1)\Beneficial-Quantum-Noise-in-Variational-Quantum-Classifiers-main\resultados_2026-01-01_10-52-40\execution_log_qualis_a1.log
+2026-01-01 10:52:40 | INFO     | __main__             | _configurar_log_cientifico | ====================================================================================================
+2026-01-01 10:52:41 | INFO     | __main__             | executar_grid_search      | [  1/600] Dataset: moons | Seed: 42 | Qubits: 4 | Camadas: 2 | Arquitetura: basico | Init: matematico | Ruído: sem_ruido | Nível: 0.0000
+2026-01-01 10:52:41 | INFO     | __main__             | executar_grid_search      | Constantes: π=3.14159, e=2.71828, φ=1.61803, ℏ=1.05e-34, α=0.00730, R∞=10973731.57
+2026-01-01 10:54:02 | INFO     | __main__             | executar_grid_search      |   ✓ Acurácia: 0.5500 | Gap: +0.0357 | Tempo: 74.1s
+2026-01-01 10:54:02 | WARNING  | __main__             | executar_grid_search      | Falha ao salvar PNG do circuito: No module named 'matplotlib.backends.registry'
+2026-01-01 10:54:02 | WARNING  | __main__             | executar_grid_search      | Falha ao salvar gráfico 3D barren plateau: No module named 'matplotlib.backends.registry'
+2026-01-01 10:54:02 | INFO     | __main__             | executar_grid_search      | [  2/600] Dataset: moons | Seed: 43 | Qubits: 4 | Camadas: 2 | Arquitetura: basico | Init: matematico | Ruído: sem_ruido | Nível: 0.0000
+2026-01-01 10:54:02 | INFO     | __main__             | executar_grid_search      | Constantes: π=3.14159, e=2.71828, φ=1.61803, ℏ=1.05e-34, α=0.00730, R∞=10973731.57
+2026-01-01 10:55:24 | INFO     | __main__             | executar_grid_search      |   ✓ Acurácia: 0.5667 | Gap: +0.0119 | Tempo: 74.6s
+2026-01-01 10:55:24 | WARNING  | __main__             | executar_grid_search      | Falha ao salvar PNG do circuito: No module named 'matplotlib.backends.registry'
+2026-01-01 10:55:24 | WARNING  | __main__             | executar_grid_search      | Falha ao salvar gráfico 3D barren plateau: No module named 'matplotlib.backends.registry'
+2026-01-01 10:55:24 | INFO     | __main__             | executar_grid_search      | [  3/600] Dataset: moons | Seed: 44 | Qubits: 4 | Camadas: 2 | Arquitetura: basico | Init: matematico | Ruído: sem_ruido | Nível: 0.0000
+2026-01-01 10:55:24 | INFO     | __main__             | executar_grid_search      | Constantes: π=3.14159, e=2.71828, φ=1.61803, ℏ=1.05e-34, α=0.00730, R∞=10973731.57

@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-12-28T14:53:35.340011",
+  "tempo_total_segundos": 0.9608349800109863,
+  "num_experimentos": 4,
+  "configuracao": {
+    "n_qubits": 6,
+    "p_layers": 2,
+    "densidade_grafo": 0.2,
+    "shots": 128,
+    "max_iter": 10,
+    "seed": 42
+  },
+  "experimentos": [
+    {
+      "Experimento": "Sem Ru\u00eddo",
+      "Tipo Ru\u00eddo": "Nenhum",
+      "N\u00edvel Ru\u00eddo": 0.0,
+      "Energia Final": 4.6171875,
+      "Itera\u00e7\u00f5es": "10",
+      "Tempo (s)": 0.1795027256011963,
+      "Status": "sucesso"
+    },
+    {
+      "Experimento": "Ru\u00eddo Depolarizing",
+      "Tipo Ru\u00eddo": "Depolarizing",
+      "N\u00edvel Ru\u00eddo": 0.001,
+      "Energia Final": 5.609375,
+      "Itera\u00e7\u00f5es": "10",
+      "Tempo (s)": 0.33859801292419434,
+      "Status": "sucesso"
+    },
+    {
+      "Experimento": "Ru\u00eddo Phase Damping",
+      "Tipo Ru\u00eddo": "Phase Damping",
+      "N\u00edvel Ru\u00eddo": 0.001,
+      "Energia Final": 5.140625,
+      "Itera\u00e7\u00f5es": "10",
+      "Tempo (s)": 0.22172999382019043,
+      "Status": "sucesso"
+    },
+    {
+      "Experimento": "Ru\u00eddo Amplitude Damping",
+      "Tipo Ru\u00eddo": "Amplitude Damping",
+      "N\u00edvel Ru\u00eddo": 0.001,
+      "Energia Final": 5.8828125,
+      "Itera\u00e7\u00f5es": "10",
+      "Tempo (s)": 0.2177274227142334,
+      "Status": "sucesso"
+    }
+  ]
+}
