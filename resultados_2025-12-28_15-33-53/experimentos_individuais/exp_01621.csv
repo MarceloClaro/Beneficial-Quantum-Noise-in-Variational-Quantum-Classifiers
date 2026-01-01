@@ -1,0 +1,2 @@
+dataset,arquitetura,estrategia_init,tipo_ruido,nivel_ruido,n_qubits,n_camadas,acuracia_treino,acuracia_teste,gap_treino_teste,tempo_segundos,custo_final,cm_tn,cm_fp,cm_fn,cm_tp,seed
+iris,star_entanglement,matematico,sem_ruido,0.0,4,2,0.6142857142857143,0.5666666666666667,0.04761904761904767,23.683351039886475,1.1142474324748,9,6,7,8,42

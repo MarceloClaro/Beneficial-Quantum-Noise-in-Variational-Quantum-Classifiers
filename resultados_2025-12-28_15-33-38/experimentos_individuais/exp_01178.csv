@@ -1,0 +1,2 @@
+dataset,arquitetura,estrategia_init,tipo_ruido,nivel_ruido,n_qubits,n_camadas,acuracia_treino,acuracia_teste,gap_treino_teste,tempo_segundos,custo_final,cm_tn,cm_fp,cm_fn,cm_tp,seed
+circles,random_entangling,fibonacci_spiral,depolarizante,0.0,4,2,0.525,0.5916666666666667,-0.06666666666666665,129.67060017585754,1.3214686198334968,40,20,25,35,44

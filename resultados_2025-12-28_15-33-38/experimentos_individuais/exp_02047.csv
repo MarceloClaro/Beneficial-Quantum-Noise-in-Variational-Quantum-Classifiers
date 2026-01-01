@@ -1,0 +1,2 @@
+dataset,arquitetura,estrategia_init,tipo_ruido,nivel_ruido,n_qubits,n_camadas,acuracia_treino,acuracia_teste,gap_treino_teste,tempo_segundos,custo_final,cm_tn,cm_fp,cm_fn,cm_tp,seed
+breast_cancer,tree,matematico,depolarizante,0.0,4,2,0.5979899497487438,0.6023391812865497,-0.004349231537805975,175.57339668273926,0.9632660916381186,3,61,7,100,43
