@@ -221,17 +221,15 @@ def convert_all_files(directory: str) -> Tuple[Dict[str, int], List[Path]]:
                 stats["docx_success"] += 1
                 print(f"      ✅ DOCX: {md_file.stem}.docx")
             else:
-                failed_files.append(md_file)
+                failed_files.append((md_file, 'DOCX'))
             
             # Converter para PDF
             pdf_ok = convert_to_pdf(md_file)
             if pdf_ok:
                 stats["pdf_success"] += 1
                 print(f"      ✅ PDF: {md_file.stem}.pdf")
-            elif not docx_ok:  # Só adicionar uma vez à lista de falhas
-                pass
             else:
-                failed_files.append(md_file)
+                failed_files.append((md_file, 'PDF'))
             
             # Contar sucessos completos
             if docx_ok and pdf_ok:
@@ -287,11 +285,11 @@ def main():
     print(f"🎯 Ambos criados: {stats['both_success']}/{stats['total']}")
     
     if failed_files:
-        print(f"\n⚠️ Arquivos com falha ({len(failed_files)}):")
-        for f in failed_files[:10]:  # Mostrar apenas os primeiros 10
-            print(f"   - {f.relative_to(target_dir)}")
+        print(f"\n⚠️ Conversões com falha ({len(failed_files)}):")
+        for f, conv_type in failed_files[:10]:  # Mostrar apenas os primeiros 10
+            print(f"   - {f.relative_to(target_dir)} ({conv_type})")
         if len(failed_files) > 10:
-            print(f"   ... e mais {len(failed_files) - 10} arquivo(s)")
+            print(f"   ... e mais {len(failed_files) - 10} falha(s)")
     
     if stats['both_success'] == stats['total']:
         print("\n🎉 Todas as conversões foram concluídas com sucesso!")

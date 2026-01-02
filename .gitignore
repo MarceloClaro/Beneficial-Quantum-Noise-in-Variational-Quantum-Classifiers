@@ -59,8 +59,6 @@ resultados_*/
 # Allow converted documents in artigo_cientifico/ directory and all subdirectories
 !artigo_cientifico/**/*.pdf
 !artigo_cientifico/**/*.docx
-!artigo_cientifico/*.pdf
-!artigo_cientifico/*.docx
 
 # Logs
 *.log
