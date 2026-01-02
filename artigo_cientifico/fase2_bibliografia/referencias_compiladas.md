@@ -1,10 +1,11 @@
 # FASE 2.1: Busca e Compilação de Referências Relevantes
 
-**Data:** 26 de dezembro de 2025 (Atualizada após auditoria)  
-**Total de Referências:** 45 (dentro do padrão QUALIS A1: 35-50)  
+**Data:** 02 de janeiro de 2026 (Atualizada com validação multiframework)  
+**Total de Referências:** 46 (dentro do padrão QUALIS A1: 35-50)  
 **Formato:** ABNT com DOI/URL  
-**Cobertura DOI:** 84.4%  
-**Status da Auditoria:** 91/100 (🥇 Excelente)
+**Cobertura DOI:** 84.8%  
+**Status da Auditoria:** 91/100 (🥇 Excelente)  
+**Validação Multi-Framework:** ✅ 3 plataformas (PennyLane, Qiskit, Cirq)
 
 
 ---
@@ -389,16 +390,16 @@
 ---
 
 
-## CATEGORIA 5: FRAMEWORKS COMPUTACIONAIS (4 referências)
+## CATEGORIA 5: FRAMEWORKS COMPUTACIONAIS (5 referências)
 
-> Referências para bibliotecas utilizadas (PennyLane, Qiskit, etc.). Critério: Artigo de apresentação da biblioteca.
+> Referências para bibliotecas utilizadas (PennyLane, Qiskit, Cirq, etc.). Critério: Artigo de apresentação da biblioteca.
 
 ### [F1] Bergholm et al. (2018) - PennyLane
 
 **BERGHOLM, V.; IZAAC, J.; SCHULD, M.; GOGOLIN, C.; AHMED, S.; AJITH, V.; ALAM, M. S.; ALONSO-LINAJE, G.; et al.** PennyLane: Automatic differentiation of hybrid quantum-classical computations. *arXiv preprint arXiv:1811.04968*, 2018.
 
 
-**Relevância:** Framework **PennyLane** utilizado como base do código. Diferenciação automática de circuitos quânticos, integração com TensorFlow/PyTorch.
+**Relevância:** Framework **PennyLane** (Xanadu) utilizado como base do código. Diferenciação automática de circuitos quânticos, integração com TensorFlow/PyTorch. Validação multi-framework: 30x mais rápido (10.03s), 53.33% acurácia.
 
 
 ---
@@ -411,7 +412,20 @@
 **URL:** <https://qiskit.org/>
 
 
-**Relevância:** Framework **Qiskit** (IBM) utilizado como backend alternativo. Implementação em hardware quântico real (IBM Quantum).
+**Relevância:** Framework **Qiskit** (IBM) utilizado para validação multi-framework. Implementação em hardware quântico real (IBM Quantum). Validação: máxima precisão (66.67% acurácia, 303.24s).
+
+
+---
+
+
+### [F2.1] Cirq Developers (2023) - Cirq
+
+**Cirq Developers.** Cirq: A Python framework for creating, editing, and invoking Noisy Intermediate Scale Quantum (NISQ) circuits, 2023.  
+**DOI:** 10.5281/zenodo.4062499  
+**URL:** <https://quantumai.google/cirq>
+
+
+**Relevância:** Framework **Cirq** (Google Quantum AI) utilizado para validação multi-framework. Terceira plataforma independente testada. Validação: equilíbrio velocidade-precisão (53.33% acurácia, 41.03s, 7.4x speedup).
 
 
 ---
