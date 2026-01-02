@@ -1,10 +1,12 @@
 # Conversão de Markdown para DOCX e PDF
 
-Este diretório contém os arquivos Markdown das seções do artigo científico (Fase 4) e suas conversões para os formatos DOCX e PDF.
+Este arquivo documenta a conversão dos arquivos Markdown do artigo científico para os formatos DOCX e PDF.
 
-## Arquivos
+## Status da Conversão - Atualizado em 2026-01-02
 
-Todos os 12 arquivos Markdown foram convertidos com sucesso:
+### Fase 4 (fase4_secoes)
+
+Todos os 12 arquivos Markdown desta pasta foram convertidos com sucesso:
 
 | Arquivo Markdown | DOCX | PDF | Tamanho PDF |
 |-----------------|------|-----|-------------|
@@ -23,11 +25,59 @@ Todos os 12 arquivos Markdown foram convertidos com sucesso:
 
 **Total:** 12 arquivos MD → 12 DOCX + 12 PDF = 24 arquivos de saída
 
-## Como Usar o Script de Conversão
+### Status Completo - Todas as Pastas
+
+A conversão foi expandida para incluir **todos** os arquivos Markdown na pasta `artigo_cientifico`:
+
+| Pasta | Arquivos MD | DOCX | PDF | Taxa de Sucesso |
+|-------|-------------|------|-----|-----------------|
+| fase1_analise | 2 | ✅ 2 | ✅ 2 | 100% |
+| fase2_bibliografia | 2 | ✅ 2 | ✅ 2 | 100% |
+| fase3_estrutura | 2 | ✅ 2 | ✅ 2 | 100% |
+| fase4_secoes | 13 | ✅ 13 | ✅ 13 | 100% |
+| fase5_suplementar | 9 | ✅ 9 | ⚠️ 7 | 78% PDF |
+| fase6_consolidacao | 9 | ✅ 9 | ✅ 9 | 100% |
+| latex_template | 1 | ✅ 1 | ✅ 1 | 100% |
+| raiz | 8 | ✅ 8 | ✅ 8 | 100% |
+| **TOTAL** | **46** | **✅ 46** | **✅ 44** | **95.7%** |
+
+### Arquivos com Problemas na Conversão PDF
+
+Apenas 2 arquivos tiveram problemas na conversão para PDF devido a padrões LaTeX complexos:
+
+1. **fase5_suplementar/apendice_g_validacao_estatistica.md**
+   - ✅ DOCX criado com sucesso
+   - ❌ PDF com erro LaTeX (comando `\text@` incompleto)
+   - Solução: Revisar manualmente os comandos `\text{}` no arquivo
+
+2. **fase5_suplementar/apendice_i_lista_simbolos.md**
+   - ✅ DOCX criado com sucesso
+   - ❌ PDF com erro LaTeX (notação de norma `\|` em tabelas)
+   - Solução: Simplificar notação matemática nas tabelas
+
+## Scripts de Conversão
+
+### Script Original (apenas fase4_secoes)
+
+```bash
+python3 tools/convert_fase4_to_docx_pdf.py
+```
+
+### Novo Script (todas as pastas recursivamente)
+
+```bash
+# Converter TODOS os arquivos MD em artigo_cientifico
+python3 tools/convert_all_artigo_mds.py
+
+# Ou especificar uma pasta específica
+python3 tools/convert_all_artigo_mds.py artigo_cientifico/fase5_suplementar
+```
+
+## Como Usar os Scripts de Conversão
 
 ### Pré-requisitos
 
-O script requer:
+Os scripts requerem:
 - Python 3.x
 - Pandoc (instalado via `apt-get install pandoc`)
 - LaTeX (texlive-xetex) para geração de PDF
@@ -45,33 +95,51 @@ sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-plain-ge
 
 ### Execução
 
+**Converter APENAS fase4_secoes (script original):**
 ```bash
-# Converter todos os arquivos .md da pasta fase4_secoes
 python3 tools/convert_fase4_to_docx_pdf.py
 
 # Ou especificar outro diretório
 python3 tools/convert_fase4_to_docx_pdf.py /caminho/para/diretorio
 ```
 
-### Características do Script
+**Converter TODAS as pastas recursivamente (novo script):**
+```bash
+# Converter todos os arquivos .md da pasta artigo_cientifico e subpastas
+python3 tools/convert_all_artigo_mds.py
 
-O script `tools/convert_fase4_to_docx_pdf.py`:
+# Ou especificar outro diretório
+python3 tools/convert_all_artigo_mds.py /caminho/para/diretorio
+```
 
-1. **Encontra automaticamente** todos os arquivos `.md` no diretório especificado
-2. **Converte para DOCX** usando pandoc com suporte a:
+### Características dos Scripts
+
+**Script Original (`convert_fase4_to_docx_pdf.py`):**
+- Converte apenas arquivos em um diretório específico (não recursivo)
+- Padrão: `artigo_cientifico/fase4_secoes`
+
+**Novo Script (`convert_all_artigo_mds.py`):**
+- Busca recursiva em todas as subpastas
+- Agrupa resultados por diretório para melhor visualização
+- Relatório detalhado com estatísticas por pasta
+- Padrão: `artigo_cientifico` (todas as subpastas)
+
+Ambos os scripts:
+1. **Encontram automaticamente** todos os arquivos `.md`
+2. **Convertem para DOCX** usando pandoc com suporte a:
    - Tabelas
    - Blocos de código
    - Formatação Markdown completa
-3. **Converte para PDF** usando pandoc + XeLaTeX com:
+3. **Convertem para PDF** usando pandoc + XeLaTeX com:
    - Suporte completo a Unicode
    - Renderização de equações LaTeX (formato `$...$` e `$$...$$`)
    - Fontes DejaVu para melhor compatibilidade
    - Margens de 2cm
-4. **Sanitiza o conteúdo** automaticamente:
-   - Remove emojis problemáticos para LaTeX
-   - Converte checkboxes markdown (`- [x]` → `- [DONE]`)
-   - Corrige padrões de fórmulas matemáticas que causam erros
-5. **Gera relatório** detalhado com estatísticas de sucesso/falha
+4. **Sanitizam o conteúdo** automaticamente:
+   - Removem emojis problemáticos para LaTeX
+   - Convertem checkboxes markdown (`- [x]` → `- [DONE]`)
+   - Corrigem padrões de fórmulas matemáticas que causam erros
+5. **Geram relatório** detalhado com estatísticas de sucesso/falha
 
 ## Formato dos Arquivos
 
@@ -118,12 +186,22 @@ O script usa `xelatex` como engine de PDF porque:
 
 Para reconverter todos os arquivos (por exemplo, após atualizar o Markdown):
 
+**Apenas fase4_secoes:**
 ```bash
 # Remover conversões antigas
 rm artigo_cientifico/fase4_secoes/*.docx artigo_cientifico/fase4_secoes/*.pdf
 
 # Reconverter
 python3 tools/convert_fase4_to_docx_pdf.py
+```
+
+**Todas as pastas:**
+```bash
+# Remover todas as conversões antigas
+find artigo_cientifico -type f \( -name "*.docx" -o -name "*.pdf" \) -delete
+
+# Reconverter tudo
+python3 tools/convert_all_artigo_mds.py
 ```
 
 ## Solução de Problemas
@@ -155,11 +233,12 @@ artigo_cientifico/fase4_secoes/
 
 ## Contato
 
-Para problemas ou sugestões relacionadas à conversão, consulte o script em:
-`tools/convert_fase4_to_docx_pdf.py`
+Para problemas ou sugestões relacionadas à conversão, consulte os scripts em:
+- `tools/convert_fase4_to_docx_pdf.py` (script original, apenas fase4_secoes)
+- `tools/convert_all_artigo_mds.py` (novo script, conversão recursiva completa)
 
 ---
 
 **Última atualização:** 02 de janeiro de 2026  
-**Versão do script:** 1.0  
-**Status:** Todos os arquivos convertidos com sucesso ✅
+**Versão do script:** 2.0 (adicionado suporte recursivo)  
+**Status:** 44/46 arquivos convertidos com sucesso (95.7%) ✅
