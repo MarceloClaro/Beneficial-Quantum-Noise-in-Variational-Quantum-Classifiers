@@ -56,9 +56,11 @@ resultados_*/
 !figuras/*.pdf
 !figuras/*.svg
 
-# Allow converted documents in artigo_cientifico/fase4_secoes
-!artigo_cientifico/fase4_secoes/*.pdf
-!artigo_cientifico/fase4_secoes/*.docx
+# Allow converted documents in artigo_cientifico/ directory and all subdirectories
+!artigo_cientifico/**/*.pdf
+!artigo_cientifico/**/*.docx
+!artigo_cientifico/*.pdf
+!artigo_cientifico/*.docx
 
 # Logs
 *.log
