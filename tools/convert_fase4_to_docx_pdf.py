@@ -9,8 +9,23 @@ artigo_cientifico/fase4_secoes para os formatos DOCX e PDF usando pandoc.
 import os
 import sys
 import subprocess
+import tempfile
+import re
 from pathlib import Path
 from typing import List, Tuple
+
+
+# Constantes para limpeza de conteúdo
+MAX_ERROR_MSG_LENGTH = 200
+
+# Padrões regex para correção de fórmulas matemáticas problemáticas
+# Converte notação dimensional $[\mathcal{...}] = $ para formato LaTeX correto
+PATTERN_DIMENSIONAL_MATHCAL = r'\$\[\\mathcal\{([^}]+)\}([^\$]*?)\]\s*=\s*\$'
+REPLACEMENT_DIMENSIONAL_MATHCAL = r'$\\text{dim}[\\mathcal{\1}\2] =$'
+
+# Converte notação dimensional genérica $[...] = $ para formato LaTeX correto  
+PATTERN_DIMENSIONAL_GENERIC = r'\$\[([^\]]+)\]\s*=\s*\$'
+REPLACEMENT_DIMENSIONAL_GENERIC = r'$\\text{dim}[\1] =$'
 
 
 def find_md_files(directory: str) -> List[Path]:
@@ -94,10 +109,7 @@ def convert_to_pdf(md_file: Path, output_dir: Path = None) -> bool:
     
     output_file = output_dir / f"{md_file.stem}.pdf"
     
-    # Criar arquivo temporário com conteúdo sanitizado
-    import tempfile
-    import re
-    
+    # Ler e sanitizar conteúdo do arquivo
     with open(md_file, 'r', encoding='utf-8') as f:
         content = f.read()
     
@@ -111,10 +123,10 @@ def convert_to_pdf(md_file: Path, output_dir: Path = None) -> bool:
     # Fix problematic math patterns with brackets
     # Pattern like $[content] = $ needs to be wrapped properly
     # Replace $[...] pattern when it appears as dimensional analysis
-    content_clean = re.sub(r'\$\[\\mathcal\{([^}]+)\}([^\$]*?)\]\s*=\s*\$', 
-                           r'$\\text{dim}[\\mathcal{\1}\2] =$', content_clean)
-    content_clean = re.sub(r'\$\[([^\]]+)\]\s*=\s*\$', 
-                           r'$\\text{dim}[\1] =$', content_clean)
+    content_clean = re.sub(PATTERN_DIMENSIONAL_MATHCAL, 
+                           REPLACEMENT_DIMENSIONAL_MATHCAL, content_clean)
+    content_clean = re.sub(PATTERN_DIMENSIONAL_GENERIC, 
+                           REPLACEMENT_DIMENSIONAL_GENERIC, content_clean)
     
     try:
         # Usar arquivo temporário para conversão
@@ -155,7 +167,7 @@ def convert_to_pdf(md_file: Path, output_dir: Path = None) -> bool:
         
     except subprocess.CalledProcessError as e:
         print(f"❌ Erro ao converter {md_file.name} para PDF:")
-        error_msg = e.stderr[:200] if e.stderr else "Erro desconhecido"
+        error_msg = e.stderr[:MAX_ERROR_MSG_LENGTH] if e.stderr else "Erro desconhecido"
         print(f"   {error_msg}")
         return False
     except Exception as e:
