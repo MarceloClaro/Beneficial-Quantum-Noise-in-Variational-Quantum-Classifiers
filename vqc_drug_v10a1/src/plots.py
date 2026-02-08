@@ -19,7 +19,7 @@ sns.set_style("whitegrid")
 
 def fig_auc_heatmap(df: pd.DataFrame, out: str = "fig1_auc_heatmap.png"):
     """AUC Heatmap – Noise × Constant"""
-    if "noise_type" in df.columns and "constant_init" in df.columns:
+    if "params_noise_type" in df.columns and "params_constant_init" in df.columns:
         pivot = df.pivot_table(values="value", index="params_noise_type", 
                               columns="params_constant_init", aggfunc="mean")
         fig, ax = plt.subplots(figsize=(7, 5), dpi=600)
