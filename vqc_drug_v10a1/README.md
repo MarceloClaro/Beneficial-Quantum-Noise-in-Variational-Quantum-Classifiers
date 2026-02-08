@@ -17,7 +17,7 @@ pip install -e .
 
 ### Run Complete Pipeline
 ```bash
-vqc-drug-a1 --target EGFR --max-qubits 20 --trials 500
+vqc-drug-a1 --target EGFR --max-qubits 20 --trials 500 --seed 42 --permutations 5000
 ```
 
 ### Docker (100% Reproducible)
@@ -105,6 +105,26 @@ vqc_drug_v10a1/
 
 ---
 
+
+## 🧪 Metodologia de Validação Rigorosa (reprodutível)
+
+A versão atual inclui um bloco explícito de validação estatística para submissão Qualis A1:
+
+1. **Pré-registro e rastreabilidade** (SHA-256 + snapshot de ambiente).
+2. **Teste unilateral vs baseline aleatório (AUC=0.5)** para hipótese primária.
+3. **IC bootstrap (95%)** da AUC média com reamostragem determinística.
+4. **Teste de permutação com sinal** (não paramétrico) para robustez.
+5. **Gates de qualidade**: p-valor, p-permutação, IC acima de 0.5 e estabilidade (CV < 10%).
+
+Artefatos gerados automaticamente:
+
+- `02_validation_report.json`
+- `02_validation_report.md`
+
+Esses arquivos documentam hipóteses, parâmetros da validação, seed e critérios de aceite para auditoria independente.
+
+---
+
 ## 📊 Output Structure
 
 After running `vqc-drug-a1 --target EGFR --trials 500`:
@@ -113,6 +133,8 @@ After running `vqc-drug-a1 --target EGFR --trials 500`:
 results_EGFR_2025-12-30_12-00-00/
 ├── 01_protocolo_pre_registrado_a3f2b8c9.json   # SHA-256 pre-registration
 ├── environment_snapshot.txt                    # pip + conda freeze
+├── 02_validation_report.json                   # hipótese, IC, permutação, gates
+├── 02_validation_report.md                     # resumo narrativo auditável
 ├── cv_comparison.csv                           # All trial results
 ├── fig1_auc_heatmap.png                        # 600 dpi heatmap
 ├── fig2_forest.png                             # 600 dpi forest plot
@@ -120,6 +142,18 @@ results_EGFR_2025-12-30_12-00-00/
 ├── latex_boilerplate.tex                       # Nature/Quantum ready
 └── checksums_final.sha256                      # Bit-wise audit trail
 ```
+
+---
+
+## 🗂️ Kit de Reprodutibilidade para Banca
+
+Para execução didática e auditoria institucional (CNPq/Qualis A1), utilize:
+
+- `../reproducibility_a1_kit/README.md`
+- `../reproducibility_a1_kit/scripts/run_reproducibility.sh`
+- `../reproducibility_a1_kit/scripts/validate_artifacts.py`
+
+Esse kit organiza checklist, modelo de relatório, ata e validação automática dos gates estatísticos.
 
 ---
 

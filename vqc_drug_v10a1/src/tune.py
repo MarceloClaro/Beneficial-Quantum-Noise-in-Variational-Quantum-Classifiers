@@ -70,12 +70,13 @@ def objective_ultra(trial, X, y, folds, target: str):
     trial.set_user_attr("constant_init", cfg.get("constant_init"))
     return mean_auc
 
-def run_study(X, y, target: str, n_trials=500, max_qubits=20):
+def run_study(X, y, target: str, n_trials=500, max_qubits=20, seed: int | None = None):
     """Full pipeline v10."""
+    resolved_seed = get_seed(0) if seed is None else int(seed)
     folds = list(StratifiedKFold(n_splits=5, shuffle=True, 
-                                  random_state=get_seed()).split(X, y))
+                                  random_state=resolved_seed).split(X, y))
     
-    sampler = QASRSampler(seed=get_seed())
+    sampler = QASRSampler(seed=resolved_seed)
     
     study = optuna.create_study(
         direction="maximize",
@@ -87,5 +88,6 @@ def run_study(X, y, target: str, n_trials=500, max_qubits=20):
     study.optimize(lambda trial: objective_ultra(trial, X, y, folds, target),
                    n_trials=n_trials, show_progress_bar=True)
 
+    study.set_user_attr("seed", resolved_seed)
     study.set_user_attr("qualis_report", qualis_report_from_trials(study.trials_dataframe()).to_dict())
     return study
