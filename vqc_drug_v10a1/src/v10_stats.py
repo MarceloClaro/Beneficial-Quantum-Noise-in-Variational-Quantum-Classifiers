@@ -39,7 +39,7 @@ def qualis_report_from_trials(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame()
     metrics = df[[c for c in df.columns if c.startswith("value") or c == "value"]].copy()
-    aucs = metrics.squeeze().to_numpy()
+    aucs = np.asarray(metrics["value"], dtype=float)
     auc_mean = float(np.mean(aucs))
     auc_std = float(np.std(aucs))
     pvals = np.clip(1 - aucs, 0, 1)  # proxy de p-valor

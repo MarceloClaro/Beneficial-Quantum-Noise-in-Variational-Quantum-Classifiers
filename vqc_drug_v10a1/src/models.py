@@ -30,11 +30,14 @@ class VQCAudit(torch.nn.Module):
 
         # Device selection (GPU if available)
         try:
-            if device_str == "lightning.gpu":
+            # default.qubit suporta canais de ruído amplamente; lightning.qubit pode limitar alguns operadores.
+            if self.noise_type != "none":
+                self.dev = qml.device("default.qubit", wires=n_qubits)
+            elif device_str == "lightning.gpu":
                 self.dev = qml.device("lightning.gpu", wires=n_qubits)
             else:
                 self.dev = qml.device("lightning.qubit", wires=n_qubits)
-        except:
+        except Exception:
             self.dev = qml.device("default.qubit", wires=n_qubits)
 
         # Parameters

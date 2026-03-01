@@ -54,22 +54,28 @@ class PCAReducer:
         return self.pca.explained_variance_ratio_.sum()
 
 def load_split(target: str, n_qubits: int, test_size: float = 0.2, 
-               seed: int = 42) -> tuple:
+               seed: int = 42, data_file: str | None = None) -> tuple:
     """
     Download + featurize + PCA + split in one pass.
     Returns: X_train, X_test, y_train, y_test (all np.ndarray)
     """
-    # 1. Download
-    url = URLS[target]
-    cache = Path(f".cache/{target}.csv")
-    if cache.exists():
-        df = pd.read_csv(cache)
+    # 1. Load dataset (custom file has priority)
+    if data_file is not None:
+        custom_path = Path(data_file)
+        if not custom_path.exists():
+            raise FileNotFoundError(f"Arquivo de dados não encontrado: {custom_path}")
+        df = pd.read_csv(custom_path)
     else:
-        cache.parent.mkdir(exist_ok=True)
-        r = requests.get(url, timeout=60)
-        r.raise_for_status()
-        df = pd.read_csv(io.StringIO(r.text))
-        df.to_csv(cache, index=False)
+        url = URLS[target]
+        cache = Path(f".cache/{target}.csv")
+        if cache.exists():
+            df = pd.read_csv(cache)
+        else:
+            cache.parent.mkdir(exist_ok=True)
+            r = requests.get(url, timeout=60)
+            r.raise_for_status()
+            df = pd.read_csv(io.StringIO(r.text))
+            df.to_csv(cache, index=False)
 
     # 2. Parse columns (adjust per dataset)
     if target == "EGFR":
